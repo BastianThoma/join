@@ -1,1 +1,23 @@
-<p>login works!</p>
+<div class="login-container">
+  <div class="logo-anim-container" [ngClass]="{ 'logo-anim-active': logoAnimActive }">
+    <img src="assets/img/join_logo_white.png" alt="Join Logo White" class="logo logo-white" [class.logo-fadeout]="logoAnimActive" />
+    <img src="assets/img/join_logo_blue.png" alt="Join Logo Blue" class="logo logo-blue" [class.logo-move]="logoAnimActive" />
+  </div>
+  <div class="login-card">
+    <h1 class="title">Log in</h1>
+    <form class="login-form">
+      <input type="email" placeholder="Email" class="input" />
+      <input type="password" placeholder="Password" class="input" />
+      <button type="submit" class="login-btn">Log in</button>
+      <button class="guest-btn" type="button">Guest Log in</button>
+    </form>
+  </div>
+  <div class="register-link-container">
+    <p>Not a join user?</p> <a class="register-link" routerLink="/register">Sign up</a>
+  </div>
+  <div class="legal-container">
+    <a href="#" class="privacy-link">Privacy Policy</a>
+    <span class="divider-dot">•</span>
+    <a href="#" class="legal-link">Legal Notice</a>
+  </div>
+</div>

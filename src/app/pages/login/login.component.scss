@@ -1,0 +1,221 @@
+.login-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  border-radius: 30px;
+  padding: 16px 32px;
+  background: #fff;
+  box-shadow: 0px 0px 10px 3px #00000014;
+  margin-bottom: 32px;
+}
+// Schriftart für alle Texte in der Login-Komponente
+.login-container,
+.login-container * {
+  font-family: Open Sans;
+}
+
+.logo-anim-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #4589ff;
+  z-index: 100;
+  pointer-events: none;
+  transition: background 1s cubic-bezier(0.4, 0, 0.2, 1);
+  .logo {
+    position: absolute;
+    width: 56px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transition: none;
+  }
+  .logo-blue {
+    opacity: 0;
+    transition: opacity 0.2s, transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 2;
+  }
+  .logo-blue.logo-move {
+    opacity: 1;
+  }
+  .logo-white {
+    opacity: 1;
+    transition: opacity 0.4s;
+    z-index: 3;
+  }
+  .logo-white.logo-fadeout {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+.logo-fadeout {
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+  z-index: 1;
+}
+.logo-move {
+  opacity: 1;
+  transition: opacity 0.2s, transform 1.2s cubic-bezier(0.4, 0, 0.2, 1),
+    width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translate(-50%, -50%) scale(1);
+  animation: logo-slide-to-corner 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  width: 40px;
+  z-index: 20;
+}
+
+@keyframes logo-slide-to-corner {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    transform: translate(calc(-50vw + 56px - 32px), calc(-50vh + 56px - 32px))
+      scale(0.7);
+  }
+}
+.logo-anim-active {
+  background: transparent;
+}
+// Legal Container (Privacy Policy & Legal Notice)
+.legal-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  font-size: 0.95rem;
+  color: #647188;
+  opacity: 0.9;
+}
+.legal-container a {
+  color: #647188;
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s;
+  font-weight: 500;
+}
+.legal-container a:hover {
+  background: #f0f4fa;
+  color: #4589ff;
+}
+.divider-dot {
+  color: #b5bac5;
+  font-size: 1.1em;
+  user-select: none;
+}
+.guest-btn {
+  background: #fff;
+  color: #4589ff;
+  border: 1px solid #4589ff;
+  border-radius: 8px;
+  padding: 12px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s, border 0.2s;
+}
+.guest-btn:hover {
+  background: #4589ff;
+  color: #fff;
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #f6f7fb;
+  padding: 24px 16px;
+}
+
+.logo {
+  width: 56px;
+  margin-bottom: 32px;
+}
+
+.title {
+  font-size: 48px;
+  font-weight: 700;
+  font-style: bold;
+  margin: 0;
+  color: #2a3647;
+  line-height: 120%;
+  letter-spacing: 0%;
+}
+
+.login-form {
+  width: 100%;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.input {
+  padding: 12px 16px;
+  border: 1px solid #d1d1d1;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #fff;
+}
+
+.login-btn {
+  background: #4589ff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s;
+}
+.login-btn:hover {
+  background: #fff;
+  color: #4589ff;
+  border: 1px solid #4589ff;
+}
+
+.register-link-container {
+  margin-top: 16px;
+  color: #647188;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  p {
+    margin: 0;
+    color: #647188;
+    font-size: 0.95rem;
+  }
+}
+.register-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  background: #4589ff;
+  border-radius: 8px;
+  padding: 10px 16px;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+  width: 66px;
+  height: 23px;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  cursor: pointer;
+}
+.register-link:hover {
+  background: #fff;
+  color: #4589ff;
+}
