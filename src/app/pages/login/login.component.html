@@ -6,8 +6,18 @@
   <div class="login-card">
     <h1 class="title">Log in</h1>
     <form class="login-form">
-      <input type="email" placeholder="Email" class="input" />
-      <input type="password" placeholder="Password" class="input" />
+      <div class="input-wrapper">
+        <input type="email" placeholder="Email" class="input" />
+        <span class="input-icon">
+          <img src="assets/img/mail_icon.png" alt="Mail Icon" />
+        </span>
+      </div>
+      <div class="input-wrapper">
+        <input type="password" placeholder="Password" class="input" />
+        <span class="input-icon">
+          <img src="assets/img/lock_icon.png" alt="Lock Icon" />
+        </span>
+      </div>
       <button type="submit" class="login-btn">Log in</button>
       <button class="guest-btn" type="button">Guest Log in</button>
     </form>
