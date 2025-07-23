@@ -14,9 +14,22 @@
         </span>
       </div>
       <div class="input-wrapper">
-        <input type="password" placeholder="Password" class="input" />
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          placeholder="Password"
+          class="input"
+          [(ngModel)]="password"
+          name="password"
+          autocomplete="current-password"
+        />
         <span class="input-icon">
-          <img src="assets/img/lock_icon.png" alt="Lock Icon" />
+          <img *ngIf="!password" src="assets/img/lock_icon.png" alt="Lock Icon" style="pointer-events: none; user-select: none;" />
+          <button *ngIf="password && !showPassword" type="button" (click)="togglePasswordVisibility()" tabindex="-1" style="background: none; border: none; padding: 0; margin: 0; cursor: pointer;">
+            <img src="assets/img/visibility_off_icon.png" alt="Passwort versteckt" />
+          </button>
+          <button *ngIf="password && showPassword" type="button" (click)="togglePasswordVisibility()" tabindex="-1" style="background: none; border: none; padding: 0; margin: 0; cursor: pointer;">
+            <img src="assets/img/visibility_icon.png" alt="Passwort sichtbar" />
+          </button>
         </span>
       </div>
       <button type="submit" class="login-btn">Log in</button>
