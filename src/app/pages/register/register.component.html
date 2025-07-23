@@ -36,6 +36,7 @@
           class="input"
           [(ngModel)]="email"
           name="email"
+          autocomplete="username"
           required
           email
           #emailInput="ngModel"
@@ -54,6 +55,7 @@
           class="input"
           [(ngModel)]="password"
           name="password"
+          autocomplete="new-password"
           required
           minlength="6"
           #passwordInput="ngModel"
@@ -113,6 +115,7 @@
           class="input"
           [(ngModel)]="confirmPassword"
           name="confirmPassword"
+          autocomplete="new-password"
           required
           minlength="6"
           #confirmPasswordInput="ngModel"
