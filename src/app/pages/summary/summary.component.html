@@ -1,0 +1,21 @@
+<div class="summary-greeting" *ngIf="showGreeting">
+  <div class="greeting-content">
+    <div class="greeting-line1">{{ greeting }},</div>
+    <div class="greeting-line2">{{ name }}</div>
+  </div>
+</div>
+
+<!-- Hier muss ich noch das Dashboard einbauen, kommt aber vermutlich nach der AddTask und Contact
+ Seite, um die Daten für die Übersicht dann auch in der Datenbank zu haben -->
+
+<div class="summary-container" *ngIf="!showGreeting">
+  <h1 class="summary-title">Welcome to Join!</h1>
+  <div class="summary-card">
+    <p class="summary-text">
+      Hier folgt ein Dashboard welches sich noch im Aufbau befindet.<br />
+      Mal schauen wann wir den Rest fertig haben.<br />
+      Der Inhalt ist also Aktuell nur Platzhalter und wird später durch das
+      Dashboard ersetzt.
+    </p>
+  </div>
+</div>

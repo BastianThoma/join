@@ -1,0 +1,96 @@
+// muss ich noch Formatieren, vorteile von SCSS nutzen.
+
+.summary-greeting {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeOut 0.7s 1.2s forwards;
+}
+
+.greeting-content {
+  color: #2a3647;
+  text-align: center;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.greeting-line1 {
+  font-size: 2rem;
+  font-weight: 400;
+  color: #2a3647;
+  margin-bottom: 0.2em;
+}
+.greeting-line2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #4589ff;
+  margin-top: 0;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+  }
+}
+
+.summary-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f6f7fb;
+  font-family: "Open Sans";
+}
+
+.summary-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2a3647;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.summary-card {
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: 0 0 10px 3px #0001;
+  padding: 32px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.summary-text {
+  font-size: 1.2rem;
+  color: #2a3647;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.summary-btn {
+  background: #4589ff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 32px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+.summary-btn:hover {
+  background: #5a9bff;
+}

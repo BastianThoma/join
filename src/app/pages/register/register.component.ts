@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
+import { Auth, createUserWithEmailAndPassword, updateProfile } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 
 @Component({
@@ -58,11 +58,14 @@ export class RegisterComponent implements OnInit, OnDestroy {
       return;
     }
     try {
-      await createUserWithEmailAndPassword(
+      const cred = await createUserWithEmailAndPassword(
         this.auth,
         this.email,
         this.password
       );
+      if (cred.user && this.name) {
+        await updateProfile(cred.user, { displayName: this.name });
+      }
       this.successMessage = 'Registration successful! You can now log in.';
       setTimeout(() => {
         this.router.navigate(['/login']);

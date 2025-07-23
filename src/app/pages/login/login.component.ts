@@ -3,7 +3,7 @@ import { Auth, signInWithEmailAndPassword } from '@angular/fire/auth';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +12,7 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit {
-  constructor(private auth: Auth) {}
+  constructor(private auth: Auth, private router: Router) {}
 
   email: string = '';
   errorMessage: string = '';
@@ -37,9 +37,10 @@ export class LoginComponent implements OnInit {
     this.errorMessage = '';
     try {
       await signInWithEmailAndPassword(this.auth, this.email, this.password);
-      // Hier später Weiterleitung nach Login
       this.email = '';
       this.password = '';
+      localStorage.setItem('join_greeting_show', '1');
+      this.router.navigate(['/summary']);
     } catch (error: any) {
       this.errorMessage = error.message || 'Login fehlgeschlagen';
     }

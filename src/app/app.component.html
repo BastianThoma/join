@@ -1,2 +1,3 @@
 
+<app-header *ngIf="!isAuthRoute()" [initials]="userService.getInitials()"></app-header>
 <router-outlet />
