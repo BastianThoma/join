@@ -18,7 +18,7 @@
 }
 .input {
   width: 100%;
-  padding: 12px 16px;
+  padding: 12px 40px 12px 16px; // Rechts mehr Platz für das Icon
   border: none;
   border-bottom: 2px solid #d1d1d1;
   font-size: 1rem;
@@ -228,7 +228,7 @@
 .login-btn {
   background: #4589ff;
   color: #fff;
-  border: none;
+  border: 1px solid #4589ff;
   border-radius: 8px;
   padding: 12px 0;
   font-size: 1rem;
@@ -236,6 +236,11 @@
   cursor: pointer;
   margin-top: 8px;
   transition: background 0.2s;
+}
+
+.login-btn:hover {
+  background: #fff;
+  color: #4589ff;
 }
 
 .register-link-container {

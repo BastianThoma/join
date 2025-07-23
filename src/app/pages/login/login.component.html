@@ -6,9 +6,19 @@
   <div class="login-card">
     <h1 class="title">Log in</h1>
     <div class="login-divider"></div>
-    <form class="login-form">
+    <form class="login-form" #loginForm="ngForm">
       <div class="input-wrapper">
-        <input type="email" placeholder="Email" class="input" />
+        <input
+          type="email"
+          placeholder="Email"
+          class="input"
+          [(ngModel)]="email"
+          name="email"
+          autocomplete="username"
+          required
+          email
+          #emailInput="ngModel"
+        />
         <span class="input-icon">
           <img src="assets/img/mail_icon.png" alt="Mail Icon" />
         </span>
@@ -21,6 +31,8 @@
           [(ngModel)]="password"
           name="password"
           autocomplete="current-password"
+          required
+          #passwordInput="ngModel"
         />
         <span class="input-icon">
           <img *ngIf="!password" src="assets/img/lock_icon.png" alt="Lock Icon" style="pointer-events: none; user-select: none;" />
@@ -32,7 +44,12 @@
           </button>
         </span>
       </div>
-      <button type="submit" class="login-btn">Log in</button>
+      <div *ngIf="(emailInput.errors?.['required'] || emailInput.errors?.['email']) && emailInput.touched" style="color: #e74c3c; margin-bottom: 8px;">
+        <ng-container *ngIf="emailInput.errors?.['required']">Bitte gib deine E-Mail-Adresse ein.</ng-container>
+        <ng-container *ngIf="emailInput.errors?.['email']">Bitte gib eine gültige E-Mail-Adresse ein.</ng-container>
+      </div>
+      <div *ngIf="errorMessage" style="color: #e74c3c; margin-bottom: 8px;">{{ errorMessage }}</div>
+      <button type="submit" class="login-btn" (click)="$event.preventDefault(); login();">Log in</button>
       <button class="guest-btn" type="button">Guest Log in</button>
     </form>
   </div>
