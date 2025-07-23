@@ -1,1 +1,213 @@
-<p>register works!</p>
+<div class="register-container">
+  <img
+    class="register-logo"
+    src="assets/img/join_logo_white.png"
+    alt="Join Logo White"
+    [class.logo-hidden]="hideLogo"
+  />
+  <div class="register-card">
+    <a class="back-to-login" routerLink="/login" title="Zurück zum Login">
+      <img src="assets/img/arrow_left.png" alt="Zurück" />
+    </a>
+    <h1 class="title">Sign up</h1>
+    <div class="register-divider"></div>
+    <form class="register-form" #registerForm="ngForm">
+      <div class="input-wrapper">
+        <input
+          type="text"
+          placeholder="Name"
+          class="input"
+          [(ngModel)]="name"
+          name="name"
+          required
+          #nameInput="ngModel"
+        />
+        <span class="input-icon">
+          <img src="assets/img/mail_icon.png" alt="User Icon" />
+        </span>
+      </div>
+      <div *ngIf="nameInput.invalid && nameInput.touched" class="input-error">
+        Bitte gib deinen Namen ein.
+      </div>
+      <div class="input-wrapper">
+        <input
+          type="email"
+          placeholder="Email"
+          class="input"
+          [(ngModel)]="email"
+          name="email"
+          required
+          email
+          #emailInput="ngModel"
+        />
+        <span class="input-icon">
+          <img src="assets/img/mail_icon.png" alt="Mail Icon" />
+        </span>
+      </div>
+      <div *ngIf="emailInput.invalid && emailInput.touched" class="input-error">
+        Bitte gib eine gültige E-Mail ein.
+      </div>
+      <div class="input-wrapper">
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          placeholder="Password"
+          class="input"
+          [(ngModel)]="password"
+          name="password"
+          required
+          minlength="6"
+          #passwordInput="ngModel"
+        />
+        <span class="input-icon">
+          <img
+            *ngIf="!password"
+            src="assets/img/lock_icon.png"
+            alt="Lock Icon"
+            style="pointer-events: none; user-select: none"
+          />
+          <button
+            *ngIf="password && !showPassword"
+            type="button"
+            (click)="togglePasswordVisibility()"
+            tabindex="-1"
+            style="
+              background: none;
+              border: none;
+              padding: 0;
+              margin: 0;
+              cursor: pointer;
+            "
+          >
+            <img
+              src="assets/img/visibility_off_icon.png"
+              alt="Passwort versteckt"
+            />
+          </button>
+          <button
+            *ngIf="password && showPassword"
+            type="button"
+            (click)="togglePasswordVisibility()"
+            tabindex="-1"
+            style="
+              background: none;
+              border: none;
+              padding: 0;
+              margin: 0;
+              cursor: pointer;
+            "
+          >
+            <img src="assets/img/visibility_icon.png" alt="Passwort sichtbar" />
+          </button>
+        </span>
+      </div>
+      <div
+        *ngIf="passwordInput.invalid && passwordInput.touched"
+        class="input-error"
+      >
+        Bitte gib ein Passwort mit mindestens 6 Zeichen ein.
+      </div>
+      <div class="input-wrapper">
+        <input
+          [type]="showConfirmPassword ? 'text' : 'password'"
+          placeholder="Confirm Password"
+          class="input"
+          [(ngModel)]="confirmPassword"
+          name="confirmPassword"
+          required
+          minlength="6"
+          #confirmPasswordInput="ngModel"
+        />
+        <span class="input-icon">
+          <img
+            *ngIf="!confirmPassword"
+            src="assets/img/lock_icon.png"
+            alt="Lock Icon"
+            style="pointer-events: none; user-select: none"
+          />
+          <button
+            *ngIf="confirmPassword && !showConfirmPassword"
+            type="button"
+            (click)="toggleConfirmPasswordVisibility()"
+            tabindex="-1"
+            style="
+              background: none;
+              border: none;
+              padding: 0;
+              margin: 0;
+              cursor: pointer;
+            "
+          >
+            <img
+              src="assets/img/visibility_off_icon.png"
+              alt="Passwort versteckt"
+            />
+          </button>
+          <button
+            *ngIf="confirmPassword && showConfirmPassword"
+            type="button"
+            (click)="toggleConfirmPasswordVisibility()"
+            tabindex="-1"
+            style="
+              background: none;
+              border: none;
+              padding: 0;
+              margin: 0;
+              cursor: pointer;
+            "
+          >
+            <img src="assets/img/visibility_icon.png" alt="Passwort sichtbar" />
+          </button>
+        </span>
+      </div>
+      <div
+        *ngIf="confirmPasswordInput.invalid && confirmPasswordInput.touched"
+        class="input-error"
+      >
+        Bitte bestätige dein Passwort (mind. 6 Zeichen).
+      </div>
+      <div
+        *ngIf="password && confirmPassword && password !== confirmPassword"
+        class="input-error"
+      >
+        Die Passwörter stimmen nicht überein.
+      </div>
+      <div class="checkbox-wrapper">
+        <input
+          type="checkbox"
+          id="privacy"
+          [(ngModel)]="acceptPrivacy"
+          name="acceptPrivacy"
+          required
+          #privacyInput="ngModel"
+        />
+        <label for="privacy"
+          >I accept the
+          <a routerLink="/privacy" class="white-link">Privacy Policy</a></label
+        >
+      </div>
+      <div
+        *ngIf="privacyInput.invalid && privacyInput.touched"
+        class="input-error"
+      >
+        Bitte akzeptiere die Datenschutzbestimmungen.
+      </div>
+      <div *ngIf="errorMessage" class="input-error">{{ errorMessage }}</div>
+      <div *ngIf="successMessage" class="input-success">
+        {{ successMessage }}
+      </div>
+      <button
+        type="submit"
+        class="register-btn"
+        [disabled]="!registerForm.valid"
+        (click)="$event.preventDefault(); register()"
+      >
+        Sign up
+      </button>
+    </form>
+  </div>
+  <div class="legal-container">
+    <a href="#" class="privacy-link white-link">Privacy Policy</a>
+    <span class="divider-dot">•</span>
+    <a href="#" class="legal-link white-link">Legal Notice</a>
+  </div>
+</div>
