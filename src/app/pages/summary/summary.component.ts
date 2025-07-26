@@ -25,7 +25,7 @@ export class SummaryComponent implements OnInit {
       setTimeout(() => {
         this.showGreeting = false;
         localStorage.removeItem('join_greeting_show');
-      }, 1500);
+      }, 2500);
     } else {
       this.showGreeting = false;
     }
