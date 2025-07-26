@@ -3,4 +3,12 @@
 body {
   margin: 0;
   font-family: 'Open Sans', sans-serif;
+  padding-top: 72px; // Platz für Header (MOBILE)
+  padding-bottom: 72px; // Platz für Navbar (MOBILE)
+  box-sizing: border-box;
+  /*
+    WICHTIG: Bei größeren Auflösungen/Desktop-Layout (z.B. Navbar links)
+    müssen diese Padding-Werte angepasst oder entfernt werden!
+    Dann stattdessen z.B. padding-left für die Sidebar und ggf. padding-top für Header.
+  */
 }

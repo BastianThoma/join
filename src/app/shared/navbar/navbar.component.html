@@ -2,11 +2,10 @@
   <ul class="navbar__list">
     <li *ngFor="let item of navItems" class="navbar__item" [ngClass]="{ 'navbar__item--active': getActive(item.route) }">
       <a [routerLink]="item.route" class="navbar__link">
-        <span class="navbar__icon" [ngSwitch]="item.icon">
-          <img *ngSwitchCase="'summary'" src="assets/img/nav_summary.svg" alt="Summary" />
-          <img *ngSwitchCase="'add_task'" src="assets/img/nav_add_task.svg" alt="Add Task" />
-          <img *ngSwitchCase="'board'" src="assets/img/nav_board.svg" alt="Board" />
-          <img *ngSwitchCase="'contacts'" src="assets/img/nav_contacts.svg" alt="Contacts" />
+        <span class="navbar__icon">
+          <img 
+            [src]="'assets/img/' + item.icon + (getActive(item.route) ? '_active.png' : '.png')"
+            [alt]="item.label" />
         </span>
         <span class="navbar__label">{{ item.label }}</span>
       </a>

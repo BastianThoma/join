@@ -11,10 +11,10 @@ import { RouterModule } from '@angular/router';
 })
 export class NavbarComponent {
   navItems = [
-    { label: 'Summary', icon: 'summary', route: '/summary' },
-    { label: 'Add Task', icon: 'add_task', route: '/add-task' },
-    { label: 'Board', icon: 'board', route: '/board' },
-    { label: 'Contacts', icon: 'contacts', route: '/contacts' }
+    { label: 'Summary', icon: 'summary_icon', route: '/summary' },
+    { label: 'Add Task', icon: 'addTask_icon', route: '/add-task' },
+    { label: 'Board', icon: 'board_icon', route: '/board' },
+    { label: 'Contacts', icon: 'contacts_icon', route: '/contacts' }
   ];
   
   getActive(route: string): boolean {

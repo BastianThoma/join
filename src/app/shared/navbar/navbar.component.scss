@@ -34,10 +34,6 @@
     &--active {
       color: #005dff;
       font-weight: 700;
-      
-      .navbar__icon img {
-        filter: brightness(0) saturate(100%) invert(32%) sepia(99%) saturate(7492%) hue-rotate(210deg) brightness(99%) contrast(101%);
-      }
     }
   }
 
@@ -53,8 +49,8 @@
   }
 
   &__icon {
-    height: 28px;
-    width: 28px;
+    height: 24px;
+    width: 24px;
     margin-bottom: 4px;
     display: flex;
     align-items: center;
@@ -64,7 +60,6 @@
       height: 100%;
       width: 100%;
       object-fit: contain;
-      transition: filter 0.2s;
     }
   }
 
