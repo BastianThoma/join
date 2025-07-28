@@ -31,6 +31,26 @@
 
   <!-- Detailansicht Overlay -->
   <div class="contact-detail" [class.contact-detail--open]="selectedContact">
+    <!-- Burger-Menu Overlay -->
+    <div
+      *ngIf="showContactMenu"
+      class="contact-menu-overlay"
+      (click)="closeContactMenu()"
+    >
+      <div class="contact-menu" (click)="$event.stopPropagation()">
+        <button class="contact-menu__item" (click)="editContact()">
+          <img src="/assets/img/edit_icon_blue.png" alt="Edit" />
+          <span>Edit</span>
+        </button>
+        <button
+          class="contact-menu__item contact-menu__item"
+          (click)="deleteContact()"
+        >
+          <img src="/assets/img/delete_icon_blue.png" alt="Delete" />
+          <span>Delete</span>
+        </button>
+      </div>
+    </div>
     <div class="contact-detail__header">
       <span class="contact-detail__title">Contact Information</span>
       <button class="contact-detail__close" (click)="closeContactDetail()">
@@ -49,7 +69,9 @@
         <div class="contact-detail__label">Email</div>
         <div class="contact-detail__email">{{ selectedContact.email }}</div>
         <div class="contact-detail__label">Phone</div>
-        <div class="contact-detail__phone">+49 1111 111 11 1</div>
+        <div class="contact-detail__phone">
+          {{ selectedContact.phone || "—" }}
+        </div>
       </div>
     </div>
   </div>
@@ -62,33 +84,120 @@
       <span class="add-contact__title">Add contact</span>
       <span class="add-contact__subtitle">Tasks are better with a team!</span>
       <button class="add-contact__close" (click)="closeAddContactOverlay()">
-        <span>&times;</span>
+        <img src="/assets/img/close_small_white_icon.png" alt="Close" />
       </button>
     </div>
     <div class="add-contact__avatar">
       <img src="/assets/img/person_icon.png" alt="Avatar" />
     </div>
-    <form class="add-contact__form">
+    <form class="add-contact__form" (submit)="addContact($event)">
       <div class="add-contact__input-group">
-        <input type="text" placeholder="Name" class="input" />
+        <input
+          type="text"
+          placeholder="Name"
+          class="input"
+          [(ngModel)]="addName"
+          name="addName"
+          required
+        />
         <span class="input-icon">
           <img src="assets/img/person_small_icon.png" alt="Name" />
         </span>
       </div>
       <div class="add-contact__input-group">
-        <input type="email" placeholder="Email" class="input" />
+        <input
+          type="email"
+          placeholder="Email"
+          class="input"
+          [(ngModel)]="addEmail"
+          name="addEmail"
+          required
+        />
         <span class="input-icon">
           <img src="assets/img/mail_small_icon.png" alt="Email" />
         </span>
       </div>
       <div class="add-contact__input-group">
-        <input type="tel" placeholder="Phone" class="input" />
+        <input
+          type="tel"
+          placeholder="Phone"
+          class="input"
+          [(ngModel)]="addPhone"
+          name="addPhone"
+        />
         <span class="input-icon">
           <img src="/assets/img/phone_small_icon.png" alt="Phone" />
         </span>
       </div>
+      <div *ngIf="addError" style="color: #e74c3c; font-size: 12px">
+        {{ addError }}
+      </div>
       <button type="submit" class="add-contact__submit">
-        Create contact <img src="/assets/img/check_small_icon.png" alt="Check" />
+        Create contact<img src="/assets/img/check_small_icon.png" alt="Check" />
+      </button>
+    </form>
+  </div>
+</div>
+<!-- Edit Contact Overlay -->
+<div class="add-contact-overlay" *ngIf="showEditContactOverlay">
+  <div class="add-contact__card">
+    <div class="add-contact__header">
+      <span class="add-contact__title">Edit contact</span>
+      <span class="add-contact__subtitle">Change contact details</span>
+      <button class="add-contact__close" (click)="closeEditContactOverlay()">
+        <img src="/assets/img/close_small_white_icon.png" alt="Close" />
+      </button>
+    </div>
+    <div
+      class="add-contact__avatar edit__avatar"
+      [ngStyle]="{ background: selectedContact?.color || '#f1f1f1' }"
+    >
+      {{ getInitials(editName) }}
+    </div>
+    <form class="add-contact__form" (submit)="saveEditContact($event)">
+      <div class="add-contact__input-group">
+        <input
+          type="text"
+          placeholder="Name"
+          class="input"
+          [(ngModel)]="editName"
+          name="editName"
+          required
+        />
+        <span class="input-icon">
+          <img src="assets/img/person_small_icon.png" alt="Name" />
+        </span>
+      </div>
+      <div class="add-contact__input-group">
+        <input
+          type="email"
+          placeholder="Email"
+          class="input"
+          [(ngModel)]="editEmail"
+          name="editEmail"
+          required
+        />
+        <span class="input-icon">
+          <img src="assets/img/mail_small_icon.png" alt="Email" />
+        </span>
+      </div>
+      <div class="add-contact__input-group">
+        <input
+          type="tel"
+          placeholder="Phone"
+          class="input"
+          [(ngModel)]="editPhone"
+          name="editPhone"
+        />
+        <span class="input-icon">
+          <img src="/assets/img/phone_small_icon.png" alt="Phone" />
+        </span>
+      </div>
+      <div *ngIf="editError" style="color: #e74c3c; font-size: 12px">
+        {{ editError }}
+      </div>
+      <button type="submit" class="add-contact__submit">
+        Save changes <img src="/assets/img/check_small_icon.png" alt="Check" />
       </button>
     </form>
   </div>
