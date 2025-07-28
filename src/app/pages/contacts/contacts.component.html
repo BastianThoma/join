@@ -1,0 +1,95 @@
+<div class="contacts">
+  <ng-container *ngFor="let group of groupedContacts">
+    <div class="contacts__letter">{{ group.letter }}</div>
+    <div
+      *ngFor="let contact of group.contacts"
+      class="contacts__row"
+      (click)="showContactDetail(contact)"
+    >
+      <div class="contacts__avatar" [ngStyle]="{ background: contact.color }">
+        {{ getInitials(contact.name) }}
+      </div>
+      <div class="contacts__info">
+        <div class="contacts__name">{{ contact.name }}</div>
+        <div class="contacts__email">{{ contact.email }}</div>
+      </div>
+    </div>
+  </ng-container>
+  <button
+    class="contacts__fab"
+    (click)="selectedContact ? onFabMenuClick() : onFabAddClick()"
+  >
+    <img
+      [src]="
+        selectedContact
+          ? '/assets/img/vertical_menu_dots.png'
+          : '/assets/img/person_add_icon.png'
+      "
+      [alt]="selectedContact ? 'Menu' : 'Add Contact'"
+    />
+  </button>
+
+  <!-- Detailansicht Overlay -->
+  <div class="contact-detail" [class.contact-detail--open]="selectedContact">
+    <div class="contact-detail__header">
+      <span class="contact-detail__title">Contact Information</span>
+      <button class="contact-detail__close" (click)="closeContactDetail()">
+        <img src="/assets/img/arrow_left.png" alt="Zurück" />
+      </button>
+    </div>
+    <div class="contact-detail__main" *ngIf="selectedContact">
+      <div
+        class="contact-detail__avatar"
+        [ngStyle]="{ background: selectedContact.color }"
+      >
+        {{ getInitials(selectedContact.name) }}
+      </div>
+      <span class="contact-detail__name">{{ selectedContact.name }}</span>
+      <div class="contact-detail__info">
+        <div class="contact-detail__label">Email</div>
+        <div class="contact-detail__email">{{ selectedContact.email }}</div>
+        <div class="contact-detail__label">Phone</div>
+        <div class="contact-detail__phone">+49 1111 111 11 1</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Contact Overlay -->
+<div class="add-contact-overlay" *ngIf="showAddContactOverlay">
+  <div class="add-contact__card">
+    <div class="add-contact__header">
+      <span class="add-contact__title">Add contact</span>
+      <span class="add-contact__subtitle">Tasks are better with a team!</span>
+      <button class="add-contact__close" (click)="closeAddContactOverlay()">
+        <span>&times;</span>
+      </button>
+    </div>
+    <div class="add-contact__avatar">
+      <img src="/assets/img/person_icon.png" alt="Avatar" />
+    </div>
+    <form class="add-contact__form">
+      <div class="add-contact__input-group">
+        <input type="text" placeholder="Name" class="input" />
+        <span class="input-icon">
+          <img src="assets/img/person_small_icon.png" alt="Name" />
+        </span>
+      </div>
+      <div class="add-contact__input-group">
+        <input type="email" placeholder="Email" class="input" />
+        <span class="input-icon">
+          <img src="assets/img/mail_small_icon.png" alt="Email" />
+        </span>
+      </div>
+      <div class="add-contact__input-group">
+        <input type="tel" placeholder="Phone" class="input" />
+        <span class="input-icon">
+          <img src="/assets/img/phone_small_icon.png" alt="Phone" />
+        </span>
+      </div>
+      <button type="submit" class="add-contact__submit">
+        Create contact <img src="/assets/img/check_small_icon.png" alt="Check" />
+      </button>
+    </form>
+  </div>
+</div>
