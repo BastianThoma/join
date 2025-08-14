@@ -1,0 +1,63 @@
+<div class="add-task">
+	<form class="add-task__form">
+		<input class="add-task__title" type="text" placeholder="Enter a title" required />
+		<div class="add-task__section">
+			<label class="add-task__label">
+				Description <span class="add-task__optional">(optional)</span>
+			</label>
+			<textarea class="add-task__description" placeholder="Enter a Description"></textarea>
+		</div>
+		<div class="add-task__section">
+			<label class="add-task__label">Due date</label>
+			<div class="add-task__date-row">
+				<input class="add-task__date" type="text" placeholder="dd/mm/yyyy" />
+				<img class="add-task__date-icon" src="/assets/img/calendar_icon.png" alt="Calendar" />
+			</div>
+		</div>
+		<div class="add-task__section">
+			<label class="add-task__label">Priority</label>
+			<div class="add-task__priority-row">
+				<button type="button" class="add-task__priority add-task__priority--urgent">
+					Urgent <img src="/assets/img/arrow_up_red.png" alt="Urgent" />
+				</button>
+				<button type="button" class="add-task__priority add-task__priority--medium add-task__priority--active">
+					Medium <img src="/assets/img/equal_yellow.png" alt="Medium" />
+				</button>
+				<button type="button" class="add-task__priority add-task__priority--low">
+					Low <img src="/assets/img/arrow_down_green.png" alt="Low" />
+				</button>
+			</div>
+		</div>
+		<div class="add-task__section">
+			<label class="add-task__label">
+				Assigned to <span class="add-task__optional">(optional)</span>
+			</label>
+			<div class="add-task__select-row">
+				<select class="add-task__select">
+					<option disabled selected>Select contacts to assign</option>
+				</select>
+				<img class="add-task__select-icon" src="/assets/img/arrow_drop_down_blue.png" alt="Dropdown" />
+			</div>
+		</div>
+		<div class="add-task__section">
+			<label class="add-task__label">Category</label>
+			<div class="add-task__select-row">
+				<select class="add-task__select">
+					<option disabled selected>Select task category</option>
+				</select>
+				<img class="add-task__select-icon" src="/assets/img/arrow_drop_down_blue.png" alt="Dropdown" />
+			</div>
+		</div>
+		<div class="add-task__section">
+			<label class="add-task__label">
+				Subtasks <span class="add-task__optional">(optional)</span>
+			</label>
+			<div class="add-task__subtasks-row">
+				<div class="add-task__subtask add-task__subtask--filled">
+					Clear <img src="/assets/img/close_small_grey_icon.png" alt="Remove" />
+				</div>
+				<button type="submit" class="add-task__create-btn">Create Task <img src="/assets/img/check_small_icon.png" alt="Create" /></button>
+			</div>
+		</div>
+	</form>
+</div>
