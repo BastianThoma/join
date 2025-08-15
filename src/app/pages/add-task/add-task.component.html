@@ -1,29 +1,29 @@
 <div class="add-task">
-	<form class="add-task__form">
-		<input class="add-task__title" type="text" placeholder="Enter a title" required />
+	<form class="add-task__form" (ngSubmit)="onSubmit()">
+		<input class="add-task__title" type="text" placeholder="Enter a title" required [(ngModel)]="title" name="title" />
 		<div class="add-task__section">
 			<label class="add-task__label">
 				Description <span class="add-task__optional">(optional)</span>
 			</label>
-			<textarea class="add-task__description" placeholder="Enter a Description"></textarea>
+			<textarea class="add-task__description" placeholder="Enter a Description" [(ngModel)]="description" name="description"></textarea>
 		</div>
 		<div class="add-task__section">
 			<label class="add-task__label">Due date</label>
 			<div class="add-task__date-row">
-				<input class="add-task__date" type="text" placeholder="dd/mm/yyyy" />
+				<input class="add-task__date" type="text" placeholder="dd/mm/yyyy" [(ngModel)]="dueDate" name="dueDate" />
 				<img class="add-task__date-icon" src="/assets/img/calendar_icon.png" alt="Calendar" />
 			</div>
 		</div>
 		<div class="add-task__section">
 			<label class="add-task__label">Priority</label>
 			<div class="add-task__priority-row">
-				<button type="button" class="add-task__priority add-task__priority--urgent">
+				<button type="button" class="add-task__priority add-task__priority--urgent" [class.add-task__priority--active]="priority==='urgent'" (click)="setPriority('urgent')">
 					Urgent <img src="/assets/img/arrow_up_red.png" alt="Urgent" />
 				</button>
-				<button type="button" class="add-task__priority add-task__priority--medium add-task__priority--active">
+				<button type="button" class="add-task__priority add-task__priority--medium" [class.add-task__priority--active]="priority==='medium'" (click)="setPriority('medium')">
 					Medium <img src="/assets/img/equal_yellow.png" alt="Medium" />
 				</button>
-				<button type="button" class="add-task__priority add-task__priority--low">
+				<button type="button" class="add-task__priority add-task__priority--low" [class.add-task__priority--active]="priority==='low'" (click)="setPriority('low')">
 					Low <img src="/assets/img/arrow_down_green.png" alt="Low" />
 				</button>
 			</div>
@@ -33,8 +33,9 @@
 				Assigned to <span class="add-task__optional">(optional)</span>
 			</label>
 			<div class="add-task__select-row">
-				<select class="add-task__select">
-					<option disabled selected>Select contacts to assign</option>
+				<select class="add-task__select" [(ngModel)]="assignedTo" name="assignedTo" multiple>
+					<option disabled value="">Select contacts to assign</option>
+					<!-- <option *ngFor="let contact of contacts" [value]="contact.id">{{ contact.name }}</option> -->
 				</select>
 				<img class="add-task__select-icon" src="/assets/img/arrow_drop_down_blue.png" alt="Dropdown" />
 			</div>
@@ -42,8 +43,9 @@
 		<div class="add-task__section">
 			<label class="add-task__label">Category</label>
 			<div class="add-task__select-row">
-				<select class="add-task__select">
-					<option disabled selected>Select task category</option>
+				<select class="add-task__select" [(ngModel)]="category" name="category">
+					<option disabled value="">Select task category</option>
+					<!-- <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option> -->
 				</select>
 				<img class="add-task__select-icon" src="/assets/img/arrow_drop_down_blue.png" alt="Dropdown" />
 			</div>
@@ -53,8 +55,8 @@
 				Subtasks <span class="add-task__optional">(optional)</span>
 			</label>
 			<div class="add-task__subtasks-row">
-				<div class="add-task__subtask add-task__subtask--filled">
-					Clear <img src="/assets/img/close_small_grey_icon.png" alt="Remove" />
+				<div *ngFor="let sub of subtasks; let i = index" class="add-task__subtask add-task__subtask--filled">
+					{{ sub }} <img src="/assets/img/close_small_grey_icon.png" alt="Remove" (click)="removeSubtask(i)" />
 				</div>
 				<button type="submit" class="add-task__create-btn">Create Task <img src="/assets/img/check_small_icon.png" alt="Create" /></button>
 			</div>
