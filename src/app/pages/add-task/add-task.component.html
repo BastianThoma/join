@@ -1,6 +1,8 @@
 <div class="add-task">
 	<form class="add-task__form" (ngSubmit)="onSubmit()">
+		<div *ngIf="success" class="add-task__success">{{ success }}</div>
 		<input class="add-task__title" type="text" placeholder="Enter a title" required [(ngModel)]="title" name="title" />
+		<div *ngIf="error && !title.trim()" class="add-task__error">Title is required.</div>
 		<div class="add-task__section">
 			<label class="add-task__label">
 				Description <span class="add-task__optional">(optional)</span>
@@ -13,6 +15,7 @@
 				<input class="add-task__date" type="text" placeholder="dd/mm/yyyy" [(ngModel)]="dueDate" name="dueDate" />
 				<img class="add-task__date-icon" src="/assets/img/calendar_icon.png" alt="Calendar" />
 			</div>
+			<div *ngIf="error && !dueDate.trim()" class="add-task__error">Due date is required.</div>
 		</div>
 		<div class="add-task__section">
 			<label class="add-task__label">Priority</label>
@@ -49,6 +52,7 @@
 				</select>
 				<img class="add-task__select-icon" src="/assets/img/arrow_drop_down_blue.png" alt="Dropdown" />
 			</div>
+			<div *ngIf="error && !category.trim()" class="add-task__error">Category is required.</div>
 		</div>
 		<div class="add-task__section">
 			<label class="add-task__label">
@@ -61,5 +65,6 @@
 				<button type="submit" class="add-task__create-btn">Create Task <img src="/assets/img/check_small_icon.png" alt="Create" /></button>
 			</div>
 		</div>
+		<div *ngIf="error && !(!title.trim() || !dueDate.trim() || !category.trim())" class="add-task__error">{{ error }}</div>
 	</form>
 </div>
