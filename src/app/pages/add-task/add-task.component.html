@@ -27,15 +27,18 @@
       <label class="add-task__label">Due date</label>
       <div class="add-task__date-row">
         <input
+          #dueInput
           class="add-task__date"
           type="date"
           [(ngModel)]="dueDate"
           name="dueDate"
+          (click)="openDatepicker(dueInput)"
         />
         <img
           class="add-task__date-icon"
-          src="/assets/img/calendar_icon.png"
+          src="/assets/img/datepicker_calendar_icon.png"
           alt="Calendar"
+          (click)="openDatepicker(dueInput)"
         />
       </div>
       <div *ngIf="error && !dueDate.trim()" class="add-task__error">
@@ -50,46 +53,95 @@
           class="add-task__priority add-task__priority--urgent"
           [class.add-task__priority--active]="priority === 'urgent'"
           (click)="setPriority('urgent')"
+          (mouseenter)="setHover('urgent')"
+          (mouseleave)="setHover(null)"
         >
-          Urgent <img src="/assets/img/arrow_up_red.png" alt="Urgent" />
+          Urgent
+          <img
+            [src]="
+              priority === 'urgent' || hoverPriority === 'urgent'
+                ? '/assets/img/urgent_prio_icon_white.png'
+                : '/assets/img/urgent_prio_icon_red.png'
+            "
+            alt="Urgent"
+          />
         </button>
         <button
           type="button"
           class="add-task__priority add-task__priority--medium"
           [class.add-task__priority--active]="priority === 'medium'"
           (click)="setPriority('medium')"
+          (mouseenter)="setHover('medium')"
+          (mouseleave)="setHover(null)"
         >
-          Medium <img src="/assets/img/equal_yellow.png" alt="Medium" />
+          Medium
+          <img
+            [src]="
+              priority === 'medium' || hoverPriority === 'medium'
+                ? '/assets/img/medium_prio_icon_white.png'
+                : '/assets/img/medium_prio_icon_orange.png'
+            "
+            alt="Medium"
+          />
         </button>
         <button
           type="button"
           class="add-task__priority add-task__priority--low"
           [class.add-task__priority--active]="priority === 'low'"
           (click)="setPriority('low')"
+          (mouseenter)="setHover('low')"
+          (mouseleave)="setHover(null)"
         >
-          Low <img src="/assets/img/arrow_down_green.png" alt="Low" />
+          Low
+          <img
+            [src]="
+              priority === 'low' || hoverPriority === 'low'
+                ? '/assets/img/low_prio_icon_white.png'
+                : '/assets/img/low_prio_icon_green.png'
+            "
+            alt="Low"
+          />
         </button>
       </div>
     </div>
+
     <div class="add-task__section">
       <label class="add-task__label">
         Assigned to <span class="add-task__optional">(optional)</span>
       </label>
-      <div class="add-task__select-row">
-        <select
-          class="add-task__select"
-          [(ngModel)]="assignedTo"
-          name="assignedTo"
-          multiple
-        >
-          <option disabled value="">Select contacts to assign</option>
-          <!-- <option *ngFor="let contact of contacts" [value]="contact.id">{{ contact.name }}</option> -->
-        </select>
-        <img
-          class="add-task__select-icon"
-          src="/assets/img/arrow_drop_down_blue.png"
-          alt="Dropdown"
-        />
+      <div class="contacts-selector-wrapper" #contactsSelectorWrapper>
+        <div class="add-task__select-row">
+          <input
+            class="add-task__select"
+            type="text"
+            placeholder="Select contacts to assign"
+            [(ngModel)]="contactSearch"
+            (focus)="openContacts()"
+            (ngModelChange)="filterContacts()"
+            name="contactSearch"
+          />
+          <img class="add-task__select-icon" [src]="showContactsDropdown ? '/assets/img/close_dropdown_icon.png' : '/assets/img/open_dropdown_icon.png'" alt="Dropdown" (click)="toggleContacts($event)" />
+
+          <div *ngIf="showContactsDropdown" class="assign-dropdown" (click)="$event.stopPropagation()">
+            <div class="assign-dropdown__list">
+              <div *ngFor="let c of filteredContacts" class="assign-dropdown__item" [ngClass]="{selected: isAssigned(c.id)}" (click)="toggleContactSelection(c)">
+                <div class="assign-dropdown__avatar" [style.background]="c.color || '#ccc'">{{ getInitials(c.name) }}</div>
+                <div class="assign-dropdown__name">{{ c.name }}</div>
+                <img class="assign-dropdown__check" [src]="isAssigned(c.id) ? '/assets/img/checked_checkbox_icon.png' : '/assets/img/unchecked_checkbox_icon.png'" alt="check" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="selected-contacts-row" *ngIf="assignedTo.length > 0">
+        <ng-container *ngFor="let id of assignedTo.slice(0,3); let i = index">
+          <div *ngIf="getContactById(id) as contact" class="selected-contact-avatar" [style.background]="contact.color || '#ccc'">
+            {{ getInitials(contact.name) }}
+          </div>
+        </ng-container>
+        <div *ngIf="assignedTo.length > 3" class="selected-contact-avatar selected-contact-avatar--more">
+          +{{ assignedTo.length - 3 }}
+        </div>
       </div>
     </div>
     <div class="add-task__section">
@@ -101,7 +153,7 @@
         </select>
         <img
           class="add-task__select-icon"
-          src="/assets/img/arrow_drop_down_blue.png"
+          src="/assets/img/open_dropdown_icon.png"
           alt="Dropdown"
         />
       </div>
@@ -119,12 +171,11 @@
           class="add-task__subtask add-task__subtask--filled"
         >
           {{ sub }}
-          <img
-            src="/assets/img/close_small_grey_icon.png"
-            alt="Remove"
-            (click)="removeSubtask(i)"
-          />
         </div>
+        <button type="button" class="add-task__create-btn" (click)="clearForm()">
+          Clear
+          <img src="/assets/img/clear_small_icon.png" alt="Clear Icon" />
+        </button>
         <button type="submit" class="add-task__create-btn">
           Create Task
           <img src="/assets/img/check_small_icon.png" alt="Create" />
