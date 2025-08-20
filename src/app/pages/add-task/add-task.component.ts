@@ -1,4 +1,3 @@
-// ...existing code...
 import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -30,6 +29,8 @@ interface Contact {
  * Komponente zum Erstellen eines neuen Tasks mit Kontaktzuweisung, Priorität, Kategorie und Subtasks.
  */
 export class AddTaskComponent {
+  /** Reference auf den Category Picker Wrapper für Outside-Click-Erkennung */
+  @ViewChild('categoryPickerWrapper', { static: false }) categoryPickerWrapper!: ElementRef;
   /** Reference auf den Kontakt-Selector-Wrapper für Outside-Click-Erkennung */
   @ViewChild('contactsSelectorWrapper', { static: false })
   contactsSelectorWrapper!: ElementRef;
@@ -61,6 +62,10 @@ export class AddTaskComponent {
   contactSearch = '';
   /** Zeigt das Dropdown an */
   showContactsDropdown = false;
+  /**
+   * Steuert die Sichtbarkeit des Category-Dropdowns
+   */
+  showCategoryDropdown = false;
 
   // --- Fehler & Erfolg ---
   /** Fehlermeldung */
@@ -88,9 +93,16 @@ export class AddTaskComponent {
    */
   @HostListener('document:click', ['$event'])
   handleOutsideClick(event: Event) {
+    // Kontakte Dropdown
     if (this.showContactsDropdown && this.contactsSelectorWrapper) {
       if (!this.contactsSelectorWrapper.nativeElement.contains(event.target)) {
         this.showContactsDropdown = false;
+      }
+    }
+    // Category Dropdown
+    if (this.showCategoryDropdown && this.categoryPickerWrapper) {
+      if (!this.categoryPickerWrapper.nativeElement.contains(event.target)) {
+        this.showCategoryDropdown = false;
       }
     }
   }
@@ -271,6 +283,14 @@ export class AddTaskComponent {
     this.filteredContacts = this.contacts.slice();
     this.error = '';
     this.success = '';
+  }
+
+  /**
+   * Setzt die Kategorie und schließt das Dropdown
+   */
+  selectCategory(cat: string) {
+    this.category = cat;
+    this.showCategoryDropdown = false;
   }
 
   /**

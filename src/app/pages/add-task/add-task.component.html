@@ -146,16 +146,16 @@
     </div>
     <div class="add-task__section">
       <label class="add-task__label">Category</label>
-      <div class="add-task__select-row">
-        <select class="add-task__select" [(ngModel)]="category" name="category">
-          <option disabled value="">Select task category</option>
-          <!-- <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option> -->
-        </select>
-        <img
-          class="add-task__select-icon"
-          src="/assets/img/open_dropdown_icon.png"
-          alt="Dropdown"
-        />
+  <div class="add-task__select-row category-picker-row" #categoryPickerWrapper (click)="$event.stopPropagation()">
+        <div class="category-picker-display" (click)="showCategoryDropdown = !showCategoryDropdown">
+          <span class="category-picker-placeholder" *ngIf="!category">Select task category</span>
+          <span class="category-picker-value" *ngIf="category">{{ category }}</span>
+          <img class="category-picker-arrow" [class.open]="showCategoryDropdown" src="/assets/img/open_dropdown_icon.png" alt="Dropdown" />
+        </div>
+        <div class="category-picker-dropdown" *ngIf="showCategoryDropdown">
+          <div class="category-picker-option" [class.selected]="category === 'Technical Task'" (click)="selectCategory('Technical Task')">Technical Task</div>
+          <div class="category-picker-option" [class.selected]="category === 'User Story'" (click)="selectCategory('User Story')">User Story</div>
+        </div>
       </div>
       <div *ngIf="error && !category.trim()" class="add-task__error">
         Category is required.

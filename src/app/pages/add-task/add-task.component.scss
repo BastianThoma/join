@@ -1,3 +1,65 @@
+
+.category-picker-row {
+  position: relative;
+  width: 100%;
+}
+.category-picker-display {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid #e0e0e0;
+  font-size: 1rem;
+  color: #42526e;
+  cursor: pointer;
+  min-height: 40px;
+}
+.category-picker-placeholder {
+  color: #b5bac5;
+}
+.category-picker-value {
+  color: #222;
+  font-weight: 500;
+}
+.category-picker-arrow {
+  width: 24px;
+  height: 24px;
+  margin-left: 8px;
+  transition: transform 0.2s;
+}
+.category-picker-arrow.open {
+  transform: rotate(180deg);
+}
+.category-picker-dropdown {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  width: 100%;
+  background: #fff;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  z-index: 10;
+  margin-top: 2px;
+  padding: 0;
+}
+.category-picker-option {
+  padding: 18px 0 18px 24px;
+  font-size: 1.1rem;
+  color: #222;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-bottom: 1px solid #f1f1f1;
+}
+.category-picker-option:last-child {
+  border-bottom: none;
+}
+.category-picker-option:hover,
+.category-picker-option.selected {
+  background: #f6f7fb;
+  color: #005dff;
+}
 .add-task {
   width: 100%;
   min-height: 100vh;
