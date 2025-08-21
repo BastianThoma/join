@@ -29,6 +29,49 @@ interface Contact {
  * Komponente zum Erstellen eines neuen Tasks mit Kontaktzuweisung, Priorität, Kategorie und Subtasks.
  */
 export class AddTaskComponent {
+
+  /** Steuert den Fokuszustand des Subtask-Inputs */
+  subtaskInputFocused = false;
+
+  /** Aktueller Wert für neues Subtask */
+  newSubtask = '';
+  /** Index des Subtasks, das bearbeitet wird, oder null */
+  editSubtaskIndex: number | null = null;
+  /** Wert des Subtasks im Edit-Modus */
+  editSubtaskValue = '';
+
+  /** Fügt ein neues Subtask hinzu, wenn nicht leer und nicht im Edit-Modus */
+  addSubtask() {
+    const value = this.newSubtask.trim();
+    if (value && this.editSubtaskIndex === null) {
+      this.subtasks.push(value);
+      this.newSubtask = '';
+    }
+  }
+
+  /** Startet den Edit-Modus für ein Subtask */
+  startEditSubtask(idx: number) {
+    this.editSubtaskIndex = idx;
+    this.editSubtaskValue = this.subtasks[idx];
+  }
+
+  /** Speichert die Änderung am Subtask */
+  confirmEditSubtask() {
+    if (this.editSubtaskIndex !== null) {
+      const value = this.editSubtaskValue.trim();
+      if (value) {
+        this.subtasks[this.editSubtaskIndex] = value;
+      }
+      this.editSubtaskIndex = null;
+      this.editSubtaskValue = '';
+    }
+  }
+
+  /** Bricht das Editieren eines Subtasks ab */
+  cancelEditSubtask() {
+    this.editSubtaskIndex = null;
+    this.editSubtaskValue = '';
+  }
   /** Reference auf den Category Picker Wrapper für Outside-Click-Erkennung */
   @ViewChild('categoryPickerWrapper', { static: false }) categoryPickerWrapper!: ElementRef;
   /** Reference auf den Kontakt-Selector-Wrapper für Outside-Click-Erkennung */

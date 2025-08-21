@@ -1,3 +1,82 @@
+// Subtask Input & List Styles (Figma-like)
+.subtask-input-wrapper {
+  position: relative;
+  width: 100%;
+  margin-bottom: 8px;
+}
+.subtask-input, .subtask-edit-input {
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #e0e0e0;
+  background: transparent;
+  font-size: 1rem;
+  color: #42526e;
+  padding: 8px 36px 8px 0;
+  outline: none;
+}
+.subtask-icon {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity 0.15s;
+  z-index: 2;
+}
+.subtask-icon.subtask-clear {
+  right: 44px;
+}
+.subtask-divider {
+  position: absolute;
+  top: 50%;
+  right: 36px;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 22px;
+  background: #e0e0e0;
+  z-index: 1;
+}
+.subtask-icon.subtask-check {
+  right: 8px;
+}
+.subtask-icon.subtask-add {
+  right: 8px;
+}
+.subtasks-list {
+  width: 100%;
+  margin-bottom: 8px;
+}
+.subtask-list-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+}
+.subtask-dot {
+  font-size: 1.2rem;
+  color: #42526e;
+  margin-right: 2px;
+}
+.subtask-text {
+  flex: 1;
+  color: #222;
+  font-size: 1rem;
+}
+.subtask-edit-input {
+  flex: 1;
+  font-size: 1rem;
+  color: #42526e;
+  border: none;
+  border-bottom: 2px solid #e0e0e0;
+  background: transparent;
+  outline: none;
+}
+.add-task__subtasks-row--actions {
+  margin-top: 12px;
+}
 
 .category-picker-row {
   position: relative;
