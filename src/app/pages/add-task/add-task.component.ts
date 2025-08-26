@@ -10,14 +10,34 @@ import {
   DocumentData,
 } from '@angular/fire/firestore';
 
+/**
+ * Interface for Contact data structure
+ */
 interface Contact {
+  /** Unique identifier for the contact */
   id?: string;
+  /** Full name of the contact */
   name: string;
+  /** Email address of the contact */
   email?: string;
+  /** Phone number of the contact */
   phone?: string;
+  /** Avatar color for the contact */
   color?: string;
 }
 
+/**
+ * Component for creating new tasks with comprehensive functionality including:
+ * - Task details (title, description, due date)
+ * - Priority selection (urgent, medium, low)
+ * - Contact assignment with avatar display
+ * - Category selection
+ * - Subtask management with inline editing
+ * - Form validation and Firestore integration
+ * 
+ * Implements WCAG accessibility standards with proper ARIA attributes,
+ * semantic HTML structure, and keyboard navigation support.
+ */
 @Component({
   selector: 'app-add-task',
   standalone: true,
@@ -25,38 +45,346 @@ interface Contact {
   templateUrl: './add-task.component.html',
   styleUrls: ['./add-task.component.scss'],
 })
-/**
- * Komponente zum Erstellen eines neuen Tasks mit Kontaktzuweisung, Priorität, Kategorie und Subtasks.
- */
 export class AddTaskComponent {
+  // ===============================
+  // ViewChild References
+  // ===============================
+  
+  /** Reference to category picker wrapper for outside-click detection */
+  @ViewChild('categoryPickerWrapper', { static: false }) 
+  categoryPickerWrapper!: ElementRef;
+  
+  /** Reference to contacts selector wrapper for outside-click detection */
+  @ViewChild('contactsSelectorWrapper', { static: false })
+  contactsSelectorWrapper!: ElementRef;
 
-  /** Steuert den Fokuszustand des Subtask-Inputs */
-  subtaskInputFocused = false;
+  // ===============================
+  // Form Fields
+  // ===============================
+  
+  /** Task title - required field */
+  title = '';
+  
+  /** Task description - optional field */
+  description = '';
+  
+  /** Due date for the task - required field */
+  dueDate = '';
+  
+  /** Task priority level with default medium priority */
+  priority: 'urgent' | 'medium' | 'low' = 'medium';
+  
+  /** Currently hovered priority for UI feedback */
+  hoverPriority: 'urgent' | 'medium' | 'low' | null = null;
+  
+  /** Array of assigned contact IDs */
+  assignedTo: string[] = [];
+  
+  /** Task category - required field */
+  category = '';
+  
+  /** Array of subtask descriptions */
+  subtasks: string[] = [];
 
-  /** Aktueller Wert für neues Subtask */
+  // ===============================
+  // Contact Management
+  // ===============================
+  
+  /** Complete list of available contacts */
+  contacts: Contact[] = [];
+  
+  /** Filtered contacts based on search input */
+  filteredContacts: Contact[] = [];
+  
+  /** Current search term for contact filtering */
+  contactSearch = '';
+  
+  /** Controls visibility of contacts dropdown */
+  showContactsDropdown = false;
+
+  // ===============================
+  // UI State Management
+  // ===============================
+  
+  /** Controls visibility of category dropdown */
+  showCategoryDropdown = false;
+  
+  /** Input value for new subtask creation */
   newSubtask = '';
-  /** Index des Subtasks, das bearbeitet wird, oder null */
+  
+  /** Tracks focus state of subtask input for UI changes */
+  subtaskInputFocused = false;
+  
+  /** Index of currently edited subtask, null if none */
   editSubtaskIndex: number | null = null;
-  /** Wert des Subtasks im Edit-Modus */
+  
+  /** Temporary value for subtask during editing */
   editSubtaskValue = '';
 
-  /** Fügt ein neues Subtask hinzu, wenn nicht leer und nicht im Edit-Modus */
-  addSubtask() {
-    const value = this.newSubtask.trim();
-    if (value && this.editSubtaskIndex === null) {
-      this.subtasks.push(value);
-      this.newSubtask = '';
+  // ===============================
+  // Feedback Messages
+  // ===============================
+  
+  /** Error message display */
+  error = '';
+  
+  /** Success message display */
+  success = '';
+
+  // ===============================
+  // Firestore Collections
+  // ===============================
+  
+  /** Firestore collection reference for tasks */
+  private tasksCol: CollectionReference<DocumentData>;
+  
+  /** Firestore collection reference for contacts */
+  private contactsCol: CollectionReference<DocumentData>;
+
+  /**
+   * Initializes the component with Firestore collections and loads contacts
+   * @param firestore - Firestore service instance
+   * @param el - ElementRef for the component
+   */
+  constructor(private firestore: Firestore, private el: ElementRef) {
+    this.tasksCol = collection(this.firestore, 'tasks');
+    this.contactsCol = collection(this.firestore, 'contacts');
+    this.loadContacts();
+  }
+
+  // ===============================
+  // Event Handlers
+  // ===============================
+
+  /**
+   * Handles outside clicks to close dropdowns when clicking outside their containers
+   * @param event - DOM click event
+   */
+  @HostListener('document:click', ['$event'])
+  handleOutsideClick(event: Event) {
+    const target = event.target as Node;
+    
+    // Close contacts dropdown if clicked outside
+    if (this.showContactsDropdown && this.contactsSelectorWrapper) {
+      if (!this.contactsSelectorWrapper.nativeElement.contains(target)) {
+        this.showContactsDropdown = false;
+      }
+    }
+    
+    // Close category dropdown if clicked outside
+    if (this.showCategoryDropdown && this.categoryPickerWrapper) {
+      if (!this.categoryPickerWrapper.nativeElement.contains(target)) {
+        this.showCategoryDropdown = false;
+      }
     }
   }
 
-  /** Startet den Edit-Modus für ein Subtask */
-  startEditSubtask(idx: number) {
-    this.editSubtaskIndex = idx;
-    this.editSubtaskValue = this.subtasks[idx];
+  /**
+   * Handles escape key press to close all open dropdowns
+   * @param event - Keyboard event
+   */
+  @HostListener('document:keydown.escape', ['$event'])
+  handleEscape(event: KeyboardEvent) {
+    this.showContactsDropdown = false;
+    this.showCategoryDropdown = false;
   }
 
-  /** Speichert die Änderung am Subtask */
-  confirmEditSubtask() {
+  // ===============================
+  // Priority Management
+  // ===============================
+
+  /**
+   * Sets the task priority level
+   * @param priority - Priority level to set
+   */
+  setPriority(priority: 'urgent' | 'medium' | 'low'): void {
+    this.priority = priority;
+  }
+
+  /**
+   * Sets hover state for priority buttons (UI feedback)
+   * @param priority - Priority level being hovered or null
+   */
+  setHover(priority: 'urgent' | 'medium' | 'low' | null): void {
+    this.hoverPriority = priority;
+  }
+
+  // ===============================
+  // Contact Management
+  // ===============================
+
+  /**
+   * Loads all available contacts from Firestore
+   * Populates both contacts and filteredContacts arrays
+   */
+  async loadContacts(): Promise<void> {
+    try {
+      const snapshot = await getDocs(this.contactsCol);
+      this.contacts = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...(doc.data() as Omit<Contact, 'id'>),
+      })) as Contact[];
+      this.filteredContacts = [...this.contacts];
+    } catch (error) {
+      console.error('Error loading contacts:', error);
+    }
+  }
+
+  /**
+   * Generates initials from a contact name
+   * @param name - Full name of the contact
+   * @returns Two-character initials in uppercase
+   */
+  getInitials(name?: string): string {
+    if (!name) return '??';
+    return name
+      .split(' ')
+      .map((word) => word[0] || '')
+      .join('')
+      .slice(0, 2)
+      .toUpperCase();
+  }
+
+  /**
+   * Opens the contacts dropdown and initializes contact filtering
+   */
+  openContacts(): void {
+    this.showContactsDropdown = true;
+    this.filterContacts();
+  }
+
+  /**
+   * Toggles the contacts dropdown visibility
+   * @param event - Optional click event to prevent propagation
+   */
+  toggleContacts(event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    
+    if (this.showContactsDropdown) {
+      this.showContactsDropdown = false;
+    } else {
+      this.openContacts();
+    }
+  }
+
+  /**
+   * Filters contacts based on search input
+   * Shows all contacts if search term is less than 2 characters
+   */
+  filterContacts(): void {
+    const searchTerm = this.contactSearch.trim().toLowerCase();
+    
+    if (searchTerm.length < 2) {
+      this.filteredContacts = [...this.contacts];
+      return;
+    }
+    
+    this.filteredContacts = this.contacts.filter((contact) =>
+      contact.name.toLowerCase().includes(searchTerm)
+    );
+  }
+
+  /**
+   * Toggles contact assignment (add/remove from assigned contacts)
+   * @param contact - Contact to toggle assignment for
+   */
+  toggleContactSelection(contact: Contact): void {
+    if (!contact?.id) return;
+    
+    const index = this.assignedTo.indexOf(contact.id);
+    if (index === -1) {
+      this.assignedTo.push(contact.id);
+    } else {
+      this.assignedTo.splice(index, 1);
+    }
+  }
+
+  /**
+   * Checks if a contact is currently assigned to the task
+   * @param contactId - ID of the contact to check
+   * @returns True if contact is assigned
+   */
+  isAssigned(contactId?: string): boolean {
+    return !!contactId && this.assignedTo.includes(contactId);
+  }
+
+  /**
+   * Retrieves a contact by ID
+   * @param contactId - ID of the contact to retrieve
+   * @returns Contact object or undefined if not found
+   */
+  getContactById(contactId: string): Contact | undefined {
+    return this.contacts.find((contact) => contact.id === contactId);
+  }
+
+  // ===============================
+  // Category Management
+  // ===============================
+
+  /**
+   * Selects a category and closes the category dropdown
+   * @param categoryName - Name of the category to select
+   */
+  selectCategory(categoryName: string): void {
+    this.category = categoryName;
+    this.showCategoryDropdown = false;
+  }
+
+  // ===============================
+  // Subtask Management
+  // ===============================
+
+  /**
+   * Adds a new subtask from the current input value
+   */
+  addSubtask(): void {
+    const value = this.newSubtask.trim();
+    if (value) {
+      this.subtasks.push(value);
+      this.newSubtask = '';
+      this.subtaskInputFocused = true;
+    }
+  }
+
+  /**
+   * Adds a subtask directly from an input element
+   * @param inputElement - HTML input element containing subtask text
+   */
+  addSubtaskFromInput(inputElement: HTMLInputElement): void {
+    const value = inputElement.value.trim();
+    if (value) {
+      this.subtasks.push(value);
+      inputElement.value = '';
+      this.newSubtask = '';
+      this.subtaskInputFocused = true;
+    }
+  }
+
+  /**
+   * Clears the subtask input field
+   * @param inputElement - HTML input element to clear
+   */
+  clearSubtaskInput(inputElement: HTMLInputElement): void {
+    inputElement.value = '';
+    this.newSubtask = '';
+    this.subtaskInputFocused = true;
+  }
+
+  /**
+   * Initiates edit mode for a specific subtask
+   * @param index - Index of the subtask to edit
+   */
+  startEditSubtask(index: number): void {
+    this.editSubtaskIndex = index;
+    this.editSubtaskValue = this.subtasks[index];
+  }
+
+  /**
+   * Confirms and saves subtask edit changes
+   */
+  confirmEditSubtask(): void {
     if (this.editSubtaskIndex !== null) {
       const value = this.editSubtaskValue.trim();
       if (value) {
@@ -67,254 +395,68 @@ export class AddTaskComponent {
     }
   }
 
-  /** Bricht das Editieren eines Subtasks ab */
-  cancelEditSubtask() {
+  /**
+   * Cancels subtask editing without saving changes
+   */
+  cancelEditSubtask(): void {
     this.editSubtaskIndex = null;
     this.editSubtaskValue = '';
   }
-  /** Reference auf den Category Picker Wrapper für Outside-Click-Erkennung */
-  @ViewChild('categoryPickerWrapper', { static: false }) categoryPickerWrapper!: ElementRef;
-  /** Reference auf den Kontakt-Selector-Wrapper für Outside-Click-Erkennung */
-  @ViewChild('contactsSelectorWrapper', { static: false })
-  contactsSelectorWrapper!: ElementRef;
-
-  // --- Formularfelder ---
-  /** Titel des Tasks */
-  title = '';
-  /** Beschreibung des Tasks */
-  description = '';
-  /** Fälligkeitsdatum */
-  dueDate = '';
-  /** Priorität des Tasks */
-  priority: 'urgent' | 'medium' | 'low' = 'medium';
-  /** Aktuell über Hover markierte Priorität (UI) */
-  hoverPriority: 'urgent' | 'medium' | 'low' | null = null;
-  /** IDs der zugewiesenen Kontakte */
-  assignedTo: string[] = [];
-  /** Kategorie des Tasks */
-  category = '';
-  /** Subtasks als Strings */
-  subtasks: string[] = [];
-
-  // --- Kontakte & Dropdown ---
-  /** Alle Kontakte */
-  contacts: Contact[] = [];
-  /** Gefilterte Kontakte für das Dropdown */
-  filteredContacts: Contact[] = [];
-  /** Suchbegriff für Kontakte */
-  contactSearch = '';
-  /** Zeigt das Dropdown an */
-  showContactsDropdown = false;
-  /**
-   * Steuert die Sichtbarkeit des Category-Dropdowns
-   */
-  showCategoryDropdown = false;
-
-  // --- Fehler & Erfolg ---
-  /** Fehlermeldung */
-  error = '';
-  /** Erfolgsmeldung */
-  success = '';
-
-  private tasksCol: CollectionReference<DocumentData>;
-  private contactsCol: CollectionReference<DocumentData>;
 
   /**
-   * Initialisiert Firestore-Collections und lädt Kontakte.
-   * @param firestore Firestore-Instanz
-   * @param el ElementRef für die Komponente
+   * Removes a subtask from the list
+   * @param index - Index of the subtask to remove
    */
-  constructor(private firestore: Firestore, private el: ElementRef) {
-    this.tasksCol = collection(this.firestore, 'tasks');
-    this.contactsCol = collection(this.firestore, 'contacts');
-    this.loadContacts();
-  }
-
-  /**
-   * Schließt das Dropdown, wenn außerhalb des Kontakt-Selectors geklickt wird.
-   * @param event Klick-Event
-   */
-  @HostListener('document:click', ['$event'])
-  handleOutsideClick(event: Event) {
-    // Kontakte Dropdown
-    if (this.showContactsDropdown && this.contactsSelectorWrapper) {
-      if (!this.contactsSelectorWrapper.nativeElement.contains(event.target)) {
-        this.showContactsDropdown = false;
-      }
-    }
-    // Category Dropdown
-    if (this.showCategoryDropdown && this.categoryPickerWrapper) {
-      if (!this.categoryPickerWrapper.nativeElement.contains(event.target)) {
-        this.showCategoryDropdown = false;
-      }
+  removeSubtask(index: number): void {
+    this.subtasks.splice(index, 1);
+    
+    // Reset edit state if the deleted item was being edited
+    if (this.editSubtaskIndex === index) {
+      this.editSubtaskIndex = null;
+      this.editSubtaskValue = '';
+    } 
+    // Adjust edit index if an item before the edited one was deleted
+    else if (this.editSubtaskIndex !== null && this.editSubtaskIndex > index) {
+      this.editSubtaskIndex--;
     }
   }
 
-  /**
-   * Schließt das Dropdown bei Escape-Taste.
-   * @param event Keyboard-Event
-   */
-  @HostListener('document:keydown.escape', ['$event'])
-  handleEscape(event: KeyboardEvent) {
-    this.showContactsDropdown = false;
-  }
+  // ===============================
+  // Utility Functions
+  // ===============================
 
   /**
-   * Schließt das Kontakt-Dropdown.
+   * Opens the native date picker for a given input element
+   * Uses modern showPicker() method with fallback to focus+click
+   * @param inputElement - Date input element to open picker for
    */
-  closeContacts() {
-    this.showContactsDropdown = false;
-  }
-
-  /**
-   * Schließt das Dropdown verzögert (z.B. für Blur-Events).
-   */
-  closeContactsDelayed() {
-    setTimeout(() => (this.showContactsDropdown = false), 200);
-  }
-
-  /**
-   * Setzt die Priorität.
-   * @param p Neue Priorität
-   */
-  setPriority(p: 'urgent' | 'medium' | 'low') {
-    this.priority = p;
-  }
-
-  /**
-   * Setzt die Hover-Priorität (für UI-Hervorhebung).
-   * @param p Priorität oder null
-   */
-  setHover(p: 'urgent' | 'medium' | 'low' | null) {
-    this.hoverPriority = p;
-  }
-
-  /**
-   * Lädt alle Kontakte aus Firestore.
-   */
-  async loadContacts() {
-    try {
-      const snap = await getDocs(this.contactsCol);
-      this.contacts = snap.docs.map((d) => ({
-        id: d.id,
-        ...(d.data() as any),
-      })) as Contact[];
-      this.filteredContacts = this.contacts.slice();
-    } catch (e) {}
-  }
-
-  /**
-   * Gibt die Initialen eines Namens zurück.
-   * @param name Name des Kontakts
-   * @returns Initialen als String
-   */
-  getInitials(name?: string) {
-    if (!name) return '??';
-    return name
-      .split(' ')
-      .map((n) => n[0] || '')
-      .join('')
-      .slice(0, 2)
-      .toUpperCase();
-  }
-
-  /**
-   * Öffnet das Kontakt-Dropdown und filtert Kontakte.
-   */
-  openContacts() {
-    this.showContactsDropdown = true;
-    this.filterContacts();
-  }
-
-  /**
-   * Öffnet oder schließt das Dropdown (z.B. beim Klick auf das Icon).
-   * @param e Event (optional)
-   */
-  toggleContacts(e?: Event) {
-    if (e) e.stopPropagation();
-    if (this.showContactsDropdown) {
-      this.closeContacts();
-    } else {
-      this.showContactsDropdown = true;
-      this.filterContacts();
-    }
-  }
-
-  /**
-   * Filtert die Kontakte nach dem Suchbegriff.
-   */
-  filterContacts() {
-    const q = this.contactSearch.trim().toLowerCase();
-    if (q.length < 2) {
-      this.filteredContacts = this.contacts.slice();
-      return;
-    }
-    this.filteredContacts = this.contacts.filter((c) =>
-      (c.name || '').toLowerCase().includes(q)
-    );
-  }
-
-  /**
-   * Fügt einen Kontakt zur Auswahl hinzu oder entfernt ihn.
-   * @param contact Kontakt-Objekt
-   */
-  toggleContactSelection(contact: Contact) {
-    if (!contact || !contact.id) return;
-    const idx = this.assignedTo.indexOf(contact.id);
-    if (idx === -1) this.assignedTo.push(contact.id);
-    else this.assignedTo.splice(idx, 1);
-  }
-
-  /**
-   * Prüft, ob ein Kontakt zugewiesen ist.
-   * @param id Kontakt-ID
-   * @returns true, wenn zugewiesen
-   */
-  isAssigned(id?: string) {
-    return !!id && this.assignedTo.indexOf(id) !== -1;
-  }
-
-  /**
-   * Entfernt einen Subtask.
-   * @param idx Index des Subtasks
-   */
-  removeSubtask(idx: number) {
-    this.subtasks.splice(idx, 1);
-  }
-
-  /**
-   * Gibt einen Kontakt anhand der ID zurück.
-   * @param id Kontakt-ID
-   * @returns Kontakt-Objekt oder undefined
-   */
-  getContactById(id: string): Contact | undefined {
-    return this.contacts.find((c) => c.id === id);
-  }
-
-  /**
-   * Öffnet den nativen Datepicker für ein gegebenes Input-Element.
-   * Versucht zuerst die moderne showPicker()-Methode, fällt sonst auf focus+click zurück.
-   * @param input Input-Element
-   */
-  openDatepicker(input: HTMLInputElement) {
-    if (!input) return;
-    const anyInput = input as any;
+  openDatepicker(inputElement: HTMLInputElement): void {
+    if (!inputElement) return;
+    
+    // Try modern showPicker method first
+    const anyInput = inputElement as any;
     if (typeof anyInput.showPicker === 'function') {
       try {
         anyInput.showPicker();
         return;
-      } catch (e) {}
+      } catch (error) {
+        console.warn('showPicker not supported, falling back to focus/click');
+      }
     }
+    
+    // Fallback for older browsers
     try {
-      input.focus();
-      input.click();
-    } catch (e) {}
+      inputElement.focus();
+      inputElement.click();
+    } catch (error) {
+      console.error('Unable to open date picker:', error);
+    }
   }
 
   /**
-   * Setzt das gesamte Formular zurück (alle Felder leeren).
+   * Resets the entire form to its initial state
    */
-  clearForm() {
+  clearForm(): void {
     this.title = '';
     this.description = '';
     this.dueDate = '';
@@ -322,39 +464,46 @@ export class AddTaskComponent {
     this.assignedTo = [];
     this.category = '';
     this.subtasks = [];
+    this.newSubtask = '';
     this.contactSearch = '';
-    this.filteredContacts = this.contacts.slice();
+    this.filteredContacts = [...this.contacts];
     this.error = '';
     this.success = '';
+    this.editSubtaskIndex = null;
+    this.editSubtaskValue = '';
+    this.subtaskInputFocused = false;
   }
 
-  /**
-   * Setzt die Kategorie und schließt das Dropdown
-   */
-  selectCategory(cat: string) {
-    this.category = cat;
-    this.showCategoryDropdown = false;
-  }
+  // ===============================
+  // Form Submission
+  // ===============================
 
   /**
-   * Validiert und speichert das Formular als neuen Task in Firestore.
+   * Validates form data and submits new task to Firestore
+   * Performs client-side validation before submission
    */
-  async onSubmit() {
+  async onSubmit(): Promise<void> {
     this.error = '';
     this.success = '';
+    
+    // Validate required fields
     if (!this.title.trim()) {
       this.error = 'Title is required.';
       return;
     }
+    
     if (!this.dueDate.trim()) {
       this.error = 'Due date is required.';
       return;
     }
+    
     if (!this.category.trim()) {
       this.error = 'Category is required.';
       return;
     }
+    
     try {
+      // Create task document
       await addDoc(this.tasksCol, {
         title: this.title.trim(),
         description: this.description.trim(),
@@ -365,7 +514,10 @@ export class AddTaskComponent {
         subtasks: this.subtasks,
         createdAt: new Date().toISOString(),
       });
-      this.success = 'Task created!';
+      
+      this.success = 'Task created successfully!';
+      
+      // Reset form after successful submission
       this.title = '';
       this.description = '';
       this.dueDate = '';
@@ -373,8 +525,44 @@ export class AddTaskComponent {
       this.assignedTo = [];
       this.category = '';
       this.subtasks = [];
-    } catch (e) {
-      this.error = 'Error saving task.';
+      
+    } catch (error) {
+      console.error('Error saving task:', error);
+      this.error = 'Error saving task. Please try again.';
     }
+  }
+
+  // ===============================
+  // TrackBy Functions for Performance
+  // ===============================
+
+  /**
+   * TrackBy function for contact list optimization
+   * @param index - Array index
+   * @param contact - Contact object
+   * @returns Unique identifier for tracking
+   */
+  trackByContactId(index: number, contact: Contact): string {
+    return contact.id || index.toString();
+  }
+
+  /**
+   * TrackBy function for subtask list optimization
+   * @param index - Array index
+   * @param subtask - Subtask string
+   * @returns Unique identifier for tracking
+   */
+  trackBySubtaskIndex(index: number, subtask: string): string {
+    return `${index}-${subtask}`;
+  }
+
+  /**
+   * TrackBy function for category list optimization
+   * @param index - Array index
+   * @param category - Category string
+   * @returns Unique identifier for tracking
+   */
+  trackByCategory(index: number, category: string): string {
+    return category;
   }
 }
