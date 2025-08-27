@@ -1,3 +1,46 @@
+/**
+ * Login Component Styles
+ * 
+ * Implementiert BEM-Methodologie mit vollständiger Accessibility-Unterstützung
+ * nach WCAG 2.1 AA Standards. Beibehaltung des bestehenden Figma-Designs.
+ * 
+ * @author Join Development Team
+ * @version 1.0.0
+ * @since 2024
+ */
+
+// === SCSS Variables ===
+$primary-color: #4589ff;
+$primary-hover: #5a9bff;
+$secondary-color: #2a3647;
+$text-color: #647188;
+$text-muted: #b5bac5;
+$background-light: #f6f7fb;
+$background-card: #fff;
+$error-color: #e74c3c;
+$border-color: #d1d1d1;
+$border-focus: #4589ff;
+$shadow-card: 0px 0px 10px 3px #00000014;
+
+// Responsive Breakpoints
+$mobile: 390px;
+$tablet: 768px;
+$desktop: 1024px;
+
+// === Screen Reader Utilities ===
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+// === Logo Animation Classes ===
 .logo-fadeout {
   opacity: 0;
   transition: opacity 0.4s;
@@ -21,16 +64,18 @@
   transition: opacity 0.4s;
 }
 
+// === Main Container ===
 .login-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: #f6f7fb;
+  background: $background-light;
   padding: 32px 16px;
-  font-family: "Open Sans";
+  font-family: "Open Sans", sans-serif;
 
+  // === Logo Animation Container ===
   .logo-anim-container {
     position: fixed;
     top: 0;
@@ -40,11 +85,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #4589ff;
+    background: $primary-color;
     z-index: 100;
     pointer-events: none;
     transition: background 1s cubic-bezier(0.4, 0, 0.2, 1);
 
+    // Logo Elements
     .logo {
       position: absolute;
       width: 56px;
@@ -52,226 +98,521 @@
       top: 50%;
       transform: translate(-50%, -50%);
       transition: none;
+
+      // Blue Logo (animated)
       &.logo-blue {
         opacity: 0;
         transition: opacity 0.2s, transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 2;
+
         &.logo-move {
           opacity: 1;
         }
       }
+
+      // White Logo (fades out)
       &.logo-white {
         opacity: 1;
         transition: opacity 0.4s;
         z-index: 3;
+
         &.logo-fadeout {
           opacity: 0;
           pointer-events: none;
         }
       }
     }
+
+    // Animation Active State
     &.logo-anim-active {
       background: transparent;
     }
   }
+}
 
-  .login-card {
+// === Login Card Component ===
+.login-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  border-radius: 30px;
+  padding: 16px 32px;
+  background: $background-card;
+  box-shadow: $shadow-card;
+  margin-top: 32px;
+  margin-bottom: 8px;
+
+  // === Header Section ===
+  &__header {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 16px;
-    border-radius: 30px;
-    padding: 16px 32px;
-    background: #fff;
-    box-shadow: 0px 0px 10px 3px #00000014;
-    margin-top: 32px;
-    margin-bottom: 8px;
-
-    .title {
-      font-size: 48px;
-      font-weight: 700;
-      font-style: bold;
-      margin: 0;
-      color: #2a3647;
-      line-height: 120%;
-      letter-spacing: 0%;
-    }
-
-    .login-divider {
-      width: 40%;
-      height: 2px;
-      background: #4589ff;
-      border-radius: 1px;
-    }
-
-    .login-form {
-      width: 100%;
-      max-width: 340px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-
-      .input-wrapper {
-        position: relative;
-        width: 100%;
-        display: flex;
-        align-items: center;
-
-        .input {
-          width: 100%;
-          padding: 12px 40px 12px 16px;
-          border: none;
-          border-bottom: 2px solid #d1d1d1;
-          font-size: 1rem;
-          font-weight: 400;
-          background: transparent;
-          transition: border-color 0.2s;
-          outline: none;
-
-          &:focus {
-            border-bottom: 2px solid #4589ff;
-          }
-          &::placeholder {
-            color: #b5bac5;
-            opacity: 1;
-          }
-        }
-
-        .input-icon {
-          position: absolute;
-          right: 0;
-          top: 50%;
-          transform: translateY(-50%);
-          display: flex;
-          align-items: center;
-          height: 24px;
-          width: 24px;
-
-          img {
-            width: 16px;
-            height: 16px;
-            opacity: 0.7;
-            object-fit: contain;
-            display: block;
-            pointer-events: none;
-          }
-          button {
-            pointer-events: auto;
-            background: none;
-            border: none;
-            padding: 0;
-            margin: 0;
-            cursor: pointer;
-          }
-        }
-      }
-
-      .login-btn {
-        background: #4589ff;
-        color: #fff;
-        border: 1px solid #4589ff;
-        border-radius: 8px;
-        padding: 12px 0;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        margin-top: 8px;
-        transition: background 0.2s;
-
-        &:hover:enabled {
-          background: #5a9bff;
-        }
-      }
-
-      .guest-btn {
-        background: #fff;
-        color: #4589ff;
-        border: 1px solid #4589ff;
-        border-radius: 8px;
-        padding: 12px 0;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        margin-top: 8px;
-        transition: background 0.2s, border 0.2s;
-
-        &:hover {
-          background: #e6f0ff;
-        }
-      }
-    }
+    width: 100%;
   }
 
-  .register-link-container {
-    margin-top: 16px;
-    color: #647188;
+  &__title {
+    font-size: 48px;
+    font-weight: 700;
+    font-style: bold;
+    margin: 0;
+    color: $secondary-color;
+    line-height: 120%;
+    letter-spacing: 0%;
+  }
+
+  &__divider {
+    width: 40%;
+    height: 2px;
+    background: $primary-color;
+    border-radius: 1px;
+  }
+
+  // === Form Section ===
+  &__form {
+    width: 100%;
+    max-width: 340px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  // === Input Groups ===
+  &__input-group {
+    position: relative;
+    width: 100%;
     display: flex;
     align-items: center;
-    gap: 10px;
-    p {
-      margin: 0;
-      color: #647188;
-      font-size: 0.95rem;
-    }
-    .register-link {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: #fff;
-      background: #4589ff;
-      border-radius: 8px;
-      padding: 10px 16px;
-      text-decoration: none;
-      transition: background 0.2s, color 0.2s;
-      width: 66px;
-      height: 23px;
-      font-family: "Open Sans", sans-serif;
-      font-weight: 400;
-      font-size: 16px;
-      cursor: pointer;
+  }
 
-      &:hover {
-        background: #5a9bff;
-      }
+  &__input {
+    width: 100%;
+    padding: 12px 40px 12px 16px;
+    border: none;
+    border-bottom: 2px solid $border-color;
+    font-size: 1rem;
+    font-weight: 400;
+    background: transparent;
+    transition: border-color 0.2s;
+    outline: none;
+
+    // Focus State
+    &:focus {
+      border-bottom: 2px solid $border-focus;
+    }
+
+    // Placeholder Styling
+    &::placeholder {
+      color: $text-muted;
+      opacity: 1;
+    }
+
+    // Invalid State
+    &[aria-invalid="true"] {
+      border-bottom-color: $error-color;
+    }
+
+    // Autocomplete Styling
+    &:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0 30px $background-card inset !important;
+      -webkit-text-fill-color: $secondary-color !important;
     }
   }
 
-  .legal-container {
+  // === Input Icons ===
+  &__input-icon {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
     display: flex;
+    align-items: center;
+    height: 24px;
+    width: 24px;
+
+    img {
+      width: 16px;
+      height: 16px;
+      opacity: 0.7;
+      object-fit: contain;
+      display: block;
+      pointer-events: none;
+    }
+  }
+
+  // === Password Visibility Button ===
+  &__visibility-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
     justify-content: center;
-    align-items: center;
-    gap: 12px;
-    margin-top: 24px;
-    font-size: 0.95rem;
-    color: #647188;
-    opacity: 0.9;
+    transition: opacity 0.2s ease;
 
-    a {
-      color: #647188;
-      text-decoration: none;
-      padding: 4px 8px;
-      border-radius: 6px;
-      transition: background 0.2s, color 0.2s;
-      font-weight: 500;
+    // Hover State
+    &:hover {
+      opacity: 1;
+    }
+
+    // Focus State
+    &:focus {
+      outline: 2px solid $primary-color;
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+
+    img {
+      pointer-events: auto;
+    }
+  }
+
+  // === Error Messages ===
+  &__error-messages {
+    min-height: 20px; // Verhindert Layout-Shift
+  }
+
+  &__error {
+    color: $error-color;
+    font-size: 0.875rem;
+    margin-bottom: 8px;
+    line-height: 1.4;
+
+    // Animation für bessere UX
+    animation: errorFadeIn 0.3s ease-out;
+  }
+
+  // === Button Section ===
+  &__buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  // === Login Button ===
+  &__login-btn {
+    background: $primary-color;
+    color: $background-card;
+    border: 1px solid $primary-color;
+    border-radius: 8px;
+    padding: 12px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    min-height: 48px; // Touch target size
+
+    // Hover State
+    &:hover:enabled {
+      background: $primary-hover;
+      transform: translateY(-1px);
+    }
+
+    // Focus State
+    &:focus {
+      outline: 3px solid rgba(69, 137, 255, 0.3);
+      outline-offset: 2px;
+    }
+
+    // Active State
+    &:active:enabled {
+      transform: translateY(0);
+    }
+
+    // Disabled State
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      background: $text-muted;
+      border-color: $text-muted;
 
       &:hover {
-        background: #f0f4fa;
-        color: #4589ff;
+        transform: none;
+        background: $text-muted;
       }
     }
-    .divider-dot {
-      color: #b5bac5;
-      font-size: 1.1em;
-      user-select: none;
+  }
+
+  // === Guest Button ===
+  &__guest-btn {
+    background: $background-card;
+    color: $primary-color;
+    border: 1px solid $primary-color;
+    border-radius: 8px;
+    padding: 12px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, border 0.2s, transform 0.1s;
+    min-height: 48px; // Touch target size
+
+    // Hover State
+    &:hover {
+      background: #e6f0ff;
+      transform: translateY(-1px);
+    }
+
+    // Focus State
+    &:focus {
+      outline: 3px solid rgba(69, 137, 255, 0.3);
+      outline-offset: 2px;
+    }
+
+    // Active State
+    &:active {
+      transform: translateY(0);
     }
   }
 }
 
+// === Register Link Container ===
+.register-link-container {
+  margin-top: 16px;
+  color: $text-color;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  &__text {
+    margin: 0;
+    color: $text-color;
+    font-size: 0.95rem;
+  }
+
+  &__link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: $background-card;
+    background: $primary-color;
+    border-radius: 8px;
+    padding: 10px 16px;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s, transform 0.1s;
+    width: 66px;
+    height: 23px;
+    font-family: "Open Sans", sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    cursor: pointer;
+    min-height: 44px; // Touch target size
+
+    // Hover State
+    &:hover {
+      background: $primary-hover;
+      transform: translateY(-1px);
+    }
+
+    // Focus State
+    &:focus {
+      outline: 3px solid rgba(69, 137, 255, 0.3);
+      outline-offset: 2px;
+    }
+
+    // Active State
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+// === Legal Links Container ===
+.legal-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  font-size: 0.95rem;
+  color: $text-color;
+  opacity: 0.9;
+
+  &__link {
+    color: $text-color;
+    text-decoration: none;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.2s, color 0.2s;
+    font-weight: 500;
+    min-height: 32px; // Touch target size
+    display: flex;
+    align-items: center;
+
+    // Hover State
+    &:hover {
+      background: #f0f4fa;
+      color: $primary-color;
+    }
+
+    // Focus State
+    &:focus {
+      outline: 2px solid $primary-color;
+      outline-offset: 2px;
+      background: #f0f4fa;
+      color: $primary-color;
+    }
+  }
+
+  &__divider {
+    color: $text-muted;
+    font-size: 1.1em;
+    user-select: none;
+  }
+}
+
+// === Animations ===
 @keyframes logo-slide-to-corner {
   0% {
     transform: translate(-50%, -50%) scale(1);
   }
   100% {
     transform: translate(calc(-50vw + 1px), calc(-50vh + 1px)) scale(0.7);
+  }
+}
+
+@keyframes errorFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// === High Contrast Mode Support ===
+@media (prefers-contrast: high) {
+  .login-card {
+    &__input {
+      border-bottom-width: 3px;
+      
+      &:focus {
+        border-bottom-width: 3px;
+      }
+    }
+
+    &__login-btn,
+    &__guest-btn {
+      border-width: 2px;
+    }
+  }
+}
+
+// === Reduced Motion Support ===
+@media (prefers-reduced-motion: reduce) {
+  .logo-fadeout,
+  .logo-move,
+  .logo-hidden {
+    transition: none;
+  }
+
+  .logo-anim-container {
+    transition: none;
+  }
+
+  @keyframes logo-slide-to-corner {
+    0%, 100% {
+      transform: translate(calc(-50vw + 1px), calc(-50vh + 1px)) scale(0.7);
+    }
+  }
+
+  .login-card {
+    &__login-btn,
+    &__guest-btn {
+      &:hover {
+        transform: none;
+      }
+    }
+  }
+
+  .register-link-container__link {
+    &:hover {
+      transform: none;
+    }
+  }
+
+  @keyframes errorFadeIn {
+    from, to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+// === Mobile Optimizations ===
+@media (max-width: $mobile) {
+  .login-container {
+    padding: 16px 8px;
+
+    .login-card {
+      padding: 16px 24px;
+      margin-top: 16px;
+
+      &__title {
+        font-size: 36px;
+      }
+
+      &__form {
+        max-width: 100%;
+      }
+
+      &__input {
+        font-size: 16px; // Verhindert Zoom auf iOS
+      }
+    }
+  }
+
+  .register-link-container {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+
+    &__link {
+      width: auto;
+      padding: 12px 24px;
+    }
+  }
+
+  .legal-container {
+    flex-direction: column;
+    gap: 8px;
+
+    &__divider {
+      display: none;
+    }
+  }
+}
+
+// === Tablet and Desktop Enhancements ===
+@media (min-width: $tablet) {
+  .login-container {
+    padding: 64px 32px;
+
+    .login-card {
+      padding: 32px 48px;
+      margin-top: 48px;
+
+      &__title {
+        font-size: 56px;
+      }
+
+      &__form {
+        max-width: 400px;
+      }
+    }
+  }
+
+  .register-link-container {
+    margin-top: 24px;
+  }
+
+  .legal-container {
+    margin-top: 32px;
   }
 }

@@ -1,64 +1,246 @@
-<div class="login-container">
-  <div class="logo-anim-container" [ngClass]="{ 'logo-anim-active': logoAnimActive }">
-    <img src="assets/img/join_logo_white.png" alt="Join Logo White" class="logo logo-white" [class.logo-fadeout]="logoAnimActive" />
-    <img src="assets/img/join_logo_blue.png" alt="Join Logo Blue" class="logo logo-blue" [class.logo-move]="logoAnimActive" [class.logo-hidden]="hideLogo" />
+<!-- Hauptbereich für Login mit semantischen Verbesserungen -->
+<main class="login-container" role="main" [attr.aria-label]="'Anmelden bei Join'">
+  
+  <!-- Logo-Animation Container -->
+  <div 
+    class="logo-anim-container" 
+    [ngClass]="{ 'logo-anim-active': logoAnimActive }"
+    [attr.aria-hidden]="'true'">
+    
+    <img 
+      src="assets/img/join_logo_white.png" 
+      alt="Join Logo" 
+      class="logo logo-white" 
+      [class.logo-fadeout]="logoAnimActive"
+      [attr.aria-hidden]="'true'" />
+    
+    <img 
+      src="assets/img/join_logo_blue.png" 
+      alt="Join Logo" 
+      class="logo logo-blue" 
+      [class.logo-move]="logoAnimActive" 
+      [class.logo-hidden]="hideLogo"
+      [attr.aria-hidden]="'true'" />
   </div>
-  <div class="login-card">
-    <h1 class="title">Log in</h1>
-    <div class="login-divider"></div>
-    <form class="login-form" #loginForm="ngForm">
-      <div class="input-wrapper">
+
+  <!-- Login-Karteninhalte -->
+  <section 
+    class="login-card" 
+    role="region" 
+    [attr.aria-labelledby]="'login-title'"
+    [attr.aria-describedby]="'login-description'">
+    
+    <!-- Überschrift -->
+    <header class="login-card__header">
+      <h1 class="login-card__title" id="login-title">Log in</h1>
+      <div 
+        class="login-card__divider" 
+        role="presentation" 
+        [attr.aria-hidden]="'true'"></div>
+      
+      <!-- Screen Reader Beschreibung -->
+      <p class="sr-only" id="login-description">
+        Melden Sie sich mit Ihrer E-Mail-Adresse und Ihrem Passwort an, um auf Join zuzugreifen.
+      </p>
+    </header>
+    
+    <!-- Login-Formular -->
+    <form 
+      class="login-card__form" 
+      #loginForm="ngForm"
+      (submit)="$event.preventDefault(); login();"
+      [attr.aria-label]="'Anmelde-Formular'"
+      novalidate>
+      
+      <!-- E-Mail Eingabefeld -->
+      <div class="login-card__input-group">
+        <label for="email-input" class="sr-only">
+          E-Mail-Adresse (Pflichtfeld)
+        </label>
+        
         <input
+          id="email-input"
           type="email"
           placeholder="Email"
-          class="input"
+          class="login-card__input"
           [(ngModel)]="email"
           name="email"
           autocomplete="username"
           required
           email
           #emailInput="ngModel"
-        />
-        <span class="input-icon">
-          <img src="assets/img/mail_icon.png" alt="Mail Icon" />
+          [attr.aria-describedby]="'email-description'"
+          [attr.aria-invalid]="(emailInput.errors?.['required'] || emailInput.errors?.['email']) && emailInput.touched ? 'true' : 'false'" />
+        
+        <span class="login-card__input-icon" [attr.aria-hidden]="'true'">
+          <img src="assets/img/mail_icon.png" alt="" />
         </span>
+        
+        <!-- E-Mail Beschreibung für Screen Reader -->
+        <div id="email-description" class="sr-only">
+          Geben Sie Ihre E-Mail-Adresse ein
+        </div>
       </div>
-      <div class="input-wrapper">
+      
+      <!-- Passwort Eingabefeld -->
+      <div class="login-card__input-group">
+        <label for="password-input" class="sr-only">
+          Passwort (Pflichtfeld)
+        </label>
+        
         <input
+          id="password-input"
           [type]="showPassword ? 'text' : 'password'"
           placeholder="Password"
-          class="input"
+          class="login-card__input"
           [(ngModel)]="password"
           name="password"
           autocomplete="current-password"
           required
           #passwordInput="ngModel"
-        />
-        <span class="input-icon">
-          <img *ngIf="!password" src="assets/img/lock_icon.png" alt="Lock Icon" style="pointer-events: none; user-select: none;" />
-          <button *ngIf="password && !showPassword" type="button" (click)="togglePasswordVisibility()" tabindex="-1" style="background: none; border: none; padding: 0; margin: 0; cursor: pointer;">
-            <img src="assets/img/visibility_off_icon.png" alt="Passwort versteckt" />
+          [attr.aria-describedby]="'password-description'"
+          [attr.aria-invalid]="passwordInput.errors?.['required'] && passwordInput.touched ? 'true' : 'false'" />
+        
+        <span class="login-card__input-icon">
+          <!-- Standard Lock Icon -->
+          <img 
+            *ngIf="!password" 
+            src="assets/img/lock_icon.png" 
+            alt=""
+            [attr.aria-hidden]="'true'" />
+          
+          <!-- Password Visibility Toggle Buttons -->
+          <button 
+            *ngIf="password && !showPassword" 
+            type="button" 
+            (click)="togglePasswordVisibility()" 
+            class="login-card__visibility-btn"
+            [attr.aria-label]="'Passwort anzeigen'"
+            [attr.aria-pressed]="'false'">
+            <img src="assets/img/visibility_off_icon.png" alt="" />
           </button>
-          <button *ngIf="password && showPassword" type="button" (click)="togglePasswordVisibility()" tabindex="-1" style="background: none; border: none; padding: 0; margin: 0; cursor: pointer;">
-            <img src="assets/img/visibility_icon.png" alt="Passwort sichtbar" />
+          
+          <button 
+            *ngIf="password && showPassword" 
+            type="button" 
+            (click)="togglePasswordVisibility()" 
+            class="login-card__visibility-btn"
+            [attr.aria-label]="'Passwort verstecken'"
+            [attr.aria-pressed]="'true'">
+            <img src="assets/img/visibility_icon.png" alt="" />
           </button>
         </span>
+        
+        <!-- Passwort Beschreibung für Screen Reader -->
+        <div id="password-description" class="sr-only">
+          Geben Sie Ihr Passwort ein
+        </div>
       </div>
-      <div *ngIf="(emailInput.errors?.['required'] || emailInput.errors?.['email']) && emailInput.touched" style="color: #e74c3c; margin-bottom: 8px;">
-        <ng-container *ngIf="emailInput.errors?.['required']">Bitte gib deine E-Mail-Adresse ein.</ng-container>
-        <ng-container *ngIf="emailInput.errors?.['email']">Bitte gib eine gültige E-Mail-Adresse ein.</ng-container>
+      
+      <!-- Validierungsfehlermeldungen -->
+      <div class="login-card__error-messages" role="alert" aria-live="polite">
+        <!-- E-Mail Validierungsfehler -->
+        <div 
+          *ngIf="(emailInput.errors?.['required'] || emailInput.errors?.['email']) && emailInput.touched" 
+          class="login-card__error">
+          <ng-container *ngIf="emailInput.errors?.['required']">
+            Bitte geben Sie Ihre E-Mail-Adresse ein.
+          </ng-container>
+          <ng-container *ngIf="emailInput.errors?.['email']">
+            Bitte geben Sie eine gültige E-Mail-Adresse ein.
+          </ng-container>
+        </div>
+        
+        <!-- Allgemeine Fehlermeldung -->
+        <div 
+          *ngIf="errorMessage" 
+          class="login-card__error">
+          {{ errorMessage }}
+        </div>
       </div>
-      <div *ngIf="errorMessage" style="color: #e74c3c; margin-bottom: 8px;">{{ errorMessage }}</div>
-      <button type="submit" class="login-btn" (click)="$event.preventDefault(); login();">Log in</button>
-      <button class="guest-btn" type="button">Guest Log in</button>
+      
+      <!-- Login Buttons -->
+      <div class="login-card__buttons">
+        <button 
+          type="submit" 
+          class="login-card__login-btn"
+          [disabled]="loginForm.invalid"
+          [attr.aria-describedby]="'login-btn-description'">
+          Log in
+        </button>
+        
+        <button 
+          class="login-card__guest-btn" 
+          type="button"
+          [attr.aria-describedby]="'guest-btn-description'">
+          Guest Log in
+        </button>
+        
+        <!-- Button Beschreibungen für Screen Reader -->
+        <div id="login-btn-description" class="sr-only">
+          Meldet Sie mit Ihren Anmeldedaten an
+        </div>
+        <div id="guest-btn-description" class="sr-only">
+          Meldet Sie als Gast an, ohne Registrierung
+        </div>
+      </div>
     </form>
-  </div>
-  <div class="register-link-container">
-    <p>Not a join user?</p> <a class="register-link" routerLink="/register">Sign up</a>
-  </div>
-  <div class="legal-container">
-    <a href="#" class="privacy-link">Privacy Policy</a>
-    <span class="divider-dot">•</span>
-    <a href="#" class="legal-link">Legal Notice</a>
-  </div>
-</div>
+  </section>
+
+  <!-- Registrierungs-Link -->
+  <nav 
+    class="register-link-container" 
+    role="navigation" 
+    [attr.aria-label]="'Registrierungs-Navigation'">
+    
+    <p class="register-link-container__text">Not a join user?</p>
+    
+    <a 
+      class="register-link-container__link" 
+      routerLink="/register"
+      [attr.aria-describedby]="'register-link-description'">
+      Sign up
+    </a>
+    
+    <!-- Link Beschreibung für Screen Reader -->
+    <div id="register-link-description" class="sr-only">
+      Zur Registrierungsseite wechseln, um ein neues Konto zu erstellen
+    </div>
+  </nav>
+
+  <!-- Rechtliche Links -->
+  <footer 
+    class="legal-container" 
+    role="contentinfo" 
+    [attr.aria-label]="'Rechtliche Informationen'">
+    
+    <nav role="navigation" [attr.aria-label]="'Rechtliche Links'">
+      <a 
+        href="#" 
+        class="legal-container__link"
+        [attr.aria-describedby]="'privacy-description'">
+        Privacy Policy
+      </a>
+      
+      <span 
+        class="legal-container__divider" 
+        role="presentation" 
+        [attr.aria-hidden]="'true'">•</span>
+      
+      <a 
+        href="#" 
+        class="legal-container__link"
+        [attr.aria-describedby]="'legal-description'">
+        Legal Notice
+      </a>
+      
+      <!-- Link Beschreibungen für Screen Reader -->
+      <div id="privacy-description" class="sr-only">
+        Öffnet die Datenschutzerklärung
+      </div>
+      <div id="legal-description" class="sr-only">
+        Öffnet das Impressum
+      </div>
+    </nav>
+  </footer>
+</main>
