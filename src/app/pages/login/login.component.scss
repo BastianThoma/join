@@ -432,6 +432,14 @@ $desktop: 1024px;
   color: $text-color;
   opacity: 0.9;
 
+  // Navigation innerhalb des Legal Containers
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+  }
+
   &__link {
     color: $text-color;
     text-decoration: none;
@@ -583,8 +591,17 @@ $desktop: 1024px;
     flex-direction: column;
     gap: 8px;
 
+    // Das nav Element innerhalb soll horizontal bleiben
+    nav {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+      justify-content: center;
+    }
+
     &__divider {
-      display: none;
+      display: inline; // Divider soll sichtbar bleiben
     }
   }
 }

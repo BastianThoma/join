@@ -9,6 +9,18 @@
  * @since v1.0.0
  */
 
+// ====== Host Container für vollständigen Hintergrund ======
+
+/**
+ * Host-Selector sorgt dafür, dass die Komponente den kompletten Viewport ausfüllt
+ */
+:host {
+  display: block;
+  min-height: 100vh;
+  width: 100%;
+  background: #4589ff;
+}
+
 // ====== Screen Reader Only Utility ======
 
 /**
@@ -31,6 +43,9 @@
 
 /**
  * Register Container - Hauptcontainer für die gesamte Registrierungs-Seite
+ * 
+ * Gemäß Figma-Design: Kompletter blauer Hintergrund für Sign Up Seite
+ * Im Gegensatz zur Login-Seite (weißer Hintergrund)
  */
 .register-container {
   display: flex;
@@ -38,8 +53,8 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  padding: 48px 16px;
-  background: #4589ff;
+  padding: 24px 16px;
+  background: #4589ff; // Kompletter blauer Hintergrund laut Figma
   font-family: "Open Sans";
   
   /**
@@ -179,7 +194,7 @@
    * Input Field Styles
    */
   &__input {
-    width: 100%;
+    width: 75%;
     padding: 12px 40px 12px 16px;
     border: none;
     border-bottom: 2px solid #d1d1d1;
@@ -470,6 +485,14 @@
   font-size: 0.95rem;
   color: #fff;
   opacity: 0.95;
+
+  // Navigation innerhalb des Legal Containers
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 20px; // Größerer Abstand für Hover-Effekt
+    justify-content: center;
+  }
   
   /**
    * Legal Links
@@ -505,13 +528,17 @@
     user-select: none;
   }
   
-  // Mobile Anpassungen
+  // Mobile Anpassungen - Divider soll sichtbar bleiben
   @media (max-width: 480px) {
-    flex-direction: column;
     gap: 8px;
     
-    &__divider {
-      display: none;
+    // Das nav Element innerhalb soll mit größerem Gap bleiben
+    nav {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 16px; // Ausreichender Abstand auch auf Mobile
+      justify-content: center;
     }
   }
 }

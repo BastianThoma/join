@@ -103,6 +103,15 @@ export class RegisterComponent implements OnInit, OnDestroy {
    */
   successMessage: string = '';
 
+  // ====== Private Properties ======
+  
+  /**
+   * Ursprünglicher Body-Hintergrund für Wiederherstellung
+   * @type {string}
+   * @private
+   */
+  private originalBodyBackground: string = '';
+
   /**
    * Constructor für RegisterComponent
    * 
@@ -117,10 +126,12 @@ export class RegisterComponent implements OnInit, OnDestroy {
    * 
    * Initialisiert die Komponente, setzt Event Listener für responsive
    * Logo-Behandlung und konfiguriert Barrierefreiheits-Features.
+   * Setzt auch den Body-Hintergrund auf blau für das Register-Design.
    * 
    * @memberof RegisterComponent
    */
   ngOnInit(): void {
+    this.setBodyBackground();
     this.setupResponsiveLogoHandling();
     this.setupAccessibilityFeatures();
   }
@@ -129,11 +140,13 @@ export class RegisterComponent implements OnInit, OnDestroy {
    * OnDestroy Lifecycle Hook
    * 
    * Bereinigt Event Listener zur Vermeidung von Memory Leaks.
+   * Stellt den ursprünglichen Body-Hintergrund wieder her.
    * 
    * @memberof RegisterComponent
    */
   ngOnDestroy(): void {
     this.cleanupEventListeners();
+    this.restoreBodyBackground();
   }
 
   // ====== Initialization Methods ======
@@ -162,6 +175,37 @@ export class RegisterComponent implements OnInit, OnDestroy {
   private setupAccessibilityFeatures(): void {
     // Screen Reader Ankündigung für Seiten-Navigation
     this.announceToScreenReader('Registrierungs-Seite geladen. Füllen Sie das Formular aus, um ein neues Konto zu erstellen.');
+  }
+
+  /**
+   * Setzt den Body-Hintergrund auf blau für das Register-Design
+   * 
+   * Speichert den ursprünglichen Hintergrund für spätere Wiederherstellung.
+   * Diese Methode sorgt dafür, dass der komplette Viewport blau ist.
+   * 
+   * @private
+   * @memberof RegisterComponent
+   */
+  private setBodyBackground(): void {
+    // Ursprünglichen Body-Hintergrund speichern
+    this.originalBodyBackground = document.body.style.backgroundColor || '';
+    
+    // Body-Hintergrund auf blau setzen
+    document.body.style.backgroundColor = '#4589ff';
+  }
+
+  /**
+   * Stellt den ursprünglichen Body-Hintergrund wieder her
+   * 
+   * Wird beim Verlassen der Komponente aufgerufen, um andere
+   * Komponenten nicht zu beeinträchtigen.
+   * 
+   * @private
+   * @memberof RegisterComponent
+   */
+  private restoreBodyBackground(): void {
+    // Ursprünglichen Body-Hintergrund wiederherstellen
+    document.body.style.backgroundColor = this.originalBodyBackground;
   }
 
   /**
