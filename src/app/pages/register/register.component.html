@@ -1,216 +1,380 @@
-<div class="register-container">
+<!-- Hauptbereich für Registrierung mit semantischen Verbesserungen -->
+<main class="register-container" role="main" [attr.aria-label]="'Registrieren bei Join'">
+  
+  <!-- Logo -->
   <img
-    class="register-logo"
-    src="assets/img/join_logo_white.png"
-    alt="Join Logo White"
-    [class.logo-hidden]="hideLogo"
-  />
-  <div class="register-card">
-    <a class="back-to-login" routerLink="/login" title="Zurück zum Login">
-      <img src="assets/img/arrow_left.png" alt="Zurück" />
-    </a>
-    <h1 class="title">Sign up</h1>
-    <div class="register-divider"></div>
-    <form class="register-form" #registerForm="ngForm">
-      <div class="input-wrapper">
+    class="register-container__logo"
+    src="assets/img/join_logo_blue.png"
+    alt="Join Logo"
+    [class.register-container__logo--hidden]="hideLogo"
+    [attr.aria-hidden]="'true'" />
+
+  <!-- Registrierungs-Karte -->
+  <section 
+    class="register-card" 
+    role="region" 
+    [attr.aria-labelledby]="'register-title'"
+    [attr.aria-describedby]="'register-description'">
+    
+    <!-- Zurück-Navigation -->
+    <nav class="register-card__navigation">
+      <a 
+        class="register-card__back-link" 
+        routerLink="/login" 
+        [attr.aria-label]="'Zurück zum Anmelden'"
+        [attr.aria-describedby]="'back-link-description'">
+        <img src="assets/img/arrow_left.png" alt="" [attr.aria-hidden]="'true'" />
+      </a>
+      
+      <!-- Navigation Beschreibung für Screen Reader -->
+      <div id="back-link-description" class="sr-only">
+        Zur Anmelde-Seite zurückkehren
+      </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="register-card__header">
+      <h1 class="register-card__title" id="register-title">Sign up</h1>
+      <div 
+        class="register-card__divider" 
+        role="presentation" 
+        [attr.aria-hidden]="'true'"></div>
+      
+      <!-- Screen Reader Beschreibung -->
+      <p class="sr-only" id="register-description">
+        Erstellen Sie ein neues Join-Konto durch Eingabe Ihrer Daten und Akzeptierung der Datenschutzbestimmungen.
+      </p>
+    </header>
+
+    <!-- Registrierungs-Formular -->
+    <form 
+      class="register-card__form" 
+      #registerForm="ngForm"
+      (submit)="$event.preventDefault(); register();"
+      [attr.aria-label]="'Registrierungs-Formular'"
+      novalidate>
+      
+      <!-- Name Eingabefeld -->
+      <div class="register-card__input-group">
+        <label for="name-input" class="sr-only">
+          Name (Pflichtfeld)
+        </label>
+        
         <input
+          id="name-input"
           type="text"
           placeholder="Name"
-          class="input"
+          class="register-card__input"
           [(ngModel)]="name"
           name="name"
           required
           #nameInput="ngModel"
-        />
-        <span class="input-icon">
-          <img src="assets/img/mail_icon.png" alt="User Icon" />
+          [attr.aria-describedby]="'name-description'"
+          [attr.aria-invalid]="nameInput.invalid && nameInput.touched ? 'true' : 'false'"
+          autocomplete="name" />
+        
+        <span class="register-card__input-icon" [attr.aria-hidden]="'true'">
+          <img src="assets/img/person_small_icon.png" alt="" />
         </span>
+        
+        <!-- Name Beschreibung für Screen Reader -->
+        <div id="name-description" class="sr-only">
+          Geben Sie Ihren vollständigen Namen ein
+        </div>
       </div>
-      <div *ngIf="nameInput.invalid && nameInput.touched" class="input-error">
-        Bitte gib deinen Namen ein.
+      
+      <!-- Name Validierungsfehler -->
+      <div 
+        *ngIf="nameInput.invalid && nameInput.touched" 
+        class="register-card__error"
+        role="alert"
+        aria-live="polite">
+        Bitte geben Sie Ihren Namen ein.
       </div>
-      <div class="input-wrapper">
+
+      <!-- E-Mail Eingabefeld -->
+      <div class="register-card__input-group">
+        <label for="email-input" class="sr-only">
+          E-Mail-Adresse (Pflichtfeld)
+        </label>
+        
         <input
+          id="email-input"
           type="email"
           placeholder="Email"
-          class="input"
+          class="register-card__input"
           [(ngModel)]="email"
           name="email"
           autocomplete="username"
           required
           email
           #emailInput="ngModel"
-        />
-        <span class="input-icon">
-          <img src="assets/img/mail_icon.png" alt="Mail Icon" />
+          [attr.aria-describedby]="'email-description'"
+          [attr.aria-invalid]="emailInput.invalid && emailInput.touched ? 'true' : 'false'" />
+        
+        <span class="register-card__input-icon" [attr.aria-hidden]="'true'">
+          <img src="assets/img/mail_icon.png" alt="" />
         </span>
+        
+        <!-- E-Mail Beschreibung für Screen Reader -->
+        <div id="email-description" class="sr-only">
+          Geben Sie eine gültige E-Mail-Adresse ein
+        </div>
       </div>
-      <div *ngIf="emailInput.invalid && emailInput.touched" class="input-error">
-        Bitte gib eine gültige E-Mail ein.
+      
+      <!-- E-Mail Validierungsfehler -->
+      <div 
+        *ngIf="emailInput.invalid && emailInput.touched" 
+        class="register-card__error"
+        role="alert"
+        aria-live="polite">
+        Bitte geben Sie eine gültige E-Mail-Adresse ein.
       </div>
-      <div class="input-wrapper">
+
+      <!-- Passwort Eingabefeld -->
+      <div class="register-card__input-group">
+        <label for="password-input" class="sr-only">
+          Passwort (Pflichtfeld, mindestens 6 Zeichen)
+        </label>
+        
         <input
+          id="password-input"
           [type]="showPassword ? 'text' : 'password'"
           placeholder="Password"
-          class="input"
+          class="register-card__input"
           [(ngModel)]="password"
           name="password"
           autocomplete="new-password"
           required
           minlength="6"
           #passwordInput="ngModel"
-        />
-        <span class="input-icon">
-          <img
-            *ngIf="!password"
-            src="assets/img/lock_icon.png"
-            alt="Lock Icon"
-            style="pointer-events: none; user-select: none"
-          />
-          <button
-            *ngIf="password && !showPassword"
-            type="button"
-            (click)="togglePasswordVisibility()"
-            tabindex="-1"
-            style="
-              background: none;
-              border: none;
-              padding: 0;
-              margin: 0;
-              cursor: pointer;
-            "
-          >
-            <img
-              src="assets/img/visibility_off_icon.png"
-              alt="Passwort versteckt"
-            />
+          [attr.aria-describedby]="'password-description'"
+          [attr.aria-invalid]="passwordInput.invalid && passwordInput.touched ? 'true' : 'false'" />
+        
+        <span class="register-card__input-icon">
+          <!-- Standard Lock Icon -->
+          <img 
+            *ngIf="!password" 
+            src="assets/img/lock_icon.png" 
+            alt=""
+            [attr.aria-hidden]="'true'" />
+          
+          <!-- Password Visibility Toggle Buttons -->
+          <button 
+            *ngIf="password && !showPassword" 
+            type="button" 
+            (click)="togglePasswordVisibility()" 
+            class="register-card__visibility-btn"
+            [attr.aria-label]="'Passwort anzeigen'"
+            [attr.aria-pressed]="'false'">
+            <img src="assets/img/visibility_off_icon.png" alt="" />
           </button>
-          <button
-            *ngIf="password && showPassword"
-            type="button"
-            (click)="togglePasswordVisibility()"
-            tabindex="-1"
-            style="
-              background: none;
-              border: none;
-              padding: 0;
-              margin: 0;
-              cursor: pointer;
-            "
-          >
-            <img src="assets/img/visibility_icon.png" alt="Passwort sichtbar" />
+          
+          <button 
+            *ngIf="password && showPassword" 
+            type="button" 
+            (click)="togglePasswordVisibility()" 
+            class="register-card__visibility-btn"
+            [attr.aria-label]="'Passwort verstecken'"
+            [attr.aria-pressed]="'true'">
+            <img src="assets/img/visibility_icon.png" alt="" />
           </button>
         </span>
+        
+        <!-- Passwort Beschreibung für Screen Reader -->
+        <div id="password-description" class="sr-only">
+          Geben Sie ein sicheres Passwort mit mindestens 6 Zeichen ein
+        </div>
       </div>
-      <div
-        *ngIf="passwordInput.invalid && passwordInput.touched"
-        class="input-error"
-      >
-        Bitte gib ein Passwort mit mindestens 6 Zeichen ein.
+      
+      <!-- Passwort Validierungsfehler -->
+      <div 
+        *ngIf="passwordInput.invalid && passwordInput.touched" 
+        class="register-card__error"
+        role="alert"
+        aria-live="polite">
+        Bitte geben Sie ein Passwort mit mindestens 6 Zeichen ein.
       </div>
-      <div class="input-wrapper">
+
+      <!-- Passwort bestätigen Eingabefeld -->
+      <div class="register-card__input-group">
+        <label for="confirm-password-input" class="sr-only">
+          Passwort bestätigen (Pflichtfeld, mindestens 6 Zeichen)
+        </label>
+        
         <input
+          id="confirm-password-input"
           [type]="showConfirmPassword ? 'text' : 'password'"
           placeholder="Confirm Password"
-          class="input"
+          class="register-card__input"
           [(ngModel)]="confirmPassword"
           name="confirmPassword"
           autocomplete="new-password"
           required
           minlength="6"
           #confirmPasswordInput="ngModel"
-        />
-        <span class="input-icon">
-          <img
-            *ngIf="!confirmPassword"
-            src="assets/img/lock_icon.png"
-            alt="Lock Icon"
-            style="pointer-events: none; user-select: none"
-          />
-          <button
-            *ngIf="confirmPassword && !showConfirmPassword"
-            type="button"
-            (click)="toggleConfirmPasswordVisibility()"
-            tabindex="-1"
-            style="
-              background: none;
-              border: none;
-              padding: 0;
-              margin: 0;
-              cursor: pointer;
-            "
-          >
-            <img
-              src="assets/img/visibility_off_icon.png"
-              alt="Passwort versteckt"
-            />
+          [attr.aria-describedby]="'confirm-password-description'"
+          [attr.aria-invalid]="confirmPasswordInput.invalid && confirmPasswordInput.touched ? 'true' : 'false'" />
+        
+        <span class="register-card__input-icon">
+          <!-- Standard Lock Icon -->
+          <img 
+            *ngIf="!confirmPassword" 
+            src="assets/img/lock_icon.png" 
+            alt=""
+            [attr.aria-hidden]="'true'" />
+          
+          <!-- Password Visibility Toggle Buttons -->
+          <button 
+            *ngIf="confirmPassword && !showConfirmPassword" 
+            type="button" 
+            (click)="toggleConfirmPasswordVisibility()" 
+            class="register-card__visibility-btn"
+            [attr.aria-label]="'Passwort-Bestätigung anzeigen'"
+            [attr.aria-pressed]="'false'">
+            <img src="assets/img/visibility_off_icon.png" alt="" />
           </button>
-          <button
-            *ngIf="confirmPassword && showConfirmPassword"
-            type="button"
-            (click)="toggleConfirmPasswordVisibility()"
-            tabindex="-1"
-            style="
-              background: none;
-              border: none;
-              padding: 0;
-              margin: 0;
-              cursor: pointer;
-            "
-          >
-            <img src="assets/img/visibility_icon.png" alt="Passwort sichtbar" />
+          
+          <button 
+            *ngIf="confirmPassword && showConfirmPassword" 
+            type="button" 
+            (click)="toggleConfirmPasswordVisibility()" 
+            class="register-card__visibility-btn"
+            [attr.aria-label]="'Passwort-Bestätigung verstecken'"
+            [attr.aria-pressed]="'true'">
+            <img src="assets/img/visibility_icon.png" alt="" />
           </button>
         </span>
+        
+        <!-- Passwort-Bestätigung Beschreibung für Screen Reader -->
+        <div id="confirm-password-description" class="sr-only">
+          Wiederholen Sie Ihr Passwort zur Bestätigung
+        </div>
       </div>
-      <div
-        *ngIf="confirmPasswordInput.invalid && confirmPasswordInput.touched"
-        class="input-error"
-      >
-        Bitte bestätige dein Passwort (mind. 6 Zeichen).
+      
+      <!-- Passwort-Bestätigung Validierungsfehler -->
+      <div 
+        *ngIf="confirmPasswordInput.invalid && confirmPasswordInput.touched" 
+        class="register-card__error"
+        role="alert"
+        aria-live="polite">
+        Bitte bestätigen Sie Ihr Passwort (mindestens 6 Zeichen).
       </div>
-      <div
-        *ngIf="password && confirmPassword && password !== confirmPassword"
-        class="input-error"
-      >
+      
+      <!-- Passwort-Übereinstimmung Validierungsfehler -->
+      <div 
+        *ngIf="password && confirmPassword && password !== confirmPassword" 
+        class="register-card__error"
+        role="alert"
+        aria-live="polite">
         Die Passwörter stimmen nicht überein.
       </div>
-      <div class="checkbox-wrapper">
+
+      <!-- Datenschutz-Checkbox -->
+      <div class="register-card__checkbox-group">
         <input
           type="checkbox"
-          id="privacy"
+          id="privacy-checkbox"
+          class="register-card__checkbox"
           [(ngModel)]="acceptPrivacy"
           name="acceptPrivacy"
           required
           #privacyInput="ngModel"
-        />
-        <label for="privacy"
-          >I accept the
-          <a routerLink="/privacy" class="white-link">Privacy Policy</a></label
-        >
+          [attr.aria-describedby]="'privacy-description'"
+          [attr.aria-invalid]="privacyInput.invalid && privacyInput.touched ? 'true' : 'false'" />
+        
+        <label for="privacy-checkbox" class="register-card__checkbox-label">
+          I accept the 
+          <a 
+            routerLink="/privacy" 
+            class="register-card__privacy-link"
+            [attr.aria-describedby]="'privacy-link-description'">
+            Privacy Policy
+          </a>
+        </label>
+        
+        <!-- Beschreibungen für Screen Reader -->
+        <div id="privacy-description" class="sr-only">
+          Sie müssen die Datenschutzbestimmungen akzeptieren, um sich zu registrieren
+        </div>
+        <div id="privacy-link-description" class="sr-only">
+          Öffnet die Datenschutzbestimmungen in einem neuen Bereich
+        </div>
       </div>
-      <div
-        *ngIf="privacyInput.invalid && privacyInput.touched"
-        class="input-error"
-      >
-        Bitte akzeptiere die Datenschutzbestimmungen.
+      
+      <!-- Datenschutz Validierungsfehler -->
+      <div 
+        *ngIf="privacyInput.invalid && privacyInput.touched" 
+        class="register-card__error"
+        role="alert"
+        aria-live="polite">
+        Bitte akzeptieren Sie die Datenschutzbestimmungen.
       </div>
-      <div *ngIf="errorMessage" class="input-error">{{ errorMessage }}</div>
-      <div *ngIf="successMessage" class="input-success">
-        {{ successMessage }}
+
+      <!-- Fehlermeldungen und Erfolg -->
+      <div class="register-card__messages" role="alert" aria-live="polite">
+        <div 
+          *ngIf="errorMessage" 
+          class="register-card__error">
+          {{ errorMessage }}
+        </div>
+        
+        <div 
+          *ngIf="successMessage" 
+          class="register-card__success">
+          {{ successMessage }}
+        </div>
       </div>
-      <button
-        type="submit"
-        class="register-btn"
+
+      <!-- Submit Button -->
+      <button 
+        type="submit" 
+        class="register-card__submit-btn"
         [disabled]="!registerForm.valid"
-        (click)="$event.preventDefault(); register()"
-      >
+        [attr.aria-describedby]="'submit-btn-description'">
         Sign up
       </button>
+      
+      <!-- Submit Button Beschreibung für Screen Reader -->
+      <div id="submit-btn-description" class="sr-only">
+        Erstellt Ihr neues Join-Konto mit den eingegebenen Daten
+      </div>
     </form>
-  </div>
-  <div class="legal-container">
-    <a href="#" class="privacy-link white-link">Privacy Policy</a>
-    <span class="divider-dot">•</span>
-    <a href="#" class="legal-link white-link">Legal Notice</a>
-  </div>
-</div>
+  </section>
+
+  <!-- Rechtliche Links -->
+  <footer 
+    class="legal-container" 
+    role="contentinfo" 
+    [attr.aria-label]="'Rechtliche Informationen'">
+    
+    <nav role="navigation" [attr.aria-label]="'Rechtliche Links'">
+      <a 
+        href="#" 
+        class="legal-container__link"
+        [attr.aria-describedby]="'footer-privacy-description'">
+        Privacy Policy
+      </a>
+      
+      <span 
+        class="legal-container__divider" 
+        role="presentation" 
+        [attr.aria-hidden]="'true'">•</span>
+      
+      <a 
+        href="#" 
+        class="legal-container__link"
+        [attr.aria-describedby]="'footer-legal-description'">
+        Legal Notice
+      </a>
+      
+      <!-- Link Beschreibungen für Screen Reader -->
+      <div id="footer-privacy-description" class="sr-only">
+        Öffnet die Datenschutzerklärung
+      </div>
+      <div id="footer-legal-description" class="sr-only">
+        Öffnet das Impressum
+      </div>
+    </nav>
+  </footer>
+</main>
