@@ -1,11 +1,22 @@
-<nav class="navbar">
-  <ul class="navbar__list">
-    <li *ngFor="let item of navItems" class="navbar__item" [ngClass]="{ 'navbar__item--active': getActive(item.route) }">
-      <a [routerLink]="item.route" class="navbar__link">
-        <span class="navbar__icon">
+
+<!-- Hauptnavigation für die Anwendung, barrierefrei und semantisch -->
+ 
+<nav class="navbar" role="navigation" aria-label="Hauptnavigation">
+  <ul class="navbar__list" role="menubar">
+    <li *ngFor="let item of navItems"
+        class="navbar__item"
+        [ngClass]="{ 'navbar__item--active': getActive(item.route) }"
+        role="none">
+      <a [routerLink]="item.route"
+         class="navbar__link"
+         role="menuitem"
+         [attr.aria-current]="getActive(item.route) ? 'page' : null"
+         tabindex="0"
+         [attr.aria-label]="item.label">
+        <span class="navbar__icon" aria-hidden="true">
           <img 
             [src]="'assets/img/' + item.icon + (getActive(item.route) ? '_active.png' : '.png')"
-            [alt]="item.label" />
+            [alt]="''" />
         </span>
         <span class="navbar__label">{{ item.label }}</span>
       </a>
