@@ -1,8 +1,9 @@
-<header class="app-header">
-  <div class="header-logo">
+
+<header class="app-header" role="banner" aria-label="Seitenkopf">
+  <div class="app-header__logo">
     <img src="assets/img/join_logo_white.png" alt="Join Logo White" />
   </div>
-  <div class="header-user" tabindex="0">
-    <span class="user-initials">{{ initials || '?' }}</span>
+  <div class="app-header__user" tabindex="0" aria-label="Benutzerprofil" role="button">
+    <span class="app-header__user-initials" aria-label="Benutzerkürzel">{{ initials || '?' }}</span>
   </div>
 </header>

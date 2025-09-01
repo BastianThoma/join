@@ -1,3 +1,4 @@
+
 .app-header {
   width: 100vw;
   height: 72px;
@@ -12,45 +13,47 @@
   left: 0;
   z-index: 1000;
   box-shadow: 0 2px 8px #0001;
-}
 
-.header-logo img {
-  height: 40px;
-  width: auto;
-  display: block;
-}
+  &__logo {
+    img {
+      height: 40px;
+      width: auto;
+      display: block;
+    }
+  }
 
-.header-user {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  position: relative;
-}
+  &__user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    position: relative;
 
-.user-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  background: #fff;
-  border: 2px solid #fff;
-  box-shadow: 0 2px 8px #0001;
-}
+    &-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #fff;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 8px #0001;
+    }
 
-.user-initials {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #4589ff;
-  background: #fff;
-  border-radius: 50%;
-  border: 2px solid #fff;
-  box-shadow: 0 2px 8px #0001;
-  position: relative;
-  pointer-events: none;
+    &-initials {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #4589ff;
+      background: #fff;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 8px #0001;
+      position: relative;
+      pointer-events: none;
+    }
+  }
 }
