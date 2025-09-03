@@ -1,0 +1,12 @@
+.board {
+  padding: 32px;
+  min-height: 100vh;
+  background: #f4f6fa;
+
+  &__title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: #222;
+  }
+}
