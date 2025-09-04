@@ -512,7 +512,9 @@ export class AddTaskComponent {
         assignedTo: this.assignedTo,
         category: this.category.trim(),
         subtasks: this.subtasks,
+        status: 'todo', // Default status for new tasks
         createdAt: new Date().toISOString(),
+        completedSubtasks: [], // Initialize empty completed subtasks array
       });
       
       this.success = 'Task created successfully!';

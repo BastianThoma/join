@@ -1,12 +1,560 @@
 .board {
   padding: 32px;
   min-height: 100vh;
-  background: #f4f6fa;
+  background: #fff;
+  
+  // ===============================
+  // Header Section
+  // ===============================
+  
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+  }
 
   &__title {
     font-size: 2rem;
     font-weight: 700;
-    margin-bottom: 24px;
-    color: #222;
+    margin: 0;
+    color: #2a3647;
   }
+
+  &__add-task-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: #4589ff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #005dff;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    img {
+      width: 16px;
+      height: 16px;
+      filter: brightness(0) invert(1);
+    }
+  }
+
+  // ===============================
+  // Loading & Error States
+  // ===============================
+
+  &__loading,
+  &__error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    text-align: center;
+    
+    p {
+      font-size: 18px;
+      color: #42526e;
+      margin-bottom: 16px;
+    }
+  }
+
+  &__retry-btn {
+    padding: 8px 16px;
+    background: #4589ff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background: #005dff;
+    }
+  }
+
+  // ===============================
+  // Board Columns Layout
+  // ===============================
+
+  &__columns {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    min-height: 600px;
+
+    @media (max-width: 1200px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__column {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__column-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #d1d1d1;
+    background: #fafbfc;
+  }
+
+  &__column-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    color: #2a3647;
+  }
+
+  &__add-task-column-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background: #e5e7eb;
+    }
+
+    .board__add-icon {
+      width: 16px;
+      height: 16px;
+      opacity: 0.6;
+    }
+  }
+
+  // ===============================
+  // Drop Zones
+  // ===============================
+
+  &__drop-zone {
+    flex: 1;
+    padding: 16px;
+    min-height: 400px;
+    transition: background-color 0.2s ease;
+
+    &--hovered {
+      background: #e6f0ff;
+      border: 2px dashed #4589ff;
+      border-radius: 8px;
+      margin: 4px;
+      padding: 14px;
+    }
+  }
+
+  // ===============================
+  // Task Cards
+  // ===============================
+
+  &__task-card {
+    background: white;
+    border: 1px solid #d1d1d1;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+    cursor: grab;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+      cursor: grabbing;
+      transform: rotate(2deg);
+      opacity: 0.8;
+    }
+  }
+
+  &__task-category {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: white;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  &__task-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2a3647;
+    margin: 0;
+    line-height: 1.4;
+    flex: 1;
+  }
+
+  &__task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    gap: 8px;
+  }
+
+  // ===============================
+  // Mobile Menu
+  // ===============================
+
+  &__mobile-menu-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  &__mobile-menu-btn {
+    width: 24px;
+    height: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background: #f3f4f6;
+    }
+
+    img {
+      width: 16px;
+      height: 16px;
+      opacity: 0.6;
+    }
+
+    // Hide on desktop by default, show on mobile
+    @media (min-width: 769px) {
+      display: none;
+    }
+  }
+
+  &__mobile-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid #d1d1d1;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    min-width: 140px;
+    overflow: hidden;
+    animation: menuSlideDown 0.2s ease-out;
+  }
+
+  &__mobile-menu-item {
+    width: 100%;
+    padding: 12px 16px;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #2a3647;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background: #f9fafb;
+    }
+
+    &:active {
+      background: #f3f4f6;
+    }
+
+    .board__menu-icon {
+      width: 16px;
+      height: 16px;
+      opacity: 0.7;
+    }
+
+    span {
+      font-weight: 500;
+    }
+  }
+
+  @keyframes menuSlideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  // Show mobile menu button on hover for desktop users
+  &__task-card:hover &__mobile-menu-btn {
+    @media (min-width: 769px) {
+      display: flex;
+    }
+  }
+
+  &__task-description {
+    font-size: 14px;
+    color: #42526e;
+    margin: 0 0 12px 0;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  // ===============================
+  // Progress Bar
+  // ===============================
+
+  &__task-progress {
+    margin-bottom: 16px;
+  }
+
+  &__progress-bar {
+    width: 100%;
+    height: 6px;
+    background: #d1d1d1;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 4px;
+  }
+
+  &__progress-fill {
+    height: 100%;
+    background: #7ae229;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+  }
+
+  &__progress-text {
+    font-size: 12px;
+    color: #42526e;
+  }
+
+  // ===============================
+  // Task Footer
+  // ===============================
+
+  &__task-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+  }
+
+  &__task-contacts {
+    display: flex;
+    gap: -8px; // Overlap avatars slightly
+  }
+
+  &__contact-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    border: 2px solid white;
+    position: relative;
+
+    &:not(:first-child) {
+      margin-left: -8px;
+    }
+
+    &--more {
+      background: #42526e;
+      font-size: 10px;
+    }
+  }
+
+  &__task-priority {
+    .board__priority-icon {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  // ===============================
+  // Empty State
+  // ===============================
+
+  &__empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: #42526e;
+    font-size: 14px;
+    font-style: italic;
+  }
+
+  // ===============================
+  // Responsive Design
+  // ===============================
+
+  @media (max-width: 768px) {
+    padding: 16px;
+
+    &__header {
+      flex-direction: column;
+      gap: 16px;
+      text-align: center;
+    }
+
+    &__columns {
+      gap: 16px;
+    }
+
+    &__column-header {
+      padding: 16px;
+    }
+
+    &__drop-zone {
+      padding: 12px;
+      min-height: 300px;
+    }
+
+    &__task-card {
+      padding: 12px;
+    }
+
+    &__task-contacts {
+      gap: 4px;
+
+      .board__contact-avatar {
+        width: 28px;
+        height: 28px;
+        font-size: 11px;
+
+        &:not(:first-child) {
+          margin-left: -4px;
+        }
+      }
+    }
+  }
+
+  // ===============================
+  // Accessibility
+  // ===============================
+
+  &__task-card {
+    &:focus {
+      outline: 2px solid #4589ff;
+      outline-offset: 2px;
+    }
+  }
+
+  &__add-task-btn,
+  &__add-task-column-btn,
+  &__retry-btn {
+    &:focus {
+      outline: 2px solid #4589ff;
+      outline-offset: 2px;
+    }
+  }
+
+  // ===============================
+  // Dark Mode Support (Disabled)
+  // ===============================
+
+  /* Dark mode temporarily disabled to fix background issue
+  @media (prefers-color-scheme: dark) {
+    background: #1f2937;
+
+    &__title {
+      color: #f9fafb;
+    }
+
+    &__column {
+      background: #374151;
+    }
+
+    &__column-header {
+      background: #4b5563;
+      border-bottom-color: #6b7280;
+    }
+
+    &__column-title {
+      color: #f9fafb;
+    }
+
+    &__task-card {
+      background: #4b5563;
+      border-color: #6b7280;
+      color: #f9fafb;
+
+      &:hover {
+        background: #6b7280;
+      }
+    }
+
+    &__task-title {
+      color: #f9fafb;
+    }
+
+    &__task-description {
+      color: #d1d5db;
+    }
+
+    &__progress-text {
+      color: #d1d5db;
+    }
+
+    &__empty-state {
+      color: #9ca3af;
+    }
+
+    &__loading p,
+    &__error p {
+      color: #d1d5db;
+    }
+  }
+  */
 }
