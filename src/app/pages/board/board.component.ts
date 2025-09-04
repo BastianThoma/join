@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import {
   Firestore,
   collection,
@@ -123,7 +124,10 @@ export class BoardComponent implements OnInit, OnDestroy {
    * Initializes the component with Firestore collections
    * @param firestore - Firestore service instance
    */
-  constructor(private firestore: Firestore) {
+  constructor(
+    private firestore: Firestore,
+    private router: Router
+  ) {
     this.tasksCol = collection(this.firestore, 'tasks');
     this.contactsCol = collection(this.firestore, 'contacts');
   }
@@ -518,5 +522,16 @@ export class BoardComponent implements OnInit, OnDestroy {
    */
   trackByContactId(index: number, contactId: string): string {
     return contactId;
+  }
+
+  // ===============================
+  // Navigation Methods
+  // ===============================
+
+  /**
+   * Navigates to the Add Task page
+   */
+  navigateToAddTask(): void {
+    this.router.navigate(['/add-task']);
   }
 }
