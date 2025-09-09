@@ -358,12 +358,9 @@
     }
   }
 
-  // Show mobile menu button on hover for desktop users
-  &__task-card:hover &__mobile-menu-btn {
-    @media (min-width: 769px) {
-      display: flex;
-    }
-  }
+  // Mobile menu button hidden by default on desktop
+  // Only visible on mobile or when manually triggered
+  // Removed hover behavior: &__task-card:hover &__mobile-menu-btn
 
   &__task-description {
     font-size: 14px;
