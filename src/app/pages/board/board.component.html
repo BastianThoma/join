@@ -32,24 +32,26 @@
     <div class="board__column">
       <div class="board__column-header">
         <h2 class="board__column-title">To do</h2>
-        <button class="board__add-task-column-btn" type="button">
+        <button class="board__add-task-column-btn" type="button" (click)="navigateToAddTask()">
           <img src="/assets/img/addTask_icon.png" alt="Neue Aufgabe hinzufügen" class="board__add-icon">
         </button>
       </div>
       
       <div 
         class="board__drop-zone"
-        [class.board__drop-zone--hovered]="hoveredDropZone === 'todo'"
-        (dragover)="onDragOver($event, 'todo')"
-        (dragleave)="onDragLeave($event)"
-        (drop)="onDrop($event, 'todo')"
+        cdkDropList
+        id="todo-list"
+        [cdkDropListData]="todoTasks"
+        [cdkDropListConnectedTo]="['inprogress-list', 'awaitfeedback-list', 'done-list']"
+        (cdkDropListDropped)="onTaskDrop($event)"
       >
         <!-- Task Card Template -->
         <div 
           *ngFor="let task of todoTasks; trackBy: trackByTaskId" 
           class="board__task-card"
-          draggable="true"
-          (dragstart)="onDragStart($event, task)"
+          cdkDrag
+          (cdkDragStarted)="onDragStarted()"
+          (cdkDragEnded)="onDragEnded()"
           (click)="$event.stopPropagation()"
         >
           <!-- Category Badge -->
@@ -151,24 +153,26 @@
     <div class="board__column">
       <div class="board__column-header">
         <h2 class="board__column-title">In progress</h2>
-        <button class="board__add-task-column-btn" type="button">
+        <button class="board__add-task-column-btn" type="button" (click)="navigateToAddTask()">
           <img src="/assets/img/addTask_icon.png" alt="Neue Aufgabe hinzufügen" class="board__add-icon">
         </button>
       </div>
       
       <div 
         class="board__drop-zone"
-        [class.board__drop-zone--hovered]="hoveredDropZone === 'inprogress'"
-        (dragover)="onDragOver($event, 'inprogress')"
-        (dragleave)="onDragLeave($event)"
-        (drop)="onDrop($event, 'inprogress')"
+        cdkDropList
+        id="inprogress-list"
+        [cdkDropListData]="inProgressTasks"
+        [cdkDropListConnectedTo]="['todo-list', 'awaitfeedback-list', 'done-list']"
+        (cdkDropListDropped)="onTaskDrop($event)"
       >
         <!-- Task Card Template -->
         <div 
           *ngFor="let task of inProgressTasks; trackBy: trackByTaskId" 
           class="board__task-card"
-          draggable="true"
-          (dragstart)="onDragStart($event, task)"
+          cdkDrag
+          (cdkDragStarted)="onDragStarted()"
+          (cdkDragEnded)="onDragEnded()"
           (click)="$event.stopPropagation()"
         >
           <!-- Category Badge -->
@@ -270,24 +274,26 @@
     <div class="board__column">
       <div class="board__column-header">
         <h2 class="board__column-title">Await feedback</h2>
-        <button class="board__add-task-column-btn" type="button">
+        <button class="board__add-task-column-btn" type="button" (click)="navigateToAddTask()">
           <img src="/assets/img/addTask_icon.png" alt="Neue Aufgabe hinzufügen" class="board__add-icon">
         </button>
       </div>
       
       <div 
         class="board__drop-zone"
-        [class.board__drop-zone--hovered]="hoveredDropZone === 'awaitfeedback'"
-        (dragover)="onDragOver($event, 'awaitfeedback')"
-        (dragleave)="onDragLeave($event)"
-        (drop)="onDrop($event, 'awaitfeedback')"
+        cdkDropList
+        id="awaitfeedback-list"
+        [cdkDropListData]="awaitFeedbackTasks"
+        [cdkDropListConnectedTo]="['todo-list', 'inprogress-list', 'done-list']"
+        (cdkDropListDropped)="onTaskDrop($event)"
       >
         <!-- Task Card Template -->
         <div 
           *ngFor="let task of awaitFeedbackTasks; trackBy: trackByTaskId" 
           class="board__task-card"
-          draggable="true"
-          (dragstart)="onDragStart($event, task)"
+          cdkDrag
+          (cdkDragStarted)="onDragStarted()"
+          (cdkDragEnded)="onDragEnded()"
           (click)="$event.stopPropagation()"
         >
           <!-- Category Badge -->
@@ -389,24 +395,26 @@
     <div class="board__column">
       <div class="board__column-header">
         <h2 class="board__column-title">Done</h2>
-        <button class="board__add-task-column-btn" type="button">
+        <button class="board__add-task-column-btn" type="button" (click)="navigateToAddTask()">
           <img src="/assets/img/addTask_icon.png" alt="Neue Aufgabe hinzufügen" class="board__add-icon">
         </button>
       </div>
       
       <div 
         class="board__drop-zone"
-        [class.board__drop-zone--hovered]="hoveredDropZone === 'done'"
-        (dragover)="onDragOver($event, 'done')"
-        (dragleave)="onDragLeave($event)"
-        (drop)="onDrop($event, 'done')"
+        cdkDropList
+        id="done-list"
+        [cdkDropListData]="doneTasks"
+        [cdkDropListConnectedTo]="['todo-list', 'inprogress-list', 'awaitfeedback-list']"
+        (cdkDropListDropped)="onTaskDrop($event)"
       >
         <!-- Task Card Template -->
         <div 
           *ngFor="let task of doneTasks; trackBy: trackByTaskId" 
           class="board__task-card"
-          draggable="true"
-          (dragstart)="onDragStart($event, task)"
+          cdkDrag
+          (cdkDragStarted)="onDragStarted()"
+          (cdkDragEnded)="onDragEnded()"
           (click)="$event.stopPropagation()"
         >
           <!-- Category Badge -->

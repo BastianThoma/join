@@ -1,6 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import {
   Firestore,
   collection,
@@ -64,9 +65,10 @@ interface Task {
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, DragDropModule],
   templateUrl: './board.component.html',
-  styleUrls: ['./board.component.scss']
+  styleUrls: ['./board.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BoardComponent implements OnInit, OnDestroy {
   // ===============================
@@ -104,11 +106,11 @@ export class BoardComponent implements OnInit, OnDestroy {
   /** Currently dragged task */
   draggedTask: Task | null = null;
   
-  /** Currently hovered drop zone */
-  hoveredDropZone: string | null = null;
-  
   /** Show mobile move menu for task ID */
   showMobileMenu: string | null = null;
+
+  /** Disable change detection during drag operations for performance */
+  isDragging = false;
 
   // ===============================
   // Firestore Collections
@@ -126,7 +128,8 @@ export class BoardComponent implements OnInit, OnDestroy {
    */
   constructor(
     private firestore: Firestore,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {
     this.tasksCol = collection(this.firestore, 'tasks');
     this.contactsCol = collection(this.firestore, 'contacts');
@@ -157,6 +160,7 @@ export class BoardComponent implements OnInit, OnDestroy {
     try {
       this.isLoading = true;
       this.error = '';
+      this.cdr.detectChanges();
       
       // Load contacts and tasks in parallel
       await Promise.all([
@@ -172,6 +176,7 @@ export class BoardComponent implements OnInit, OnDestroy {
       this.error = 'Fehler beim Laden der Daten';
     } finally {
       this.isLoading = false;
+      this.cdr.detectChanges();
     }
   }
 
@@ -217,75 +222,100 @@ export class BoardComponent implements OnInit, OnDestroy {
   }
 
   // ===============================
-  // Native Drag & Drop Functionality
+  // Drag & Drop Methods (Angular CDK) - Performance Optimized
   // ===============================
 
   /**
-   * Handles drag start event
-   * @param event - Drag event
-   * @param task - Task being dragged
+   * Called when drag starts - optimize performance
    */
-  onDragStart(event: DragEvent, task: Task): void {
-    this.draggedTask = task;
-    if (event.dataTransfer) {
-      event.dataTransfer.effectAllowed = 'move';
-      event.dataTransfer.setData('text/plain', task.id || '');
-    }
+  onDragStarted(): void {
+    this.isDragging = true;
+    this.cdr.detach(); // Stop change detection during drag
   }
 
   /**
-   * Handles drag over event for drop zones
-   * @param event - Drag event
-   * @param status - Target status/column
+   * Called when drag ends - restore performance
    */
-  onDragOver(event: DragEvent, status: string): void {
-    event.preventDefault();
-    this.hoveredDropZone = status;
-    if (event.dataTransfer) {
-      event.dataTransfer.dropEffect = 'move';
-    }
+  onDragEnded(): void {
+    this.isDragging = false;
+    this.cdr.reattach(); // Re-enable change detection
+    this.cdr.detectChanges(); // Update view
   }
 
   /**
-   * Handles drag leave event for drop zones
-   * @param event - Drag event
+   * Handles drop event from Angular CDK
+   * @param event - CDK Drop event
    */
-  onDragLeave(event: DragEvent): void {
-    this.hoveredDropZone = null;
-  }
-
-  /**
-   * Handles drop event
-   * @param event - Drop event
-   * @param newStatus - Target status/column
-   */
-  async onDrop(event: DragEvent, newStatus: Task['status']): Promise<void> {
-    event.preventDefault();
-    this.hoveredDropZone = null;
+  async onTaskDrop(event: CdkDragDrop<Task[]>): Promise<void> {
+    // Disable change detection during drag operation
+    this.cdr.detach();
     
-    if (!this.draggedTask || this.draggedTask.status === newStatus) {
-      this.draggedTask = null;
-      return;
-    }
-
     try {
-      // Update task status in Firestore
-      if (this.draggedTask.id) {
-        await this.updateTaskStatus(this.draggedTask.id, newStatus);
+      // If dropped in the same container, just reorder
+      if (event.previousContainer === event.container) {
+        moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+        this.cdr.reattach();
+        this.cdr.detectChanges();
+        return;
+      }
+
+      // Move task between containers (columns)
+      const task = event.previousContainer.data[event.previousIndex];
+      const newStatus = this.getStatusFromContainer(event.container);
+      
+      if (task.id && newStatus) {
+        // Transfer item between arrays first (optimistic update)
+        transferArrayItem(
+          event.previousContainer.data,
+          event.container.data,
+          event.previousIndex,
+          event.currentIndex
+        );
         
         // Update local task object
-        this.draggedTask.status = newStatus;
+        task.status = newStatus;
         
-        // Re-sort tasks into columns
-        this.sortTasksIntoColumns();
+        // Re-enable change detection and update view
+        this.cdr.reattach();
+        this.cdr.detectChanges();
+        
+        // Update in Firestore (async, non-blocking)
+        this.updateTaskStatus(task.id, newStatus).catch(error => {
+          console.error('Error moving task:', error);
+          this.error = 'Fehler beim Verschieben der Aufgabe';
+          this.cdr.detectChanges();
+        });
+        
+        console.log(`Task "${task.title}" moved to ${newStatus}`);
+      } else {
+        this.cdr.reattach();
+        this.cdr.detectChanges();
       }
     } catch (error) {
-      console.error('Error updating task status:', error);
-      this.error = 'Fehler beim Aktualisieren der Aufgabe';
-      // Reload data to restore correct state
-      await this.loadData();
-    } finally {
-      this.draggedTask = null;
+      console.error('Error during drag operation:', error);
+      this.cdr.reattach();
+      this.cdr.detectChanges();
+    }
+  }
+
+  /**
+   * Gets the status from a CDK drop container
+   * @param container - CDK drop container
+   * @returns Task status
+   */
+  private getStatusFromContainer(container: any): Task['status'] | null {
+    const containerId = container.id;
+    switch (containerId) {
+      case 'todo-list':
+        return 'todo';
+      case 'inprogress-list':
+        return 'inprogress';
+      case 'awaitfeedback-list':
+        return 'awaitfeedback';
+      case 'done-list':
+        return 'done';
+      default:
+        return null;
     }
   }
 

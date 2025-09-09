@@ -153,7 +153,7 @@
   }
 
   // ===============================
-  // Drop Zones
+  // Drop Zones & CDK Drag Drop
   // ===============================
 
   &__drop-zone {
@@ -162,7 +162,8 @@
     min-height: 400px;
     transition: background-color 0.2s ease;
 
-    &--hovered {
+    // CDK Drop List active state
+    &.cdk-drop-list-dragging {
       background: #e6f0ff;
       border: 2px dashed #4589ff;
       border-radius: 8px;
@@ -172,7 +173,7 @@
   }
 
   // ===============================
-  // Task Cards
+  // Task Cards & CDK Drag (Performance Optimized)
   // ===============================
 
   &__task-card {
@@ -182,22 +183,52 @@
     padding: 16px;
     margin-bottom: 12px;
     cursor: grab;
-    transition: all 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    will-change: transform; // GPU acceleration hint
 
     &:last-child {
       margin-bottom: 0;
     }
 
-    &:hover {
+    &:hover:not(.cdk-drag-disabled) {
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
-    &:active {
-      cursor: grabbing;
-      transform: rotate(2deg);
-      opacity: 0.8;
+    // CDK Drag states - optimized for performance
+    &.cdk-drag-preview {
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
+      border: 1px solid #4589ff;
+      transform: rotate(5deg);
+      transition: none; // Remove transitions during drag
+      will-change: transform;
+      contain: layout style paint; // CSS containment for performance
+    }
+
+    &.cdk-drag-placeholder {
+      opacity: 0.4;
+      background: #f0f9ff;
+      border: 2px dashed #4589ff;
+      transition: none; // Remove transitions during drag
+      
+      * {
+        visibility: hidden;
+      }
+    }
+
+    &.cdk-drag-animating {
+      transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+      will-change: transform;
+    }
+
+    // Disable pointer events during drag for better performance
+    &.cdk-drag-dragging {
+      pointer-events: none;
+      
+      .board__mobile-menu {
+        display: none !important;
+      }
     }
   }
 
