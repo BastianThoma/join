@@ -45,101 +45,16 @@
         [cdkDropListConnectedTo]="['inprogress-list', 'awaitfeedback-list', 'done-list']"
         (cdkDropListDropped)="onTaskDrop($event)"
       >
-        <!-- Task Card Template -->
+        <!-- Task Cards using Template -->
         <div 
-          *ngFor="let task of todoTasks; trackBy: trackByTaskId" 
+          *ngFor="let task of todoTasks; trackBy: trackByTaskId"
           class="board__task-card"
           cdkDrag
           (cdkDragStarted)="onDragStarted()"
           (cdkDragEnded)="onDragEnded()"
-          (click)="$event.stopPropagation()"
+          (click)="openTaskDetail(task); $event.stopPropagation()"
         >
-          <!-- Category Badge -->
-          <div class="board__task-category" [style.background-color]="getCategoryColor(task.category)">
-            {{ task.category }}
-          </div>
-          
-          <!-- Task Header with Title and Mobile Menu -->
-          <div class="board__task-header">
-            <h3 class="board__task-title">{{ task.title }}</h3>
-            
-            <!-- Mobile Menu Button -->
-            <div class="board__mobile-menu-container">
-              <button 
-                class="board__mobile-menu-btn"
-                type="button"
-                (click)="toggleMobileMenu(task.id); $event.stopPropagation()"
-                [attr.aria-label]="'Task verschieben: ' + task.title"
-              >
-                <img src="/assets/img/swap_icon_blue.png" alt="" role="presentation">
-              </button>
-              
-              <!-- Mobile Menu -->
-              <div 
-                *ngIf="showMobileMenu === task.id" 
-                class="board__mobile-menu"
-              >
-                <button
-                  *ngFor="let option of getAvailableStatusOptions(task.status)"
-                  type="button"
-                  class="board__mobile-menu-item"
-                  (click)="moveTaskViaMobile(task, option.status); $event.stopPropagation()"
-                >
-                  <img [src]="option.icon" alt="" role="presentation" class="board__menu-icon">
-                  <span>{{ option.label }}</span>
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Task Description -->
-          <p *ngIf="task.description" class="board__task-description">
-            {{ task.description }}
-          </p>
-          
-          <!-- Subtasks Progress -->
-          <div *ngIf="getTotalSubtasksCount(task) > 0" class="board__task-progress">
-            <div class="board__progress-bar">
-              <div 
-                class="board__progress-fill" 
-                [style.width.%]="(getCompletedSubtasksCount(task) / getTotalSubtasksCount(task)) * 100"
-              ></div>
-            </div>
-            <span class="board__progress-text">
-              {{ getCompletedSubtasksCount(task) }}/{{ getTotalSubtasksCount(task) }} Subtasks
-            </span>
-          </div>
-          
-          <!-- Task Footer -->
-          <div class="board__task-footer">
-            <!-- Assigned Contacts -->
-            <div class="board__task-contacts">
-              <div 
-                *ngFor="let contactId of task.assignedTo.slice(0, 3); trackBy: trackByContactId" 
-                class="board__contact-avatar"
-                [style.background-color]="getContactColor(contactId)"
-                [title]="getContactName(contactId)"
-              >
-                {{ getContactInitials(contactId) }}
-              </div>
-              <div 
-                *ngIf="task.assignedTo.length > 3" 
-                class="board__contact-avatar board__contact-avatar--more"
-                [title]="'Und ' + (task.assignedTo.length - 3) + ' weitere'"
-              >
-                +{{ task.assignedTo.length - 3 }}
-              </div>
-            </div>
-            
-            <!-- Priority Icon -->
-            <div class="board__task-priority">
-              <img 
-                [src]="getPriorityIcon(task.priority)" 
-                [alt]="task.priority + ' Priorität'"
-                class="board__priority-icon"
-              >
-            </div>
-          </div>
+          <ng-container *ngTemplateOutlet="taskCardContentTemplate; context: { task: task }"></ng-container>
         </div>
         
         <!-- Empty State -->
@@ -166,101 +81,16 @@
         [cdkDropListConnectedTo]="['todo-list', 'awaitfeedback-list', 'done-list']"
         (cdkDropListDropped)="onTaskDrop($event)"
       >
-        <!-- Task Card Template -->
+        <!-- Task Cards using Template -->
         <div 
-          *ngFor="let task of inProgressTasks; trackBy: trackByTaskId" 
+          *ngFor="let task of inProgressTasks; trackBy: trackByTaskId"
           class="board__task-card"
           cdkDrag
           (cdkDragStarted)="onDragStarted()"
           (cdkDragEnded)="onDragEnded()"
-          (click)="$event.stopPropagation()"
+          (click)="openTaskDetail(task); $event.stopPropagation()"
         >
-          <!-- Category Badge -->
-          <div class="board__task-category" [style.background-color]="getCategoryColor(task.category)">
-            {{ task.category }}
-          </div>
-          
-          <!-- Task Header with Title and Mobile Menu -->
-          <div class="board__task-header">
-            <h3 class="board__task-title">{{ task.title }}</h3>
-            
-            <!-- Mobile Menu Button -->
-            <div class="board__mobile-menu-container">
-              <button 
-                class="board__mobile-menu-btn"
-                type="button"
-                (click)="toggleMobileMenu(task.id); $event.stopPropagation()"
-                [attr.aria-label]="'Task verschieben: ' + task.title"
-              >
-                <img src="/assets/img/vertical_menu_dots.png" alt="" role="presentation">
-              </button>
-              
-              <!-- Mobile Menu -->
-              <div 
-                *ngIf="showMobileMenu === task.id" 
-                class="board__mobile-menu"
-              >
-                <button
-                  *ngFor="let option of getAvailableStatusOptions(task.status)"
-                  type="button"
-                  class="board__mobile-menu-item"
-                  (click)="moveTaskViaMobile(task, option.status); $event.stopPropagation()"
-                >
-                  <img [src]="option.icon" alt="" role="presentation" class="board__menu-icon">
-                  <span>{{ option.label }}</span>
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Task Description -->
-          <p *ngIf="task.description" class="board__task-description">
-            {{ task.description }}
-          </p>
-          
-          <!-- Subtasks Progress -->
-          <div *ngIf="getTotalSubtasksCount(task) > 0" class="board__task-progress">
-            <div class="board__progress-bar">
-              <div 
-                class="board__progress-fill" 
-                [style.width.%]="(getCompletedSubtasksCount(task) / getTotalSubtasksCount(task)) * 100"
-              ></div>
-            </div>
-            <span class="board__progress-text">
-              {{ getCompletedSubtasksCount(task) }}/{{ getTotalSubtasksCount(task) }} Subtasks
-            </span>
-          </div>
-          
-          <!-- Task Footer -->
-          <div class="board__task-footer">
-            <!-- Assigned Contacts -->
-            <div class="board__task-contacts">
-              <div 
-                *ngFor="let contactId of task.assignedTo.slice(0, 3); trackBy: trackByContactId" 
-                class="board__contact-avatar"
-                [style.background-color]="getContactColor(contactId)"
-                [title]="getContactName(contactId)"
-              >
-                {{ getContactInitials(contactId) }}
-              </div>
-              <div 
-                *ngIf="task.assignedTo.length > 3" 
-                class="board__contact-avatar board__contact-avatar--more"
-                [title]="'Und ' + (task.assignedTo.length - 3) + ' weitere'"
-              >
-                +{{ task.assignedTo.length - 3 }}
-              </div>
-            </div>
-            
-            <!-- Priority Icon -->
-            <div class="board__task-priority">
-              <img 
-                [src]="getPriorityIcon(task.priority)" 
-                [alt]="task.priority + ' Priorität'"
-                class="board__priority-icon"
-              >
-            </div>
-          </div>
+          <ng-container *ngTemplateOutlet="taskCardContentTemplate; context: { task: task }"></ng-container>
         </div>
         
         <!-- Empty State -->
@@ -287,101 +117,16 @@
         [cdkDropListConnectedTo]="['todo-list', 'inprogress-list', 'done-list']"
         (cdkDropListDropped)="onTaskDrop($event)"
       >
-        <!-- Task Card Template -->
+        <!-- Task Cards using Template -->
         <div 
-          *ngFor="let task of awaitFeedbackTasks; trackBy: trackByTaskId" 
+          *ngFor="let task of awaitFeedbackTasks; trackBy: trackByTaskId"
           class="board__task-card"
           cdkDrag
           (cdkDragStarted)="onDragStarted()"
           (cdkDragEnded)="onDragEnded()"
-          (click)="$event.stopPropagation()"
+          (click)="openTaskDetail(task); $event.stopPropagation()"
         >
-          <!-- Category Badge -->
-          <div class="board__task-category" [style.background-color]="getCategoryColor(task.category)">
-            {{ task.category }}
-          </div>
-          
-          <!-- Task Header with Title and Mobile Menu -->
-          <div class="board__task-header">
-            <h3 class="board__task-title">{{ task.title }}</h3>
-            
-            <!-- Mobile Menu Button -->
-            <div class="board__mobile-menu-container">
-              <button 
-                class="board__mobile-menu-btn"
-                type="button"
-                (click)="toggleMobileMenu(task.id); $event.stopPropagation()"
-                [attr.aria-label]="'Task verschieben: ' + task.title"
-              >
-                <img src="/assets/img/vertical_menu_dots.png" alt="" role="presentation">
-              </button>
-              
-              <!-- Mobile Menu -->
-              <div 
-                *ngIf="showMobileMenu === task.id" 
-                class="board__mobile-menu"
-              >
-                <button
-                  *ngFor="let option of getAvailableStatusOptions(task.status)"
-                  type="button"
-                  class="board__mobile-menu-item"
-                  (click)="moveTaskViaMobile(task, option.status); $event.stopPropagation()"
-                >
-                  <img [src]="option.icon" alt="" role="presentation" class="board__menu-icon">
-                  <span>{{ option.label }}</span>
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Task Description -->
-          <p *ngIf="task.description" class="board__task-description">
-            {{ task.description }}
-          </p>
-          
-          <!-- Subtasks Progress -->
-          <div *ngIf="getTotalSubtasksCount(task) > 0" class="board__task-progress">
-            <div class="board__progress-bar">
-              <div 
-                class="board__progress-fill" 
-                [style.width.%]="(getCompletedSubtasksCount(task) / getTotalSubtasksCount(task)) * 100"
-              ></div>
-            </div>
-            <span class="board__progress-text">
-              {{ getCompletedSubtasksCount(task) }}/{{ getTotalSubtasksCount(task) }} Subtasks
-            </span>
-          </div>
-          
-          <!-- Task Footer -->
-          <div class="board__task-footer">
-            <!-- Assigned Contacts -->
-            <div class="board__task-contacts">
-              <div 
-                *ngFor="let contactId of task.assignedTo.slice(0, 3); trackBy: trackByContactId" 
-                class="board__contact-avatar"
-                [style.background-color]="getContactColor(contactId)"
-                [title]="getContactName(contactId)"
-              >
-                {{ getContactInitials(contactId) }}
-              </div>
-              <div 
-                *ngIf="task.assignedTo.length > 3" 
-                class="board__contact-avatar board__contact-avatar--more"
-                [title]="'Und ' + (task.assignedTo.length - 3) + ' weitere'"
-              >
-                +{{ task.assignedTo.length - 3 }}
-              </div>
-            </div>
-            
-            <!-- Priority Icon -->
-            <div class="board__task-priority">
-              <img 
-                [src]="getPriorityIcon(task.priority)" 
-                [alt]="task.priority + ' Priorität'"
-                class="board__priority-icon"
-              >
-            </div>
-          </div>
+          <ng-container *ngTemplateOutlet="taskCardContentTemplate; context: { task: task }"></ng-container>
         </div>
         
         <!-- Empty State -->
@@ -408,101 +153,16 @@
         [cdkDropListConnectedTo]="['todo-list', 'inprogress-list', 'awaitfeedback-list']"
         (cdkDropListDropped)="onTaskDrop($event)"
       >
-        <!-- Task Card Template -->
+        <!-- Task Cards using Template -->
         <div 
-          *ngFor="let task of doneTasks; trackBy: trackByTaskId" 
+          *ngFor="let task of doneTasks; trackBy: trackByTaskId"
           class="board__task-card"
           cdkDrag
           (cdkDragStarted)="onDragStarted()"
           (cdkDragEnded)="onDragEnded()"
-          (click)="$event.stopPropagation()"
+          (click)="openTaskDetail(task); $event.stopPropagation()"
         >
-          <!-- Category Badge -->
-          <div class="board__task-category" [style.background-color]="getCategoryColor(task.category)">
-            {{ task.category }}
-          </div>
-          
-          <!-- Task Header with Title and Mobile Menu -->
-          <div class="board__task-header">
-            <h3 class="board__task-title">{{ task.title }}</h3>
-            
-            <!-- Mobile Menu Button -->
-            <div class="board__mobile-menu-container">
-              <button 
-                class="board__mobile-menu-btn"
-                type="button"
-                (click)="toggleMobileMenu(task.id); $event.stopPropagation()"
-                [attr.aria-label]="'Task verschieben: ' + task.title"
-              >
-                <img src="/assets/img/vertical_menu_dots.png" alt="" role="presentation">
-              </button>
-              
-              <!-- Mobile Menu -->
-              <div 
-                *ngIf="showMobileMenu === task.id" 
-                class="board__mobile-menu"
-              >
-                <button
-                  *ngFor="let option of getAvailableStatusOptions(task.status)"
-                  type="button"
-                  class="board__mobile-menu-item"
-                  (click)="moveTaskViaMobile(task, option.status); $event.stopPropagation()"
-                >
-                  <img [src]="option.icon" alt="" role="presentation" class="board__menu-icon">
-                  <span>{{ option.label }}</span>
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Task Description -->
-          <p *ngIf="task.description" class="board__task-description">
-            {{ task.description }}
-          </p>
-          
-          <!-- Subtasks Progress -->
-          <div *ngIf="getTotalSubtasksCount(task) > 0" class="board__task-progress">
-            <div class="board__progress-bar">
-              <div 
-                class="board__progress-fill" 
-                [style.width.%]="(getCompletedSubtasksCount(task) / getTotalSubtasksCount(task)) * 100"
-              ></div>
-            </div>
-            <span class="board__progress-text">
-              {{ getCompletedSubtasksCount(task) }}/{{ getTotalSubtasksCount(task) }} Subtasks
-            </span>
-          </div>
-          
-          <!-- Task Footer -->
-          <div class="board__task-footer">
-            <!-- Assigned Contacts -->
-            <div class="board__task-contacts">
-              <div 
-                *ngFor="let contactId of task.assignedTo.slice(0, 3); trackBy: trackByContactId" 
-                class="board__contact-avatar"
-                [style.background-color]="getContactColor(contactId)"
-                [title]="getContactName(contactId)"
-              >
-                {{ getContactInitials(contactId) }}
-              </div>
-              <div 
-                *ngIf="task.assignedTo.length > 3" 
-                class="board__contact-avatar board__contact-avatar--more"
-                [title]="'Und ' + (task.assignedTo.length - 3) + ' weitere'"
-              >
-                +{{ task.assignedTo.length - 3 }}
-              </div>
-            </div>
-            
-            <!-- Priority Icon -->
-            <div class="board__task-priority">
-              <img 
-                [src]="getPriorityIcon(task.priority)" 
-                [alt]="task.priority + ' Priorität'"
-                class="board__priority-icon"
-              >
-            </div>
-          </div>
+          <ng-container *ngTemplateOutlet="taskCardContentTemplate; context: { task: task }"></ng-container>
         </div>
         
         <!-- Empty State -->
@@ -514,3 +174,199 @@
 
   </div>
 </section>
+
+<!-- Task Detail Modal -->
+<div *ngIf="showTaskDetail && selectedTask" class="board__modal-overlay" (click)="closeTaskDetail()">
+  <div class="board__task-detail-modal" (click)="$event.stopPropagation()">
+    
+    <!-- Modal Header -->
+    <div class="board__modal-header">
+      <div class="board__task-category-detail" [style.background-color]="getCategoryColor(selectedTask.category)">
+        {{ selectedTask.category }}
+      </div>
+      <button class="board__modal-close-btn" type="button" (click)="closeTaskDetail()">
+        <img src="/assets/img/close_small_white_icon.png" alt="Schließen">
+      </button>
+    </div>
+
+    <!-- Modal Content -->
+    <div class="board__modal-content">
+      
+      <!-- Task Title -->
+      <h2 class="board__modal-title">{{ selectedTask.title }}</h2>
+      
+      <!-- Task Description -->
+      <p *ngIf="selectedTask.description" class="board__modal-description">
+        {{ selectedTask.description }}
+      </p>
+      
+      <!-- Task Details Grid -->
+      <div class="board__modal-details">
+        
+        <!-- Due Date -->
+        <div class="board__detail-item">
+          <span class="board__detail-label">Fälligkeitsdatum:</span>
+          <span class="board__detail-value">{{ selectedTask.dueDate | date:'dd.MM.yyyy' }}</span>
+        </div>
+        
+        <!-- Priority -->
+        <div class="board__detail-item">
+          <span class="board__detail-label">Priorität:</span>
+          <div class="board__priority-detail">
+            <img [src]="getPriorityIcon(selectedTask.priority)" [alt]="selectedTask.priority" class="board__priority-icon-detail">
+            <span class="board__detail-value">{{ selectedTask.priority }}</span>
+          </div>
+        </div>
+        
+        <!-- Assigned Contacts -->
+        <div class="board__detail-item">
+          <span class="board__detail-label">Zugewiesen an:</span>
+          <div class="board__assigned-contacts">
+            <div 
+              *ngFor="let contactId of selectedTask.assignedTo" 
+              class="board__contact-detail"
+            >
+              <div 
+                class="board__contact-avatar-detail"
+                [style.background-color]="getContactColor(contactId)"
+              >
+                {{ getContactInitials(contactId) }}
+              </div>
+              <span class="board__contact-name">{{ getContactName(contactId) }}</span>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+      
+      <!-- Subtasks Section -->
+      <div *ngIf="selectedTask.subtasks && selectedTask.subtasks.length > 0" class="board__subtasks-section">
+        <h3 class="board__subtasks-title">Subtasks</h3>
+        <div class="board__subtasks-list">
+          <div 
+            *ngFor="let subtask of selectedTask.subtasks; let i = index" 
+            class="board__subtask-item"
+          >
+            <label class="board__subtask-label">
+              <input 
+                type="checkbox" 
+                class="board__subtask-checkbox"
+                [checked]="isSubtaskCompleted(subtask)"
+                (change)="toggleSubtask(i, $event)"
+              >
+              <span class="board__subtask-text" [class.board__subtask-text--completed]="isSubtaskCompleted(subtask)">
+                {{ subtask }}
+              </span>
+            </label>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    
+    <!-- Modal Actions -->
+    <div class="board__modal-actions">
+      <button class="board__action-btn board__action-btn--delete" type="button" (click)="deleteTask(selectedTask)">
+        <img src="/assets/img/delete_icon_blue.png" alt="" role="presentation">
+        Löschen
+      </button>
+      <button class="board__action-btn board__action-btn--edit" type="button" (click)="editTask(selectedTask)">
+        <img src="/assets/img/edit_icon_blue.png" alt="" role="presentation">
+        Bearbeiten
+      </button>
+    </div>
+    
+  </div>
+</div>
+
+<!-- ===============================
+     Reusable Task Card Template
+     =============================== -->
+<ng-template #taskCardContentTemplate let-task="task">
+    <!-- Category Badge -->
+    <div class="board__task-category" [style.background-color]="getCategoryColor(task.category)">
+      {{ task.category }}
+    </div>
+    
+    <!-- Task Header with Title and Mobile Menu -->
+    <div class="board__task-header">
+      <h3 class="board__task-title">{{ task.title }}</h3>
+      
+      <!-- Mobile Menu Button -->
+      <div class="board__mobile-menu-container">
+        <button 
+          class="board__mobile-menu-btn"
+          type="button"
+          (click)="toggleMobileMenu(task.id); $event.stopPropagation()"
+          [attr.aria-label]="'Task verschieben: ' + task.title"
+        >
+          <img src="/assets/img/swap_icon_blue.png" alt="" role="presentation">
+        </button>
+        
+        <!-- Mobile Menu -->
+        <div 
+          *ngIf="showMobileMenu === task.id" 
+          class="board__mobile-menu"
+        >
+          <button
+            *ngFor="let option of getAvailableStatusOptions(task.status)"
+            type="button"
+            class="board__mobile-menu-item"
+            (click)="moveTaskViaMobile(task, option.status); $event.stopPropagation()"
+          >
+            <img [src]="option.icon" alt="" role="presentation" class="board__menu-icon">
+            <span>{{ option.label }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Task Description -->
+    <p *ngIf="task.description" class="board__task-description">
+      {{ task.description }}
+    </p>
+    
+    <!-- Subtasks Progress -->
+    <div *ngIf="getTotalSubtasksCount(task) > 0" class="board__task-progress">
+      <div class="board__progress-bar">
+        <div 
+          class="board__progress-fill" 
+          [style.width.%]="(getCompletedSubtasksCount(task) / getTotalSubtasksCount(task)) * 100"
+        ></div>
+      </div>
+      <span class="board__progress-text">
+        {{ getCompletedSubtasksCount(task) }}/{{ getTotalSubtasksCount(task) }} Subtasks
+      </span>
+    </div>
+    
+    <!-- Task Footer -->
+    <div class="board__task-footer">
+      <!-- Assigned Contacts -->
+      <div class="board__task-contacts">
+        <div 
+          *ngFor="let contactId of task.assignedTo.slice(0, 3); trackBy: trackByContactId" 
+          class="board__contact-avatar"
+          [style.background-color]="getContactColor(contactId)"
+          [title]="getContactName(contactId)"
+        >
+          {{ getContactInitials(contactId) }}
+        </div>
+        <div 
+          *ngIf="task.assignedTo.length > 3" 
+          class="board__contact-avatar board__contact-avatar--more"
+          [title]="'Und ' + (task.assignedTo.length - 3) + ' weitere'"
+        >
+          +{{ task.assignedTo.length - 3 }}
+        </div>
+      </div>
+      
+      <!-- Priority Icon -->
+      <div class="board__task-priority">
+        <img 
+          [src]="getPriorityIcon(task.priority)" 
+          [alt]="task.priority + ' Priorität'"
+          class="board__priority-icon"
+        >
+      </div>
+    </div>
+</ng-template>

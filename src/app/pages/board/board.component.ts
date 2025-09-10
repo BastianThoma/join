@@ -8,6 +8,7 @@ import {
   getDocs,
   doc,
   updateDoc,
+  deleteDoc,
   CollectionReference,
   DocumentData,
 } from '@angular/fire/firestore';
@@ -111,6 +112,12 @@ export class BoardComponent implements OnInit, OnDestroy {
 
   /** Disable change detection during drag operations for performance */
   isDragging = false;
+
+  /** Selected task for detail view */
+  selectedTask: Task | null = null;
+
+  /** Show task detail modal */
+  showTaskDetail = false;
 
   // ===============================
   // Firestore Collections
@@ -350,9 +357,11 @@ export class BoardComponent implements OnInit, OnDestroy {
       await this.updateTaskStatus(task.id, newStatus);
       task.status = newStatus;
       this.sortTasksIntoColumns();
+      this.cdr.detectChanges(); // Force change detection for OnPush strategy
     } catch (error) {
       console.error('Error moving task:', error);
       this.error = 'Fehler beim Verschieben der Aufgabe';
+      this.cdr.detectChanges(); // Ensure error is displayed
     }
   }
 
@@ -367,6 +376,7 @@ export class BoardComponent implements OnInit, OnDestroy {
   toggleMobileMenu(taskId: string | undefined): void {
     if (!taskId) return;
     this.showMobileMenu = this.showMobileMenu === taskId ? null : taskId;
+    this.cdr.detectChanges(); // Force change detection for OnPush strategy
   }
 
   /**
@@ -374,6 +384,7 @@ export class BoardComponent implements OnInit, OnDestroy {
    */
   closeMobileMenu(): void {
     this.showMobileMenu = null;
+    this.cdr.detectChanges(); // Force change detection for OnPush strategy
   }
 
   /**
@@ -552,6 +563,135 @@ export class BoardComponent implements OnInit, OnDestroy {
    */
   trackByContactId(index: number, contactId: string): string {
     return contactId;
+  }
+
+  // ===============================
+  // Task Detail Methods
+  // ===============================
+
+  /**
+   * Opens task detail modal
+   * @param task - Task to show details for
+   */
+  openTaskDetail(task: Task): void {
+    this.selectedTask = { ...task }; // Create a copy to avoid direct mutation
+    this.showTaskDetail = true;
+    this.cdr.detectChanges();
+  }
+
+  /**
+   * Closes task detail modal
+   */
+  closeTaskDetail(): void {
+    this.selectedTask = null;
+    this.showTaskDetail = false;
+    this.cdr.detectChanges();
+  }
+
+  /**
+   * Updates a task in all local arrays after modification
+   */
+  private updateTaskInArrays(updatedTask: Task): void {
+    // Update in main array
+    const taskIndex = this.allTasks.findIndex(t => t.id === updatedTask.id);
+    if (taskIndex !== -1) {
+      this.allTasks[taskIndex] = updatedTask;
+    }
+    
+    // Re-sort tasks into columns to reflect changes
+    this.sortTasksIntoColumns();
+  }
+
+  /**
+   * Toggles subtask completion status
+   * @param subtaskIndex - Index of the subtask
+   */
+  async toggleSubtask(subtaskIndex: number, event: any): Promise<void> {
+    if (!this.selectedTask || !this.selectedTask.id) return;
+
+    try {
+      // Initialize completedSubtasks if it doesn't exist
+      if (!this.selectedTask.completedSubtasks) {
+        this.selectedTask.completedSubtasks = [];
+      }
+
+      const subtaskText = this.selectedTask.subtasks[subtaskIndex];
+      const completedIndex = this.selectedTask.completedSubtasks.indexOf(subtaskText);
+
+      if (completedIndex === -1) {
+        // Mark as completed
+        this.selectedTask.completedSubtasks.push(subtaskText);
+      } else {
+        // Mark as not completed
+        this.selectedTask.completedSubtasks.splice(completedIndex, 1);
+      }
+
+      // Update in Firestore
+      const taskDoc = doc(this.firestore, 'tasks', this.selectedTask.id);
+      await updateDoc(taskDoc, { 
+        completedSubtasks: this.selectedTask.completedSubtasks 
+      });
+
+      // Update the task in the local arrays
+      const originalTask = this.allTasks.find(t => t.id === this.selectedTask!.id);
+      if (originalTask) {
+        originalTask.completedSubtasks = this.selectedTask.completedSubtasks;
+      }
+
+      this.cdr.detectChanges();
+      console.log('Subtask toggled successfully');
+    } catch (error) {
+      console.error('Error toggling subtask:', error);
+      this.error = 'Fehler beim Aktualisieren der Subtask';
+    }
+  }
+
+  /**
+   * Deletes the current task
+   */
+  async deleteTask(task: Task): Promise<void> {
+    if (!task || !task.id) return;
+
+    const confirmed = confirm(`Möchten Sie die Aufgabe "${task.title}" wirklich löschen?`);
+    if (!confirmed) return;
+
+    try {
+      // Delete from Firestore
+      const taskDoc = doc(this.firestore, 'tasks', task.id);
+      await updateDoc(taskDoc, { deleted: true }); // Soft delete
+
+      // Remove from local arrays
+      this.allTasks = this.allTasks.filter(t => t.id !== task.id);
+      this.sortTasksIntoColumns();
+
+      // Close detail modal
+      this.closeTaskDetail();
+
+      console.log('Task deleted successfully');
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      this.error = 'Fehler beim Löschen der Aufgabe';
+    }
+  }
+
+  /**
+   * Navigates to edit task page
+   */
+  editTask(task: Task): void {
+    if (task && task.id) {
+      this.router.navigate(['/add-task'], { 
+        queryParams: { edit: task.id } 
+      });
+    }
+  }
+
+  /**
+   * Checks if a subtask is completed
+   * @param subtaskText - The subtask text
+   * @returns Whether the subtask is completed
+   */
+  isSubtaskCompleted(subtaskText: string): boolean {
+    return this.selectedTask?.completedSubtasks?.includes(subtaskText) || false;
   }
 
   // ===============================
