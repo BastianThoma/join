@@ -1,3 +1,4 @@
+<!-- Greeting Animation -->
 <div class="summary-greeting" *ngIf="showGreeting">
   <div class="greeting-content">
     <div class="greeting-line1">{{ greeting }},</div>
@@ -5,17 +6,91 @@
   </div>
 </div>
 
-<!-- Hier muss ich noch das Dashboard einbauen, kommt aber vermutlich nach der AddTask und Contact
- Seite, um die Daten für die Übersicht dann auch in der Datenbank zu haben -->
-
+<!-- Dashboard Content -->
 <div class="summary-container" *ngIf="!showGreeting">
-  <h1 class="summary-title">Welcome to Join!</h1>
-  <div class="summary-card">
-    <p class="summary-text">
-      Hier folgt ein Dashboard welches sich noch im Aufbau befindet.<br />
-      Mal schauen wann wir den Rest fertig haben.<br />
-      Der Inhalt ist also Aktuell nur Platzhalter und wird später durch das
-      Dashboard ersetzt.
-    </p>
+
+  <!-- Loading State -->
+  <div class="dashboard-loading" *ngIf="isLoading">
+    <div class="loading-spinner"></div>
+    <p>Dashboard wird geladen...</p>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div class="dashboard-content" *ngIf="!isLoading">
+    
+    <!-- Urgent Tasks / Next Deadline Card -->
+    <div class="urgent-card" *ngIf="stats.urgentTasks > 0 || stats.nextDeadline">
+      <div class="urgent-icon">
+        <img src="assets/img/urgent_prio_icon_white.png" alt="Urgent">
+      </div>
+      <div class="urgent-content">
+        <div class="urgent-number">{{ stats.urgentTasks }}</div>
+        <div class="urgent-label">Tasks Urgent</div>
+      </div>
+      <div class="urgent-divider"></div>
+      <div class="deadline-content" *ngIf="stats.nextDeadline">
+        <div class="deadline-date">{{ stats.nextDeadline }}</div>
+        <div class="deadline-label">Upcoming Deadline</div>
+      </div>
+    </div>
+
+    <!-- Todo Tasks Card -->
+    <div class="task-card task-card--light" routerLink="/board">
+      <div class="task-icon">
+        <img src="assets/img/addTask_icon.png" alt="Todo">
+      </div>
+      <div class="task-content">
+        <div class="task-number">{{ stats.todoTasks }}</div>
+        <div class="task-label">Tasks To-do</div>
+      </div>
+    </div>
+
+    <!-- Task Status Grid -->
+    <div class="status-grid">
+      <!-- Tasks on Board -->
+      <div class="status-card" routerLink="/board">
+        <div class="status-icon status-icon--board">
+          <img src="assets/img/board_icon.png" alt="Board">
+        </div>
+        <div class="status-content">
+          <div class="status-number">{{ stats.totalTasks }}</div>
+          <div class="status-label">Tasks on Board</div>
+        </div>
+      </div>
+
+      <!-- Tasks in Progress -->
+      <div class="status-card" routerLink="/board">
+        <div class="status-icon status-icon--progress">
+          <img src="assets/img/board_icon.png" alt="Progress">
+        </div>
+        <div class="status-content">
+          <div class="status-number">{{ stats.inProgressTasks }}</div>
+          <div class="status-label">Tasks in Progress</div>
+        </div>
+      </div>
+
+      <!-- Awaiting Feedback -->
+      <div class="status-card" routerLink="/board">
+        <div class="status-icon status-icon--feedback">
+          <img src="assets/img/datepicker_calendar_icon.png" alt="Feedback">
+        </div>
+        <div class="status-content">
+          <div class="status-number">{{ stats.awaitFeedbackTasks }}</div>
+          <div class="status-label">Awaiting feedback</div>
+        </div>
+      </div>
+
+      <!-- Tasks Done -->
+      <div class="status-card" routerLink="/board">
+        <div class="status-icon status-icon--done">
+          <img src="assets/img/check_blue_icon.png" alt="Done">
+        </div>
+        <div class="status-content">
+          <div class="status-number">{{ stats.doneTasks }}</div>
+          <div class="status-label">Tasks Done</div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>

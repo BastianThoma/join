@@ -1,4 +1,21 @@
-// muss ich noch Formatieren, vorteile von SCSS nutzen.
+// ===============================
+// SCSS Variables (Figma Design)
+// ===============================
+
+$primary-blue: #4589ff;
+$secondary-blue: #29abe2;
+$light-blue: #e7f3ff;
+$very-light-blue: #f0f8ff;
+$white: #ffffff;
+$text-dark: #2a3647;
+$text-light: #a8a8a8;
+$background: #f6f7fb;
+$border-radius: 16px;
+$transition: all 0.3s ease;
+
+// ===============================
+// Greeting Animation
+// ===============================
 
 .summary-greeting {
   position: fixed;
@@ -6,7 +23,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: #fff;
+  background: linear-gradient(135deg, $white 0%, #f8fafc 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -15,24 +32,26 @@
 }
 
 .greeting-content {
-  color: #2a3647;
   text-align: center;
-  padding: 0;
-  background: none;
-  box-shadow: none;
-}
-
-.greeting-line1 {
-  font-size: 2rem;
-  font-weight: 400;
-  color: #2a3647;
-  margin-bottom: 0.2em;
-}
-.greeting-line2 {
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: #4589ff;
-  margin-top: 0;
+  color: $text-dark;
+  
+  .greeting-line1 {
+    font-size: 2.5rem;
+    font-weight: 400;
+    color: $text-dark;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: slideInUp 0.8s 0.5s forwards;
+  }
+  
+  .greeting-line2 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: $primary-blue;
+    margin-top: 0;
+    opacity: 0;
+    animation: slideInUp 0.8s 1s forwards;
+  }
 }
 
 @keyframes fadeOut {
@@ -43,54 +62,405 @@
   }
 }
 
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ===============================
+// Main Container (Mobile First)
+// ===============================
+
 .summary-container {
   min-height: 100vh;
+  background: $background;
+  padding: 16px;
+  font-family: "Open Sans", sans-serif;
+}
+
+// ===============================
+// Mobile Header
+// ===============================
+
+.mobile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  
+  .logo {
+    font-size: 2rem;
+    font-weight: 700;
+    color: $white;
+    background: $primary-blue;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .user-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: $text-light;
+    color: $white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+}
+
+// ===============================
+// Loading State
+// ===============================
+
+.dashboard-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #f6f7fb;
-  font-family: "Open Sans";
+  min-height: 400px;
+  color: $text-light;
+  
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e5e7eb;
+    border-top: 3px solid $primary-blue;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 16px;
+  }
+  
+  p {
+    font-size: 1.1rem;
+    margin: 0;
+  }
 }
 
-.summary-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #2a3647;
-  margin-bottom: 24px;
-  text-align: center;
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-.summary-card {
-  background: #fff;
-  border-radius: 24px;
-  box-shadow: 0 0 10px 3px #0001;
-  padding: 32px 40px;
+// ===============================
+// Dashboard Content
+// ===============================
+
+.dashboard-content {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 16px;
 }
 
-.summary-text {
-  font-size: 1.2rem;
-  color: #2a3647;
-  text-align: center;
-  margin-bottom: 16px;
+// ===============================
+// Urgent Tasks Card (Blue)
+// ===============================
+
+.urgent-card {
+  background: linear-gradient(135deg, $primary-blue 0%, #5a9bff 100%);
+  border-radius: $border-radius;
+  padding: 24px;
+  color: $white;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  
+  .urgent-icon {
+    width: 56px;
+    height: 56px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    
+    img {
+      width: 28px;
+      height: 28px;
+      filter: brightness(0) invert(1);
+    }
+  }
+  
+  .urgent-content {
+    flex: 1;
+    
+    .urgent-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    
+    .urgent-label {
+      font-size: 1rem;
+      font-weight: 400;
+      opacity: 0.9;
+    }
+  }
+  
+  .urgent-divider {
+    width: 2px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.3);
+    flex-shrink: 0;
+  }
+  
+  .deadline-content {
+    text-align: right;
+    flex-shrink: 0;
+    
+    .deadline-date {
+      font-size: 1.1rem;
+      font-weight: 600;
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+    
+    .deadline-label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+  }
 }
 
-.summary-btn {
-  background: #4589ff;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 32px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: background 0.2s;
+// ===============================
+// Todo Tasks Card (Light Blue)
+// ===============================
+
+.task-card {
+  background: $light-blue;
+  border-radius: $border-radius;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
   cursor: pointer;
+  transition: $transition;
+  text-decoration: none;
+  color: inherit;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(69, 137, 255, 0.15);
+  }
+  
+  .task-icon {
+    width: 48px;
+    height: 48px;
+    background: $primary-blue;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    
+    img {
+      width: 24px;
+      height: 24px;
+      filter: brightness(0) invert(1);
+    }
+  }
+  
+  .task-content {
+    flex: 1;
+    
+    .task-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: $text-dark;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    
+    .task-label {
+      font-size: 1rem;
+      color: $text-dark;
+      font-weight: 400;
+    }
+  }
 }
-.summary-btn:hover {
-  background: #5a9bff;
+
+// ===============================
+// Status Grid (2x2)
+// ===============================
+
+.status-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.status-card {
+  background: $white;
+  border-radius: $border-radius;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: $transition;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+  
+  .status-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    
+    img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+    }
+    
+    // Specific colors for each status
+    &--board {
+      background: linear-gradient(135deg, #3b82f6, #60a5fa);
+      
+      img {
+        filter: brightness(0) invert(1);
+      }
+    }
+    
+    &--progress {
+      background: linear-gradient(135deg, $primary-blue, #60a5fa);
+      
+      img {
+        filter: brightness(0) invert(1);
+      }
+    }
+    
+    &--feedback {
+      background: linear-gradient(135deg, #a855f7, #c084fc);
+      
+      img {
+        filter: brightness(0) invert(1);
+      }
+    }
+    
+    &--done {
+      background: linear-gradient(135deg, #10b981, #34d399);
+      
+      img {
+        filter: brightness(0) invert(1);
+      }
+    }
+  }
+  
+  .status-content {
+    .status-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: $text-dark;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    
+    .status-label {
+      font-size: 0.9rem;
+      color: $text-dark;
+      font-weight: 400;
+      line-height: 1.2;
+    }
+  }
+}
+
+// ===============================
+// Responsive Adjustments
+// ===============================
+
+@media (max-width: 374px) {
+  .summary-container {
+    padding: 12px;
+  }
+  
+  .urgent-card {
+    padding: 20px;
+    flex-direction: column;
+    text-align: center;
+    
+    .urgent-divider {
+      width: 60px;
+      height: 2px;
+    }
+    
+    .deadline-content {
+      text-align: center;
+    }
+  }
+  
+  .status-grid {
+    gap: 12px;
+  }
+  
+  .status-card {
+    padding: 16px;
+    
+    .status-icon {
+      width: 48px;
+      height: 48px;
+      
+      img {
+        width: 24px;
+        height: 24px;
+      }
+    }
+    
+    .status-content .status-number {
+      font-size: 1.75rem;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .summary-container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+  
+  .mobile-header {
+    margin-bottom: 32px;
+  }
+  
+  .dashboard-content {
+    gap: 20px;
+  }
+  
+  .urgent-card {
+    padding: 28px;
+  }
+  
+  .task-card {
+    padding: 24px;
+  }
+  
+  .status-card {
+    padding: 24px;
+  }
 }
