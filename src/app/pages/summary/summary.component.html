@@ -20,15 +20,17 @@
     
     <!-- Urgent Tasks / Next Deadline Card -->
     <div class="urgent-card" *ngIf="stats.urgentTasks > 0 || stats.nextDeadline">
-      <div class="urgent-icon">
-        <img src="assets/img/urgent_prio_icon_white.png" alt="Urgent">
-      </div>
-      <div class="urgent-content">
-        <div class="urgent-number">{{ stats.urgentTasks }}</div>
+      <div class="urgent-left-section">
+        <div class="urgent-top-row">
+          <div class="urgent-icon">
+            <img src="assets/img/urgent_icon.png" alt="Urgent">
+          </div>
+          <div class="urgent-number">{{ stats.urgentTasks }}</div>
+        </div>
         <div class="urgent-label">Tasks Urgent</div>
       </div>
       <div class="urgent-divider"></div>
-      <div class="deadline-content" *ngIf="stats.nextDeadline">
+      <div class="urgent-right-section" *ngIf="stats.nextDeadline">
         <div class="deadline-date">{{ stats.nextDeadline }}</div>
         <div class="deadline-label">Upcoming Deadline</div>
       </div>
@@ -37,58 +39,56 @@
     <!-- Todo Tasks Card -->
     <div class="task-card task-card--light" routerLink="/board">
       <div class="task-icon">
-        <img src="assets/img/addTask_icon.png" alt="Todo">
+        <img src="assets/img/urgent_todo_icon.png" alt="Todo">
       </div>
-      <div class="task-content">
-        <div class="task-number">{{ stats.todoTasks }}</div>
-        <div class="task-label">Tasks To-do</div>
-      </div>
+      <div class="task-number">{{ stats.todoTasks }}</div>
+      <div class="task-label">Tasks To-do</div>
     </div>
 
     <!-- Task Status Grid -->
     <div class="status-grid">
       <!-- Tasks on Board -->
       <div class="status-card" routerLink="/board">
-        <div class="status-icon status-icon--board">
-          <img src="assets/img/board_icon.png" alt="Board">
-        </div>
-        <div class="status-content">
+        <div class="status-top-row">
+          <div class="status-icon status-icon--board">
+            <img src="assets/img/board_icon_summary.png" alt="Board">
+          </div>
           <div class="status-number">{{ stats.totalTasks }}</div>
-          <div class="status-label">Tasks on Board</div>
         </div>
+        <div class="status-label">Tasks on Board</div>
       </div>
 
       <!-- Tasks in Progress -->
       <div class="status-card" routerLink="/board">
-        <div class="status-icon status-icon--progress">
-          <img src="assets/img/board_icon.png" alt="Progress">
-        </div>
-        <div class="status-content">
+        <div class="status-top-row">
+          <div class="status-icon status-icon--progress">
+            <img src="assets/img/in_progress_icon.png" alt="Progress">
+          </div>
           <div class="status-number">{{ stats.inProgressTasks }}</div>
-          <div class="status-label">Tasks in Progress</div>
         </div>
+        <div class="status-label">Tasks in Progress</div>
       </div>
 
       <!-- Awaiting Feedback -->
       <div class="status-card" routerLink="/board">
-        <div class="status-icon status-icon--feedback">
-          <img src="assets/img/datepicker_calendar_icon.png" alt="Feedback">
-        </div>
-        <div class="status-content">
+        <div class="status-top-row">
+          <div class="status-icon status-icon--feedback">
+            <img src="assets/img/await_feedback_icon.png" alt="Feedback">
+          </div>
           <div class="status-number">{{ stats.awaitFeedbackTasks }}</div>
-          <div class="status-label">Awaiting feedback</div>
         </div>
+        <div class="status-label">Awaiting feedback</div>
       </div>
 
       <!-- Tasks Done -->
       <div class="status-card" routerLink="/board">
-        <div class="status-icon status-icon--done">
-          <img src="assets/img/check_blue_icon.png" alt="Done">
-        </div>
-        <div class="status-content">
+        <div class="status-top-row">
+          <div class="status-icon status-icon--done">
+            <img src="assets/img/done_icon.png" alt="Done">
+          </div>
           <div class="status-number">{{ stats.doneTasks }}</div>
-          <div class="status-label">Tasks Done</div>
         </div>
+        <div class="status-label">Tasks Done</div>
       </div>
     </div>
 
