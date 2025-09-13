@@ -246,6 +246,14 @@ $desktop: 1024px;
     margin: 10px 10px 0 16px;
   }
   
+  &__header-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    width: 100%;
+  }
+  
   &__avatar {
     width: 64px;
     height: 64px;
@@ -258,14 +266,14 @@ $desktop: 1024px;
     font-weight: 700;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     border: 3px solid #fff;
-    margin-bottom: 8px;
+    flex-shrink: 0; // Verhindert, dass der Avatar schrumpft
   }
   
   &__name {
     font-size: 24px;
     font-weight: 400;
     color: #222;
-    margin-bottom: 8px;
+    margin: 0; // Entfernt den Standard-Margin
   }
   
   &__info {

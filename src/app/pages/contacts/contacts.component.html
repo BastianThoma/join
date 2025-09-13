@@ -127,14 +127,16 @@
     
     <!-- Hauptinhalt -->
     <main class="contact-detail__main" *ngIf="selectedContact">
-      <div
-        class="contact-detail__avatar"
-        [ngStyle]="{ background: selectedContact.color }"
-        [attr.aria-hidden]="'true'">
-        {{ getInitials(selectedContact.name) }}
+      <div class="contact-detail__header-info">
+        <div
+          class="contact-detail__avatar"
+          [ngStyle]="{ background: selectedContact.color }"
+          [attr.aria-hidden]="'true'">
+          {{ getInitials(selectedContact.name) }}
+        </div>
+        
+        <h2 class="contact-detail__name">{{ selectedContact.name }}</h2>
       </div>
-      
-      <h2 class="contact-detail__name">{{ selectedContact.name }}</h2>
       
       <dl class="contact-detail__info">
         <dt class="contact-detail__label">Email</dt>
