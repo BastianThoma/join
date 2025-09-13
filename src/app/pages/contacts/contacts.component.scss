@@ -194,6 +194,13 @@ $desktop: 1024px;
   opacity: 0;
   padding-top: 72px;
   
+  // Desktop: Sidebar-Layout berücksichtigen
+  @media (min-width: 1024px) {
+    left: 240px; // Sidebar-Breite berücksichtigen
+    width: calc(100vw - 240px); // Verfügbare Breite anpassen
+    padding-top: 72px; // Header-Höhe beibehalten
+  }
+  
   &--open {
     transform: translateX(0);
     pointer-events: auto;
@@ -315,6 +322,12 @@ $desktop: 1024px;
   display: flex;
   align-items: center;
   justify-content: center;
+  
+  // Desktop: Sidebar-Layout berücksichtigen (Optional für bessere Zentrierung)
+  @media (min-width: 1024px) {
+    left: 240px;
+    width: calc(100vw - 240px);
+  }
 }
 
 .add-contact {

@@ -38,6 +38,14 @@
     role="region"
     aria-label="Dashboard Inhalt">
     
+    <!-- User Greeting Header -->
+    <header class="dashboard-greeting" role="banner">
+      <h1 class="dashboard-greeting__text">
+        <span class="dashboard-greeting__time">{{ greeting }},</span>
+        <span class="dashboard-greeting__name">{{ getUserDisplayName() }}</span>
+      </h1>
+    </header>
+    
     <!-- Urgent Tasks / Next Deadline Card -->
     <article 
       class="urgent-card" 

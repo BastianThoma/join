@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Injector, runInInjectionContext } from '@angular/core';
+import { Component, OnInit, OnDestroy, Injector, runInInjectionContext, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { UserService } from '../../shared/user.service';
@@ -180,6 +180,15 @@ export class SummaryComponent implements OnInit, OnDestroy {
   constructor(public userService: UserService) {
     this.tasksCol = collection(this.firestore, 'tasks');
     this.contactsCol = collection(this.firestore, 'contacts');
+    
+    // Reactive effect that updates user data when authentication state changes
+    effect(() => {
+      const user = this.userService.user();
+      if (user) {
+        this.name = user.displayName || user.email?.split('@')[0] || '';
+        this.greeting = this.getGreeting();
+      }
+    });
   }
 
   /**
@@ -190,11 +199,10 @@ export class SummaryComponent implements OnInit, OnDestroy {
    * @returns {Promise<void>}
    */
   async ngOnInit(): Promise<void> {
+    // Load user data (effect in constructor will update when auth state changes)
+    this.loadUserData();
+    
     if (localStorage.getItem('join_greeting_show') === '1') {
-      const user = this.userService.user();
-      this.name = user?.displayName || user?.email?.split('@')[0] || '';
-      this.greeting = this.getGreeting();
-      
       // Load data in background while showing greeting
       this.loadDashboardData();
       
@@ -219,6 +227,22 @@ export class SummaryComponent implements OnInit, OnDestroy {
   }
 
   // === Data Loading Methods ===
+
+  /**
+   * Loads user data for greeting display
+   * Uses reactive effect from constructor to automatically update when auth state changes
+   * 
+   * @private
+   * @returns {void}
+   */
+  private loadUserData(): void {
+    const user = this.userService.user();
+    if (user) {
+      this.name = user.displayName || user.email?.split('@')[0] || '';
+    }
+    // Don't set fallback name here - let the effect handle it
+    this.greeting = this.getGreeting();
+  }
 
   /**
    * Loads all dashboard data from Firestore
@@ -313,6 +337,25 @@ export class SummaryComponent implements OnInit, OnDestroy {
   }
 
   // === UI Helper Methods ===
+
+  /**
+   * Gets the user's display name with fallbacks
+   * Provides reliable user name display regardless of authentication timing
+   * 
+   * @returns {string} User display name or fallback
+   */
+  getUserDisplayName(): string {
+    if (this.name) {
+      return this.name;
+    }
+    
+    const user = this.userService.user();
+    if (user) {
+      return user.displayName || user.email?.split('@')[0] || 'User';
+    }
+    
+    return 'User';
+  }
 
   /**
    * Generates appropriate greeting based on current time
