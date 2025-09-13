@@ -1,6 +1,6 @@
 import { Auth, signInWithEmailAndPassword } from '@angular/fire/auth';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Injector, runInInjectionContext, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 
@@ -59,17 +59,20 @@ export class LoginComponent implements OnInit, OnDestroy {
   /** Timer ID für die Logo-Animation */
   private logoAnimationTimer?: number;
 
+  /** Firebase Auth service */
+  private auth = inject(Auth);
+  
+  /** Angular Router service */
+  private router = inject(Router);
+  
+  /** Angular Injector for running Firebase calls in injection context */
+  private injector = inject(Injector);
+
   /**
    * Konstruktor
    * Initialisiert die benötigten Services
-   * 
-   * @param auth - Firebase Auth Service
-   * @param router - Angular Router Service
    */
-  constructor(
-    private auth: Auth, 
-    private router: Router
-  ) {}
+  constructor() {}
 
   /**
    * Component Initialization
@@ -109,8 +112,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     try {
-      // Authenticate with Firebase
-      await signInWithEmailAndPassword(this.auth, this.email, this.password);
+      // Authenticate with Firebase within injection context
+      await runInInjectionContext(this.injector, async () => {
+        return signInWithEmailAndPassword(this.auth, this.email, this.password);
+      });
       
       // Clear form data
       this.clearLoginForm();

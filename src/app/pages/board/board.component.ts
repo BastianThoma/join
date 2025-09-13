@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, Injector, runInInjectionContext, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
@@ -123,6 +123,18 @@ export class BoardComponent implements OnInit, OnDestroy {
   // Firestore Collections
   // ===============================
   
+  /** Firestore instance */
+  private firestore = inject(Firestore);
+  
+  /** Router for navigation */
+  private router = inject(Router);
+  
+  /** Change detection reference */
+  private cdr = inject(ChangeDetectorRef);
+  
+  /** Angular Injector for running Firebase calls in injection context */
+  private injector = inject(Injector);
+  
   /** Firestore collection reference for tasks */
   private tasksCol: CollectionReference<DocumentData>;
   
@@ -131,13 +143,8 @@ export class BoardComponent implements OnInit, OnDestroy {
 
   /**
    * Initializes the component with Firestore collections
-   * @param firestore - Firestore service instance
    */
-  constructor(
-    private firestore: Firestore,
-    private router: Router,
-    private cdr: ChangeDetectorRef
-  ) {
+  constructor() {
     this.tasksCol = collection(this.firestore, 'tasks');
     this.contactsCol = collection(this.firestore, 'contacts');
   }
@@ -192,7 +199,9 @@ export class BoardComponent implements OnInit, OnDestroy {
    */
   async loadContacts(): Promise<void> {
     try {
-      const snapshot = await getDocs(this.contactsCol);
+      const snapshot = await runInInjectionContext(this.injector, async () => {
+        return getDocs(this.contactsCol);
+      });
       this.allContacts = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...(doc.data() as Omit<Contact, 'id'>),
@@ -207,7 +216,9 @@ export class BoardComponent implements OnInit, OnDestroy {
    */
   async loadTasks(): Promise<void> {
     try {
-      const snapshot = await getDocs(this.tasksCol);
+      const snapshot = await runInInjectionContext(this.injector, async () => {
+        return getDocs(this.tasksCol);
+      });
       this.allTasks = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...(doc.data() as Omit<Task, 'id'>),
@@ -333,8 +344,10 @@ export class BoardComponent implements OnInit, OnDestroy {
    */
   async updateTaskStatus(taskId: string, newStatus: Task['status']): Promise<void> {
     try {
-      const taskDoc = doc(this.firestore, 'tasks', taskId);
-      await updateDoc(taskDoc, { status: newStatus });
+      await runInInjectionContext(this.injector, async () => {
+        const taskDoc = doc(this.firestore, 'tasks', taskId);
+        return updateDoc(taskDoc, { status: newStatus });
+      });
     } catch (error) {
       console.error('Error updating task status in Firestore:', error);
       throw error;
@@ -627,9 +640,11 @@ export class BoardComponent implements OnInit, OnDestroy {
       }
 
       // Update in Firestore
-      const taskDoc = doc(this.firestore, 'tasks', this.selectedTask.id);
-      await updateDoc(taskDoc, { 
-        completedSubtasks: this.selectedTask.completedSubtasks 
+      await runInInjectionContext(this.injector, async () => {
+        const taskDoc = doc(this.firestore, 'tasks', this.selectedTask!.id!);
+        return updateDoc(taskDoc, { 
+          completedSubtasks: this.selectedTask!.completedSubtasks 
+        });
       });
 
       // Update the task in the local arrays
@@ -657,8 +672,10 @@ export class BoardComponent implements OnInit, OnDestroy {
 
     try {
       // Delete from Firestore
-      const taskDoc = doc(this.firestore, 'tasks', task.id);
-      await updateDoc(taskDoc, { deleted: true }); // Soft delete
+      await runInInjectionContext(this.injector, async () => {
+        const taskDoc = doc(this.firestore, 'tasks', task.id!);
+        return updateDoc(taskDoc, { deleted: true }); // Soft delete
+      });
 
       // Remove from local arrays
       this.allTasks = this.allTasks.filter(t => t.id !== task.id);

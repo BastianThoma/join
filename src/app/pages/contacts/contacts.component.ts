@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Injector, runInInjectionContext } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { 
@@ -70,6 +70,9 @@ export interface ContactGroup {
 export class ContactsComponent implements OnInit, OnDestroy {
   /** Firestore-Instanz für Datenbankoperationen */
   private firestore = inject(Firestore);
+  
+  /** Angular Injector for running Firebase calls in injection context */
+  private injector = inject(Injector);
   
   /** Subject für Component Lifecycle Management */
   private destroy$ = new Subject<void>();
@@ -168,8 +171,10 @@ export class ContactsComponent implements OnInit, OnDestroy {
    */
   private async loadContacts(): Promise<void> {
     try {
-      const contactsCollection = collection(this.firestore, 'contacts');
-      const snapshot = await getDocs(contactsCollection);
+      const snapshot = await runInInjectionContext(this.injector, async () => {
+        const contactsCollection = collection(this.firestore, 'contacts');
+        return getDocs(contactsCollection);
+      });
       
       this.contacts = snapshot.docs.map(doc => ({
         id: doc.id,
@@ -439,8 +444,10 @@ export class ContactsComponent implements OnInit, OnDestroy {
         color: this.generateRandomColor()
       };
 
-      const contactsCollection = collection(this.firestore, 'contacts');
-      const docRef = await addDoc(contactsCollection, newContact);
+      const docRef = await runInInjectionContext(this.injector, async () => {
+        const contactsCollection = collection(this.firestore, 'contacts');
+        return addDoc(contactsCollection, newContact);
+      });
       
       // Lokale Liste aktualisieren
       const addedContact: Contact = {
@@ -554,8 +561,10 @@ export class ContactsComponent implements OnInit, OnDestroy {
         phone: this.editPhone.trim() || ''
       };
 
-      const contactDoc = doc(this.firestore, 'contacts', this.selectedContact.id);
-      await updateDoc(contactDoc, updatedData);
+      await runInInjectionContext(this.injector, async () => {
+        const contactDoc = doc(this.firestore, 'contacts', this.selectedContact!.id);
+        return updateDoc(contactDoc, updatedData);
+      });
       
       // Lokale Daten aktualisieren
       const contactIndex = this.contacts.findIndex(c => c.id === this.selectedContact!.id);
@@ -595,8 +604,10 @@ export class ContactsComponent implements OnInit, OnDestroy {
     }
 
     try {
-      const contactDoc = doc(this.firestore, 'contacts', this.selectedContact.id);
-      await deleteDoc(contactDoc);
+      await runInInjectionContext(this.injector, async () => {
+        const contactDoc = doc(this.firestore, 'contacts', this.selectedContact!.id);
+        return deleteDoc(contactDoc);
+      });
       
       // Lokale Liste aktualisieren
       this.contacts = this.contacts.filter(c => c.id !== this.selectedContact!.id);

@@ -1,96 +1,205 @@
 <!-- Greeting Animation -->
-<div class="summary-greeting" *ngIf="showGreeting">
+<div 
+  class="summary-greeting" 
+  *ngIf="showGreeting"
+  role="alert"
+  aria-live="polite"
+  aria-label="Begrüßung wird angezeigt">
   <div class="greeting-content">
-    <div class="greeting-line1">{{ greeting }},</div>
-    <div class="greeting-line2">{{ name }}</div>
+    <div class="greeting-line1" aria-label="Begrüßung">{{ greeting }},</div>
+    <div class="greeting-line2" aria-label="Benutzername">{{ name }}</div>
   </div>
 </div>
 
 <!-- Dashboard Content -->
-<div class="summary-container" *ngIf="!showGreeting">
+<main 
+  class="summary-container" 
+  *ngIf="!showGreeting"
+  role="main"
+  aria-label="Dashboard Übersicht">
 
   <!-- Loading State -->
-  <div class="dashboard-loading" *ngIf="isLoading">
-    <div class="loading-spinner"></div>
+  <div 
+    class="dashboard-loading" 
+    *ngIf="isLoading"
+    role="status"
+    aria-live="polite"
+    aria-label="Dashboard wird geladen">
+    <div 
+      class="loading-spinner"
+      aria-hidden="true"></div>
     <p>Dashboard wird geladen...</p>
   </div>
 
   <!-- Dashboard Content -->
-  <div class="dashboard-content" *ngIf="!isLoading">
+  <div 
+    class="dashboard-content" 
+    *ngIf="!isLoading"
+    role="region"
+    aria-label="Dashboard Inhalt">
     
     <!-- Urgent Tasks / Next Deadline Card -->
-    <div class="urgent-card" *ngIf="stats.urgentTasks > 0 || stats.nextDeadline">
+    <article 
+      class="urgent-card" 
+      *ngIf="stats.urgentTasks > 0 || stats.nextDeadline"
+      role="button"
+      tabindex="0"
+      [attr.aria-label]="'Dringende Aufgaben: ' + stats.urgentTasks + ' Tasks, nächste Frist: ' + (stats.nextDeadline || 'Keine Frist verfügbar')"
+      (keydown.enter)="navigateToBoard()"
+      (keydown.space)="navigateToBoard()"
+      (click)="navigateToBoard()">
+      
       <div class="urgent-left-section">
         <div class="urgent-top-row">
-          <div class="urgent-icon">
-            <img src="assets/img/urgent_icon.png" alt="Urgent">
+          <div class="urgent-icon" aria-hidden="true">
+            <img 
+              src="assets/img/urgent_icon.png" 
+              alt=""
+              role="presentation">
           </div>
-          <div class="urgent-number">{{ stats.urgentTasks }}</div>
+          <div 
+            class="urgent-number"
+            [attr.aria-label]="stats.urgentTasks + ' dringende Aufgaben'">{{ stats.urgentTasks }}</div>
         </div>
         <div class="urgent-label">Tasks Urgent</div>
       </div>
-      <div class="urgent-divider"></div>
+      
+      <div class="urgent-divider" aria-hidden="true"></div>
+      
       <div class="urgent-right-section" *ngIf="stats.nextDeadline">
-        <div class="deadline-date">{{ stats.nextDeadline }}</div>
+        <div 
+          class="deadline-date"
+          [attr.aria-label]="'Nächste Frist am ' + stats.nextDeadline">{{ stats.nextDeadline }}</div>
         <div class="deadline-label">Upcoming Deadline</div>
       </div>
-    </div>
+    </article>
 
     <!-- Todo Tasks Card -->
-    <div class="task-card task-card--light" routerLink="/board">
-      <div class="task-icon">
-        <img src="assets/img/urgent_todo_icon.png" alt="Todo">
+    <article 
+      class="task-card task-card--light"
+      role="button"
+      tabindex="0"
+      [attr.aria-label]="'Zu erledigende Aufgaben: ' + stats.todoTasks + ' Tasks - Zum Board navigieren'"
+      (keydown.enter)="navigateToBoard()"
+      (keydown.space)="navigateToBoard()"
+      routerLink="/board">
+      
+      <div class="task-icon" aria-hidden="true">
+        <img 
+          src="assets/img/urgent_todo_icon.png" 
+          alt=""
+          role="presentation">
       </div>
-      <div class="task-number">{{ stats.todoTasks }}</div>
+      <div 
+        class="task-number"
+        [attr.aria-label]="stats.todoTasks + ' zu erledigende Aufgaben'">{{ stats.todoTasks }}</div>
       <div class="task-label">Tasks To-do</div>
-    </div>
+    </article>
 
     <!-- Task Status Grid -->
-    <div class="status-grid">
+    <section 
+      class="status-grid"
+      role="region"
+      aria-label="Aufgaben Status Übersicht">
+      
+      <h2 class="visually-hidden">Aufgaben nach Status</h2>
+      
       <!-- Tasks on Board -->
-      <div class="status-card" routerLink="/board">
+      <article 
+        class="status-card"
+        role="button"
+        tabindex="0"
+        [attr.aria-label]="'Gesamt Aufgaben auf Board: ' + stats.totalTasks + ' Tasks - Zum Board navigieren'"
+        (keydown.enter)="navigateToBoard()"
+        (keydown.space)="navigateToBoard()"
+        routerLink="/board">
+        
         <div class="status-top-row">
-          <div class="status-icon status-icon--board">
-            <img src="assets/img/board_icon_summary.png" alt="Board">
+          <div class="status-icon status-icon--board" aria-hidden="true">
+            <img 
+              src="assets/img/board_icon_summary.png" 
+              alt=""
+              role="presentation">
           </div>
-          <div class="status-number">{{ stats.totalTasks }}</div>
+          <div 
+            class="status-number"
+            [attr.aria-label]="stats.totalTasks + ' Aufgaben auf Board'">{{ stats.totalTasks }}</div>
         </div>
         <div class="status-label">Tasks on Board</div>
-      </div>
+      </article>
 
       <!-- Tasks in Progress -->
-      <div class="status-card" routerLink="/board">
+      <article 
+        class="status-card"
+        role="button"
+        tabindex="0"
+        [attr.aria-label]="'Aufgaben in Bearbeitung: ' + stats.inProgressTasks + ' Tasks - Zum Board navigieren'"
+        (keydown.enter)="navigateToBoard()"
+        (keydown.space)="navigateToBoard()"
+        routerLink="/board">
+        
         <div class="status-top-row">
-          <div class="status-icon status-icon--progress">
-            <img src="assets/img/in_progress_icon.png" alt="Progress">
+          <div class="status-icon status-icon--progress" aria-hidden="true">
+            <img 
+              src="assets/img/in_progress_icon.png" 
+              alt=""
+              role="presentation">
           </div>
-          <div class="status-number">{{ stats.inProgressTasks }}</div>
+          <div 
+            class="status-number"
+            [attr.aria-label]="stats.inProgressTasks + ' Aufgaben in Bearbeitung'">{{ stats.inProgressTasks }}</div>
         </div>
         <div class="status-label">Tasks in Progress</div>
-      </div>
+      </article>
 
       <!-- Awaiting Feedback -->
-      <div class="status-card" routerLink="/board">
+      <article 
+        class="status-card"
+        role="button"
+        tabindex="0"
+        [attr.aria-label]="'Aufgaben warten auf Feedback: ' + stats.awaitFeedbackTasks + ' Tasks - Zum Board navigieren'"
+        (keydown.enter)="navigateToBoard()"
+        (keydown.space)="navigateToBoard()"
+        routerLink="/board">
+        
         <div class="status-top-row">
-          <div class="status-icon status-icon--feedback">
-            <img src="assets/img/await_feedback_icon.png" alt="Feedback">
+          <div class="status-icon status-icon--feedback" aria-hidden="true">
+            <img 
+              src="assets/img/await_feedback_icon.png" 
+              alt=""
+              role="presentation">
           </div>
-          <div class="status-number">{{ stats.awaitFeedbackTasks }}</div>
+          <div 
+            class="status-number"
+            [attr.aria-label]="stats.awaitFeedbackTasks + ' Aufgaben warten auf Feedback'">{{ stats.awaitFeedbackTasks }}</div>
         </div>
         <div class="status-label">Awaiting feedback</div>
-      </div>
+      </article>
 
       <!-- Tasks Done -->
-      <div class="status-card" routerLink="/board">
+      <article 
+        class="status-card"
+        role="button"
+        tabindex="0"
+        [attr.aria-label]="'Erledigte Aufgaben: ' + stats.doneTasks + ' Tasks - Zum Board navigieren'"
+        (keydown.enter)="navigateToBoard()"
+        (keydown.space)="navigateToBoard()"
+        routerLink="/board">
+        
         <div class="status-top-row">
-          <div class="status-icon status-icon--done">
-            <img src="assets/img/done_icon.png" alt="Done">
+          <div class="status-icon status-icon--done" aria-hidden="true">
+            <img 
+              src="assets/img/done_icon.png" 
+              alt=""
+              role="presentation">
           </div>
-          <div class="status-number">{{ stats.doneTasks }}</div>
+          <div 
+            class="status-number"
+            [attr.aria-label]="stats.doneTasks + ' erledigte Aufgaben'">{{ stats.doneTasks }}</div>
         </div>
         <div class="status-label">Tasks Done</div>
-      </div>
-    </div>
+      </article>
+    </section>
 
   </div>
-</div>
+</main>

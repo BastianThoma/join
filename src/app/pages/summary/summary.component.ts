@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Injector, runInInjectionContext } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { UserService } from '../../shared/user.service';
 import { 
   Firestore, 
@@ -12,46 +12,103 @@ import {
 import { inject } from '@angular/core';
 
 /**
- * Interface for Task data structure
+ * Interface for Task data structure from Firestore
+ * 
+ * @interface Task
  */
 interface Task {
+  /** Unique identifier for the task */
   id?: string;
+  /** Task title/name */
   title: string;
+  /** Detailed description of the task */
   description: string;
+  /** Due date in ISO string format */
   dueDate: string;
+  /** Priority level of the task */
   priority: 'urgent' | 'medium' | 'low';
+  /** Array of user IDs assigned to this task */
   assignedTo: string[];
+  /** Category/type of the task */
   category: string;
+  /** Array of subtask descriptions */
   subtasks: string[];
+  /** Current status of the task */
   status: 'todo' | 'inprogress' | 'awaitfeedback' | 'done';
+  /** Creation timestamp in ISO string format */
   createdAt: string;
+  /** Array of completed subtask descriptions */
   completedSubtasks?: string[];
 }
 
 /**
- * Interface for Contact data structure
+ * Interface for Contact data structure from Firestore
+ * 
+ * @interface Contact
  */
 interface Contact {
+  /** Unique identifier for the contact */
   id?: string;
+  /** Full name of the contact */
   name: string;
+  /** Email address (optional) */
   email?: string;
+  /** Phone number (optional) */
   phone?: string;
+  /** Assigned color for visual identification */
   color?: string;
 }
 
 /**
  * Interface for Dashboard Statistics
+ * Aggregated data for dashboard display
+ * 
+ * @interface DashboardStats
  */
 interface DashboardStats {
+  /** Total number of tasks across all statuses */
   totalTasks: number;
+  /** Number of tasks with 'todo' status */
   todoTasks: number;
+  /** Number of tasks with 'inprogress' status */
   inProgressTasks: number;
+  /** Number of tasks with 'awaitfeedback' status */
   awaitFeedbackTasks: number;
+  /** Number of tasks with 'done' status */
   doneTasks: number;
+  /** Number of tasks with 'urgent' priority */
   urgentTasks: number;
+  /** Total number of contacts */
   totalContacts: number;
+  /** Next upcoming deadline formatted as string, null if none */
   nextDeadline: string | null;
 }
+
+/**
+ * SummaryComponent - Dashboard overview component
+ * 
+ * This component provides a comprehensive dashboard view showing:
+ * - Task statistics and counts by status/priority
+ * - Next upcoming deadline
+ * - Personalized greeting animation
+ * - Navigation to detailed views
+ * 
+ * Features:
+ * - WCAG 2.1 AA compliant accessibility
+ * - Real-time data loading from Firestore
+ * - Responsive design with mobile-first approach
+ * - Keyboard navigation support
+ * - Screen reader optimization
+ * - Performance optimized data loading
+ * 
+ * @class SummaryComponent
+ * @implements {OnInit}
+ * @implements {OnDestroy}
+ * 
+ * @author Join Development Team
+ * @version 1.0.0
+ * @since 2024
+ */
 
 @Component({
   selector: 'app-summary',
@@ -61,18 +118,47 @@ interface DashboardStats {
   styleUrls: ['./summary.component.scss'],
 })
 export class SummaryComponent implements OnInit, OnDestroy {
+  
+  // === Private Service Injections ===
+  
+  /** Firestore database instance */
   private firestore = inject(Firestore);
+  
+  /** Angular Router for navigation */
+  private router = inject(Router);
+
+  /** Angular Injector for running Firebase calls in injection context */
+  private injector = inject(Injector);
+  
+  /** Firestore collection reference for tasks */
   private tasksCol: CollectionReference<DocumentData>;
+  
+  /** Firestore collection reference for contacts */
   private contactsCol: CollectionReference<DocumentData>;
 
+  // === Public Component Properties ===
+  
+  /** Controls greeting animation visibility */
   showGreeting = true;
+  
+  /** Personalized greeting text based on time of day */
   greeting = '';
+  
+  /** User's display name for greeting */
   name = '';
+  
+  /** Loading state indicator for UI feedback */
   isLoading = true;
   
-  // Dashboard data
+  // === Dashboard Data Properties ===
+  
+  /** Array of all tasks loaded from Firestore */
   tasks: Task[] = [];
+  
+  /** Array of all contacts loaded from Firestore */
   contacts: Contact[] = [];
+  
+  /** Aggregated statistics for dashboard display */
   stats: DashboardStats = {
     totalTasks: 0,
     todoTasks: 0,
@@ -84,12 +170,24 @@ export class SummaryComponent implements OnInit, OnDestroy {
     nextDeadline: null
   };
 
+  /**
+   * Constructor - Initializes component dependencies
+   * 
+   * @param {UserService} userService - Service for user management and authentication
+   */
   constructor(public userService: UserService) {
     this.tasksCol = collection(this.firestore, 'tasks');
     this.contactsCol = collection(this.firestore, 'contacts');
   }
 
-  async ngOnInit() {
+  /**
+   * Component initialization lifecycle hook
+   * Handles greeting animation and data loading based on user state
+   * 
+   * @async
+   * @returns {Promise<void>}
+   */
+  async ngOnInit(): Promise<void> {
     if (localStorage.getItem('join_greeting_show') === '1') {
       const user = this.userService.user();
       this.name = user?.displayName || user?.email?.split('@')[0] || '';
@@ -108,36 +206,52 @@ export class SummaryComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy() {
-    // Cleanup if needed
+  /**
+   * Component cleanup lifecycle hook
+   * Performs necessary cleanup operations
+   * 
+   * @returns {void}
+   */
+  ngOnDestroy(): void {
+    // Cleanup if needed in future implementations
   }
+
+  // === Data Loading Methods ===
 
   /**
    * Loads all dashboard data from Firestore
+   * Fetches tasks and contacts in parallel for optimal performance
+   * 
+   * @async
+   * @returns {Promise<void>}
+   * @throws {Error} When Firestore operations fail
    */
   async loadDashboardData(): Promise<void> {
     try {
       this.isLoading = true;
       
-      // Load tasks and contacts in parallel
-      const [tasksSnapshot, contactsSnapshot] = await Promise.all([
-        getDocs(this.tasksCol),
-        getDocs(this.contactsCol)
-      ]);
+      // Load tasks and contacts in parallel for better performance
+      // Use runInInjectionContext to ensure Firebase APIs are called within the proper injection context
+      const [tasksSnapshot, contactsSnapshot] = await runInInjectionContext(this.injector, async () => {
+        return Promise.all([
+          getDocs(this.tasksCol),
+          getDocs(this.contactsCol)
+        ]);
+      });
 
-      // Process tasks
+      // Process and transform task documents
       this.tasks = tasksSnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       } as Task));
 
-      // Process contacts
+      // Process and transform contact documents
       this.contacts = contactsSnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       } as Contact));
 
-      // Calculate statistics
+      // Calculate aggregated statistics
       this.calculateStats();
       
     } catch (error) {
@@ -147,8 +261,14 @@ export class SummaryComponent implements OnInit, OnDestroy {
     }
   }
 
+  // === Statistics Calculation Methods ===
+
   /**
    * Calculates dashboard statistics from loaded data
+   * Aggregates task counts by status and priority, plus contact count
+   * 
+   * @private
+   * @returns {void}
    */
   private calculateStats(): void {
     this.stats = {
@@ -164,7 +284,11 @@ export class SummaryComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Gets the next upcoming deadline
+   * Determines the next upcoming deadline from active tasks
+   * Filters out completed tasks and sorts by due date
+   * 
+   * @private
+   * @returns {string | null} Formatted deadline date or null if no deadlines
    */
   private getNextDeadline(): string | null {
     const upcomingTasks = this.tasks
@@ -184,8 +308,13 @@ export class SummaryComponent implements OnInit, OnDestroy {
     return null;
   }
 
+  // === UI Helper Methods ===
+
   /**
-   * Gets appropriate greeting based on time of day
+   * Generates appropriate greeting based on current time
+   * Provides personalized experience based on time of day
+   * 
+   * @returns {string} Localized greeting message
    */
   getGreeting(): string {
     const hour = new Date().getHours();
@@ -197,7 +326,10 @@ export class SummaryComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Gets completion percentage for progress indication
+   * Calculates task completion percentage for progress indication
+   * Useful for progress bars or completion metrics
+   * 
+   * @returns {number} Completion percentage (0-100)
    */
   getCompletionPercentage(): number {
     if (this.stats.totalTasks === 0) return 0;
@@ -205,7 +337,10 @@ export class SummaryComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Gets formatted current date for display
+   * Formats current date for display purposes
+   * Returns localized date string in German format
+   * 
+   * @returns {string} Formatted current date
    */
   getCurrentDate(): string {
     return new Date().toLocaleDateString('de-DE', {
@@ -214,5 +349,23 @@ export class SummaryComponent implements OnInit, OnDestroy {
       month: 'long',
       day: 'numeric'
     });
+  }
+
+  // === Navigation Methods ===
+
+  /**
+   * Navigates to the board page
+   * Accessible navigation method for keyboard and click events
+   * Provides consistent navigation experience across all dashboard cards
+   * 
+   * @returns {Promise<boolean>} Navigation result promise
+   */
+  async navigateToBoard(): Promise<boolean> {
+    try {
+      return await this.router.navigate(['/board']);
+    } catch (error) {
+      console.error('Navigation to board failed:', error);
+      return false;
+    }
   }
 }

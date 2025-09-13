@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild, Injector, runInInjectionContext, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -135,6 +135,15 @@ export class AddTaskComponent {
   // Firestore Collections
   // ===============================
   
+  /** Firestore instance */
+  private firestore = inject(Firestore);
+  
+  /** Element reference */
+  private el = inject(ElementRef);
+  
+  /** Angular Injector for running Firebase calls in injection context */
+  private injector = inject(Injector);
+  
   /** Firestore collection reference for tasks */
   private tasksCol: CollectionReference<DocumentData>;
   
@@ -143,10 +152,8 @@ export class AddTaskComponent {
 
   /**
    * Initializes the component with Firestore collections and loads contacts
-   * @param firestore - Firestore service instance
-   * @param el - ElementRef for the component
    */
-  constructor(private firestore: Firestore, private el: ElementRef) {
+  constructor() {
     this.tasksCol = collection(this.firestore, 'tasks');
     this.contactsCol = collection(this.firestore, 'contacts');
     this.loadContacts();
@@ -219,7 +226,9 @@ export class AddTaskComponent {
    */
   async loadContacts(): Promise<void> {
     try {
-      const snapshot = await getDocs(this.contactsCol);
+      const snapshot = await runInInjectionContext(this.injector, async () => {
+        return getDocs(this.contactsCol);
+      });
       this.contacts = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...(doc.data() as Omit<Contact, 'id'>),
@@ -504,17 +513,19 @@ export class AddTaskComponent {
     
     try {
       // Create task document
-      await addDoc(this.tasksCol, {
-        title: this.title.trim(),
-        description: this.description.trim(),
-        dueDate: this.dueDate.trim(),
-        priority: this.priority,
-        assignedTo: this.assignedTo,
-        category: this.category.trim(),
-        subtasks: this.subtasks,
-        status: 'todo', // Default status for new tasks
-        createdAt: new Date().toISOString(),
-        completedSubtasks: [], // Initialize empty completed subtasks array
+      await runInInjectionContext(this.injector, async () => {
+        return addDoc(this.tasksCol, {
+          title: this.title.trim(),
+          description: this.description.trim(),
+          dueDate: this.dueDate.trim(),
+          priority: this.priority,
+          assignedTo: this.assignedTo,
+          category: this.category.trim(),
+          subtasks: this.subtasks,
+          status: 'todo', // Default status for new tasks
+          createdAt: new Date().toISOString(),
+          completedSubtasks: [], // Initialize empty completed subtasks array
+        });
       });
       
       this.success = 'Task created successfully!';
