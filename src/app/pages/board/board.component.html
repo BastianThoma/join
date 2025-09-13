@@ -1,235 +1,392 @@
 <!--
   BoardComponent
-  Stellt das Aufgaben-Board dar. Hier werden Aufgaben nach Status sortiert angezeigt.
-  Unterstützt Drag & Drop zwischen den Spalten und mobile Verschiebung.
+  Barrierefreies Kanban-Board für Aufgabenverwaltung nach WCAG 2.1 AA Standards
+  Unterstützt Drag & Drop zwischen den Spalten, Keyboard-Navigation und Screen Reader
 -->
-<section class="board" (click)="closeMobileMenu()">
-  <header class="board__header">
-    <h1 class="board__title">Board</h1>
-    <button class="board__add-task-btn" type="button" (click)="navigateToAddTask()">
-      <img src="/assets/img/addTask_icon.png" alt="" role="presentation">
-      Add Task
+<main class="board" 
+      role="main" 
+      aria-label="Aufgaben-Board" 
+      (click)="closeMobileMenu()">
+  
+  <!-- Board Header mit Navigation und Aktionen -->
+  <header class="board__header" role="banner">
+    <h1 class="board__title" id="board-title">Board</h1>
+    <button class="board__add-task-btn" 
+            type="button" 
+            (click)="navigateToAddTask()"
+            aria-label="Neue Aufgabe erstellen"
+            aria-describedby="board-title">
+      <img src="/assets/img/addTask_icon.png" alt="" role="presentation" aria-hidden="true">
+      <span>Add Task</span>
     </button>
   </header>
 
-  <!-- Loading State -->
-  <div *ngIf="isLoading" class="board__loading">
+  <!-- Loading State mit Screen Reader Support -->
+  <div *ngIf="isLoading" 
+       class="board__loading" 
+       role="status" 
+       aria-live="polite" 
+       aria-label="Aufgaben werden geladen">
     <p>Lade Aufgaben...</p>
   </div>
 
-  <!-- Error Message -->
-  <div *ngIf="error" class="board__error">
+  <!-- Error Message mit Screen Reader Support -->
+  <div *ngIf="error" 
+       class="board__error" 
+       role="alert" 
+       aria-live="assertive">
     <p>{{ error }}</p>
-    <button type="button" (click)="loadData()" class="board__retry-btn">
+    <button type="button" 
+            (click)="loadData()" 
+            class="board__retry-btn"
+            aria-label="Aufgaben erneut laden">
       Erneut versuchen
     </button>
   </div>
 
-  <!-- Board Columns -->
-  <div *ngIf="!isLoading && !error" class="board__columns">
+  <!-- Kanban Board Spalten mit Accessibility -->
+  <div *ngIf="!isLoading && !error" 
+       class="board__columns" 
+       role="application" 
+       aria-label="Kanban Board mit vier Spalten"
+       aria-describedby="board-instructions">
+    
+    <!-- Screen Reader Anweisungen -->
+    <div id="board-instructions" class="sr-only">
+      Verwenden Sie die Pfeiltasten oder Drag and Drop, um Aufgaben zwischen den Spalten zu verschieben. 
+      Drücken Sie Enter oder Leertaste, um eine Aufgabe zu öffnen.
+    </div>
     
     <!-- To Do Column -->
-    <div class="board__column">
+    <section class="board__column" 
+             role="region" 
+             aria-labelledby="todo-title"
+             aria-describedby="todo-description">
       <div class="board__column-header">
-        <h2 class="board__column-title">To do</h2>
-        <button class="board__add-task-column-btn" type="button" (click)="navigateToAddTask()">
-          <img src="/assets/img/addTask_icon.png" alt="Neue Aufgabe hinzufügen" class="board__add-icon">
+        <h2 class="board__column-title" id="todo-title">To do</h2>
+        <div id="todo-description" class="sr-only">
+          Spalte für neue Aufgaben. Enthält {{ todoTasks.length }} Aufgaben.
+        </div>
+        <button class="board__add-task-column-btn" 
+                type="button" 
+                (click)="navigateToAddTask()"
+                aria-label="Neue Aufgabe zur To-do Spalte hinzufügen">
+          <img src="/assets/img/addTask_icon.png" 
+               alt="" 
+               role="presentation" 
+               aria-hidden="true"
+               class="board__add-icon">
         </button>
       </div>
       
-      <div 
-        class="board__drop-zone"
-        cdkDropList
-        id="todo-list"
-        [cdkDropListData]="todoTasks"
-        [cdkDropListConnectedTo]="['inprogress-list', 'awaitfeedback-list', 'done-list']"
-        (cdkDropListDropped)="onTaskDrop($event)"
-      >
+      <div class="board__drop-zone"
+           cdkDropList
+           id="todo-list"
+           [cdkDropListData]="todoTasks"
+           [cdkDropListConnectedTo]="['inprogress-list', 'awaitfeedback-list', 'done-list']"
+           (cdkDropListDropped)="onTaskDrop($event)"
+           role="listbox"
+           aria-label="To-do Aufgaben"
+           [attr.aria-describedby]="todoTasks.length === 0 ? 'todo-empty' : null">
+        
         <!-- Task Cards using Template -->
-        <div 
-          *ngFor="let task of todoTasks; trackBy: trackByTaskId"
-          class="board__task-card"
-          cdkDrag
-          (cdkDragStarted)="onDragStarted()"
-          (cdkDragEnded)="onDragEnded()"
-          (click)="openTaskDetail(task); $event.stopPropagation()"
-        >
+        <div *ngFor="let task of todoTasks; trackBy: trackByTaskId"
+             class="board__task-card"
+             cdkDrag
+             (cdkDragStarted)="onDragStarted()"
+             (cdkDragEnded)="onDragEnded()"
+             (click)="openTaskDetail(task); $event.stopPropagation()"
+             (keydown.enter)="openTaskDetail(task)"
+             (keydown.space)="openTaskDetail(task); $event.preventDefault()"
+             role="option"
+             tabindex="0"
+             [attr.aria-label]="'Aufgabe: ' + task.title + ', Priorität: ' + task.priority + ', Fällig: ' + (task.dueDate | date:'dd.MM.yyyy')"
+             [attr.aria-describedby]="'task-' + task.id + '-desc'">
           <ng-container *ngTemplateOutlet="taskCardContentTemplate; context: { task: task }"></ng-container>
         </div>
         
         <!-- Empty State -->
-        <div *ngIf="todoTasks.length === 0" class="board__empty-state">
+        <div *ngIf="todoTasks.length === 0" 
+             class="board__empty-state"
+             id="todo-empty"
+             role="status"
+             aria-live="polite">
           <p>Keine Aufgaben</p>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- In Progress Column -->
-    <div class="board__column">
+    <section class="board__column" 
+             role="region" 
+             aria-labelledby="inprogress-title"
+             aria-describedby="inprogress-description">
       <div class="board__column-header">
-        <h2 class="board__column-title">In progress</h2>
-        <button class="board__add-task-column-btn" type="button" (click)="navigateToAddTask()">
-          <img src="/assets/img/addTask_icon.png" alt="Neue Aufgabe hinzufügen" class="board__add-icon">
+        <h2 class="board__column-title" id="inprogress-title">In progress</h2>
+        <div id="inprogress-description" class="sr-only">
+          Spalte für Aufgaben in Bearbeitung. Enthält {{ inProgressTasks.length }} Aufgaben.
+        </div>
+        <button class="board__add-task-column-btn" 
+                type="button" 
+                (click)="navigateToAddTask()"
+                aria-label="Neue Aufgabe zur In Progress Spalte hinzufügen">
+          <img src="/assets/img/addTask_icon.png" 
+               alt="" 
+               role="presentation" 
+               aria-hidden="true"
+               class="board__add-icon">
         </button>
       </div>
       
-      <div 
-        class="board__drop-zone"
-        cdkDropList
-        id="inprogress-list"
-        [cdkDropListData]="inProgressTasks"
-        [cdkDropListConnectedTo]="['todo-list', 'awaitfeedback-list', 'done-list']"
-        (cdkDropListDropped)="onTaskDrop($event)"
-      >
+      <div class="board__drop-zone"
+           cdkDropList
+           id="inprogress-list"
+           [cdkDropListData]="inProgressTasks"
+           [cdkDropListConnectedTo]="['todo-list', 'awaitfeedback-list', 'done-list']"
+           (cdkDropListDropped)="onTaskDrop($event)"
+           role="listbox"
+           aria-label="In Progress Aufgaben"
+           [attr.aria-describedby]="inProgressTasks.length === 0 ? 'inprogress-empty' : null">
+        
         <!-- Task Cards using Template -->
-        <div 
-          *ngFor="let task of inProgressTasks; trackBy: trackByTaskId"
-          class="board__task-card"
-          cdkDrag
-          (cdkDragStarted)="onDragStarted()"
-          (cdkDragEnded)="onDragEnded()"
-          (click)="openTaskDetail(task); $event.stopPropagation()"
-        >
+        <div *ngFor="let task of inProgressTasks; trackBy: trackByTaskId"
+             class="board__task-card"
+             cdkDrag
+             (cdkDragStarted)="onDragStarted()"
+             (cdkDragEnded)="onDragEnded()"
+             (click)="openTaskDetail(task); $event.stopPropagation()"
+             (keydown.enter)="openTaskDetail(task)"
+             (keydown.space)="openTaskDetail(task); $event.preventDefault()"
+             role="option"
+             tabindex="0"
+             [attr.aria-label]="'Aufgabe: ' + task.title + ', Priorität: ' + task.priority + ', Fällig: ' + (task.dueDate | date:'dd.MM.yyyy')"
+             [attr.aria-describedby]="'task-' + task.id + '-desc'">
           <ng-container *ngTemplateOutlet="taskCardContentTemplate; context: { task: task }"></ng-container>
         </div>
         
         <!-- Empty State -->
-        <div *ngIf="inProgressTasks.length === 0" class="board__empty-state">
+        <div *ngIf="inProgressTasks.length === 0" 
+             class="board__empty-state"
+             id="inprogress-empty"
+             role="status"
+             aria-live="polite">
           <p>Keine Aufgaben</p>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- Await Feedback Column -->
-    <div class="board__column">
+    <section class="board__column" 
+             role="region" 
+             aria-labelledby="awaitfeedback-title"
+             aria-describedby="awaitfeedback-description">
       <div class="board__column-header">
-        <h2 class="board__column-title">Await feedback</h2>
-        <button class="board__add-task-column-btn" type="button" (click)="navigateToAddTask()">
-          <img src="/assets/img/addTask_icon.png" alt="Neue Aufgabe hinzufügen" class="board__add-icon">
+        <h2 class="board__column-title" id="awaitfeedback-title">Await feedback</h2>
+        <div id="awaitfeedback-description" class="sr-only">
+          Spalte für Aufgaben, die auf Feedback warten. Enthält {{ awaitFeedbackTasks.length }} Aufgaben.
+        </div>
+        <button class="board__add-task-column-btn" 
+                type="button" 
+                (click)="navigateToAddTask()"
+                aria-label="Neue Aufgabe zur Await Feedback Spalte hinzufügen">
+          <img src="/assets/img/addTask_icon.png" 
+               alt="" 
+               role="presentation" 
+               aria-hidden="true"
+               class="board__add-icon">
         </button>
       </div>
       
-      <div 
-        class="board__drop-zone"
-        cdkDropList
-        id="awaitfeedback-list"
-        [cdkDropListData]="awaitFeedbackTasks"
-        [cdkDropListConnectedTo]="['todo-list', 'inprogress-list', 'done-list']"
-        (cdkDropListDropped)="onTaskDrop($event)"
-      >
+      <div class="board__drop-zone"
+           cdkDropList
+           id="awaitfeedback-list"
+           [cdkDropListData]="awaitFeedbackTasks"
+           [cdkDropListConnectedTo]="['todo-list', 'inprogress-list', 'done-list']"
+           (cdkDropListDropped)="onTaskDrop($event)"
+           role="listbox"
+           aria-label="Await Feedback Aufgaben"
+           [attr.aria-describedby]="awaitFeedbackTasks.length === 0 ? 'awaitfeedback-empty' : null">
+        
         <!-- Task Cards using Template -->
-        <div 
-          *ngFor="let task of awaitFeedbackTasks; trackBy: trackByTaskId"
-          class="board__task-card"
-          cdkDrag
-          (cdkDragStarted)="onDragStarted()"
-          (cdkDragEnded)="onDragEnded()"
-          (click)="openTaskDetail(task); $event.stopPropagation()"
-        >
+        <div *ngFor="let task of awaitFeedbackTasks; trackBy: trackByTaskId"
+             class="board__task-card"
+             cdkDrag
+             (cdkDragStarted)="onDragStarted()"
+             (cdkDragEnded)="onDragEnded()"
+             (click)="openTaskDetail(task); $event.stopPropagation()"
+             (keydown.enter)="openTaskDetail(task)"
+             (keydown.space)="openTaskDetail(task); $event.preventDefault()"
+             role="option"
+             tabindex="0"
+             [attr.aria-label]="'Aufgabe: ' + task.title + ', Priorität: ' + task.priority + ', Fällig: ' + (task.dueDate | date:'dd.MM.yyyy')"
+             [attr.aria-describedby]="'task-' + task.id + '-desc'">
           <ng-container *ngTemplateOutlet="taskCardContentTemplate; context: { task: task }"></ng-container>
         </div>
         
         <!-- Empty State -->
-        <div *ngIf="awaitFeedbackTasks.length === 0" class="board__empty-state">
+        <div *ngIf="awaitFeedbackTasks.length === 0" 
+             class="board__empty-state"
+             id="awaitfeedback-empty"
+             role="status"
+             aria-live="polite">
           <p>Keine Aufgaben</p>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- Done Column -->
-    <div class="board__column">
+    <section class="board__column" 
+             role="region" 
+             aria-labelledby="done-title"
+             aria-describedby="done-description">
       <div class="board__column-header">
-        <h2 class="board__column-title">Done</h2>
-        <button class="board__add-task-column-btn" type="button" (click)="navigateToAddTask()">
-          <img src="/assets/img/addTask_icon.png" alt="Neue Aufgabe hinzufügen" class="board__add-icon">
+        <h2 class="board__column-title" id="done-title">Done</h2>
+        <div id="done-description" class="sr-only">
+          Spalte für abgeschlossene Aufgaben. Enthält {{ doneTasks.length }} Aufgaben.
+        </div>
+        <button class="board__add-task-column-btn" 
+                type="button" 
+                (click)="navigateToAddTask()"
+                aria-label="Neue Aufgabe zur Done Spalte hinzufügen">
+          <img src="/assets/img/addTask_icon.png" 
+               alt="" 
+               role="presentation" 
+               aria-hidden="true"
+               class="board__add-icon">
         </button>
       </div>
       
-      <div 
-        class="board__drop-zone"
-        cdkDropList
-        id="done-list"
-        [cdkDropListData]="doneTasks"
-        [cdkDropListConnectedTo]="['todo-list', 'inprogress-list', 'awaitfeedback-list']"
-        (cdkDropListDropped)="onTaskDrop($event)"
-      >
+      <div class="board__drop-zone"
+           cdkDropList
+           id="done-list"
+           [cdkDropListData]="doneTasks"
+           [cdkDropListConnectedTo]="['todo-list', 'inprogress-list', 'awaitfeedback-list']"
+           (cdkDropListDropped)="onTaskDrop($event)"
+           role="listbox"
+           aria-label="Abgeschlossene Aufgaben"
+           [attr.aria-describedby]="doneTasks.length === 0 ? 'done-empty' : null">
+        
         <!-- Task Cards using Template -->
-        <div 
-          *ngFor="let task of doneTasks; trackBy: trackByTaskId"
-          class="board__task-card"
-          cdkDrag
-          (cdkDragStarted)="onDragStarted()"
-          (cdkDragEnded)="onDragEnded()"
-          (click)="openTaskDetail(task); $event.stopPropagation()"
-        >
+        <div *ngFor="let task of doneTasks; trackBy: trackByTaskId"
+             class="board__task-card"
+             cdkDrag
+             (cdkDragStarted)="onDragStarted()"
+             (cdkDragEnded)="onDragEnded()"
+             (click)="openTaskDetail(task); $event.stopPropagation()"
+             (keydown.enter)="openTaskDetail(task)"
+             (keydown.space)="openTaskDetail(task); $event.preventDefault()"
+             role="option"
+             tabindex="0"
+             [attr.aria-label]="'Aufgabe: ' + task.title + ', Priorität: ' + task.priority + ', Fällig: ' + (task.dueDate | date:'dd.MM.yyyy')"
+             [attr.aria-describedby]="'task-' + task.id + '-desc'">
           <ng-container *ngTemplateOutlet="taskCardContentTemplate; context: { task: task }"></ng-container>
         </div>
         
         <!-- Empty State -->
-        <div *ngIf="doneTasks.length === 0" class="board__empty-state">
+        <div *ngIf="doneTasks.length === 0" 
+             class="board__empty-state"
+             id="done-empty"
+             role="status"
+             aria-live="polite">
           <p>Keine Aufgaben</p>
         </div>
       </div>
-    </div>
+    </section>
 
   </div>
-</section>
+</main>
 
-<!-- Task Detail Modal -->
-<div *ngIf="showTaskDetail && selectedTask" class="board__modal-overlay" (click)="closeTaskDetail()">
-  <div class="board__task-detail-modal" (click)="$event.stopPropagation()">
+<!-- Task Detail Modal mit WCAG 2.1 AA Compliance -->
+<div *ngIf="showTaskDetail && selectedTask" 
+     class="board__modal-overlay" 
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="modal-title"
+     aria-describedby="modal-description"
+     (click)="closeTaskDetail()"
+     (keydown.escape)="closeTaskDetail()">
+  
+  <div class="board__task-detail-modal" 
+       (click)="$event.stopPropagation()"
+       role="document">
     
     <!-- Modal Header -->
-    <div class="board__modal-header">
-      <div class="board__task-category-detail" [style.background-color]="getCategoryColor(selectedTask.category)">
+    <header class="board__modal-header">
+      <div class="board__task-category-detail" 
+           [style.background-color]="getCategoryColor(selectedTask.category)"
+           role="status"
+           [attr.aria-label]="'Kategorie: ' + selectedTask.category">
         {{ selectedTask.category }}
       </div>
-      <button class="board__modal-close-btn" type="button" (click)="closeTaskDetail()">
-        <img src="/assets/img/close_small_white_icon.png" alt="Schließen">
+      <button class="board__modal-close-btn" 
+              type="button" 
+              (click)="closeTaskDetail()"
+              aria-label="Task Detail Dialog schließen"
+              autofocus>
+        <img src="/assets/img/close_small_white_icon.png" 
+             alt="" 
+             role="presentation" 
+             aria-hidden="true">
       </button>
-    </div>
+    </header>
 
     <!-- Modal Content -->
-    <div class="board__modal-content">
+    <div class="board__modal-content" role="main">
       
       <!-- Task Title -->
-      <h2 class="board__modal-title">{{ selectedTask.title }}</h2>
+      <h1 class="board__modal-title" id="modal-title">{{ selectedTask.title }}</h1>
       
       <!-- Task Description -->
-      <p *ngIf="selectedTask.description" class="board__modal-description">
-        {{ selectedTask.description }}
-      </p>
+      <div *ngIf="selectedTask.description" 
+           class="board__modal-description" 
+           id="modal-description">
+        <h2 class="sr-only">Beschreibung</h2>
+        <p>{{ selectedTask.description }}</p>
+      </div>
       
       <!-- Task Details Grid -->
-      <div class="board__modal-details">
+      <div class="board__modal-details" role="group" aria-label="Aufgaben-Details">
         
         <!-- Due Date -->
         <div class="board__detail-item">
-          <span class="board__detail-label">Fälligkeitsdatum:</span>
-          <span class="board__detail-value">{{ selectedTask.dueDate | date:'dd.MM.yyyy' }}</span>
+          <span class="board__detail-label" id="due-date-label">Fälligkeitsdatum:</span>
+          <span class="board__detail-value" 
+                aria-labelledby="due-date-label"
+                [attr.aria-label]="'Fällig am ' + (selectedTask.dueDate | date:'dd.MM.yyyy')">
+            {{ selectedTask.dueDate | date:'dd.MM.yyyy' }}
+          </span>
         </div>
         
         <!-- Priority -->
         <div class="board__detail-item">
-          <span class="board__detail-label">Priorität:</span>
-          <div class="board__priority-detail">
-            <img [src]="getPriorityIcon(selectedTask.priority)" [alt]="selectedTask.priority" class="board__priority-icon-detail">
+          <span class="board__detail-label" id="priority-label">Priorität:</span>
+          <div class="board__priority-detail" 
+               role="group" 
+               aria-labelledby="priority-label"
+               [attr.aria-label]="selectedTask.priority + ' Priorität'">
+            <img [src]="getPriorityIcon(selectedTask.priority)" 
+                 [alt]=""
+                 role="presentation"
+                 aria-hidden="true"
+                 class="board__priority-icon-detail">
             <span class="board__detail-value">{{ selectedTask.priority }}</span>
           </div>
         </div>
         
         <!-- Assigned Contacts -->
         <div class="board__detail-item">
-          <span class="board__detail-label">Zugewiesen an:</span>
-          <div class="board__assigned-contacts">
-            <div 
-              *ngFor="let contactId of selectedTask.assignedTo" 
-              class="board__contact-detail"
-            >
-              <div 
-                class="board__contact-avatar-detail"
-                [style.background-color]="getContactColor(contactId)"
-              >
+          <span class="board__detail-label" id="assigned-label">Zugewiesen an:</span>
+          <div class="board__assigned-contacts" 
+               role="group" 
+               aria-labelledby="assigned-label">
+            <div *ngFor="let contactId of selectedTask.assignedTo" 
+                 class="board__contact-detail"
+                 role="group"
+                 [attr.aria-label]="'Kontakt: ' + getContactName(contactId)">
+              <div class="board__contact-avatar-detail"
+                   [style.background-color]="getContactColor(contactId)"
+                   [attr.aria-label]="'Avatar von ' + getContactName(contactId)"
+                   role="img">
                 {{ getContactInitials(contactId) }}
               </div>
               <span class="board__contact-name">{{ getContactName(contactId) }}</span>
@@ -240,133 +397,193 @@
       </div>
       
       <!-- Subtasks Section -->
-      <div *ngIf="selectedTask.subtasks && selectedTask.subtasks.length > 0" class="board__subtasks-section">
-        <h3 class="board__subtasks-title">Subtasks</h3>
-        <div class="board__subtasks-list">
-          <div 
-            *ngFor="let subtask of selectedTask.subtasks; let i = index" 
-            class="board__subtask-item"
-          >
-            <label class="board__subtask-label">
-              <input 
-                type="checkbox" 
-                class="board__subtask-checkbox"
-                [checked]="isSubtaskCompleted(subtask)"
-                (change)="toggleSubtask(i, $event)"
-              >
-              <span class="board__subtask-text" [class.board__subtask-text--completed]="isSubtaskCompleted(subtask)">
+      <div *ngIf="selectedTask.subtasks && selectedTask.subtasks.length > 0" 
+           class="board__subtasks-section"
+           role="group"
+           aria-labelledby="subtasks-title">
+        <h2 class="board__subtasks-title" id="subtasks-title">
+          Subtasks ({{ getCompletedSubtasksCount(selectedTask) }}/{{ getTotalSubtasksCount(selectedTask) }})
+        </h2>
+        <ul class="board__subtasks-list" 
+            role="list"
+            aria-label="Liste der Teilaufgaben">
+          <li *ngFor="let subtask of selectedTask.subtasks; let i = index" 
+              class="board__subtask-item"
+              role="listitem">
+            <label class="board__subtask-label" 
+                   [attr.for]="'subtask-' + i">
+              <input type="checkbox" 
+                     class="board__subtask-checkbox"
+                     [id]="'subtask-' + i"
+                     [checked]="isSubtaskCompleted(subtask)"
+                     (change)="toggleSubtask(i, $event)"
+                     [attr.aria-describedby]="'subtask-text-' + i">
+              <span class="board__subtask-text" 
+                    [id]="'subtask-text-' + i"
+                    [class.board__subtask-text--completed]="isSubtaskCompleted(subtask)"
+                    [attr.aria-label]="(isSubtaskCompleted(subtask) ? 'Erledigt: ' : 'Offen: ') + subtask">
                 {{ subtask }}
               </span>
             </label>
-          </div>
-        </div>
+          </li>
+        </ul>
       </div>
       
     </div>
     
     <!-- Modal Actions -->
-    <div class="board__modal-actions">
-      <button class="board__action-btn board__action-btn--delete" type="button" (click)="deleteTask(selectedTask)">
-        <img src="/assets/img/delete_icon_blue.png" alt="" role="presentation">
-        Löschen
+    <footer class="board__modal-actions" 
+            role="group" 
+            aria-label="Aufgaben-Aktionen">
+      <button class="board__action-btn board__action-btn--delete" 
+              type="button" 
+              (click)="deleteTask(selectedTask)"
+              aria-label="Aufgabe löschen"
+              aria-describedby="delete-description">
+        <img src="/assets/img/delete_icon_blue.png" 
+             alt="" 
+             role="presentation" 
+             aria-hidden="true">
+        <span>Löschen</span>
+        <span id="delete-description" class="sr-only">
+          Diese Aktion löscht die Aufgabe dauerhaft
+        </span>
       </button>
-      <button class="board__action-btn board__action-btn--edit" type="button" (click)="editTask(selectedTask)">
-        <img src="/assets/img/edit_icon_blue.png" alt="" role="presentation">
-        Bearbeiten
+      <button class="board__action-btn board__action-btn--edit" 
+              type="button" 
+              (click)="editTask(selectedTask)"
+              aria-label="Aufgabe bearbeiten"
+              aria-describedby="edit-description">
+        <img src="/assets/img/edit_icon_blue.png" 
+             alt="" 
+             role="presentation" 
+             aria-hidden="true">
+        <span>Bearbeiten</span>
+        <span id="edit-description" class="sr-only">
+          Öffnet das Bearbeitungsformular für diese Aufgabe
+        </span>
       </button>
-    </div>
+    </footer>
     
   </div>
 </div>
 
 <!-- ===============================
-     Reusable Task Card Template
+     Reusable Task Card Template mit WCAG 2.1 AA
      =============================== -->
 <ng-template #taskCardContentTemplate let-task="task">
+    <!-- Versteckte Beschreibung für Screen Reader -->
+    <div [id]="'task-' + task.id + '-desc'" class="sr-only">
+      Aufgabe in {{ task.status === 'todo' ? 'To-do' : task.status === 'inprogress' ? 'In Progress' : task.status === 'awaitfeedback' ? 'Await Feedback' : 'Done' }} Spalte.
+      {{ task.description ? 'Beschreibung: ' + task.description + '.' : '' }}
+      {{ task.assignedTo.length > 0 ? 'Zugewiesen an ' + task.assignedTo.length + ' Person' + (task.assignedTo.length === 1 ? '' : 'en') + '.' : '' }}
+      {{ getTotalSubtasksCount(task) > 0 ? getCompletedSubtasksCount(task) + ' von ' + getTotalSubtasksCount(task) + ' Teilaufgaben erledigt.' : '' }}
+    </div>
+
     <!-- Category Badge -->
-    <div class="board__task-category" [style.background-color]="getCategoryColor(task.category)">
+    <div class="board__task-category" 
+         [style.background-color]="getCategoryColor(task.category)"
+         role="status"
+         [attr.aria-label]="'Kategorie: ' + task.category">
       {{ task.category }}
     </div>
     
     <!-- Task Header with Title and Mobile Menu -->
-    <div class="board__task-header">
+    <header class="board__task-header">
       <h3 class="board__task-title">{{ task.title }}</h3>
       
-      <!-- Mobile Menu Button -->
+      <!-- Mobile Menu Container -->
       <div class="board__mobile-menu-container">
-        <button 
-          class="board__mobile-menu-btn"
-          type="button"
-          (click)="toggleMobileMenu(task.id); $event.stopPropagation()"
-          [attr.aria-label]="'Task verschieben: ' + task.title"
-        >
-          <img src="/assets/img/swap_icon_blue.png" alt="" role="presentation">
+        <button class="board__mobile-menu-btn"
+                type="button"
+                (click)="toggleMobileMenu(task.id); $event.stopPropagation()"
+                [attr.aria-label]="'Task verschieben: ' + task.title"
+                [attr.aria-expanded]="showMobileMenu === task.id"
+                [attr.aria-controls]="'mobile-menu-' + task.id">
+          <img src="/assets/img/swap_icon_blue.png" 
+               alt="" 
+               role="presentation" 
+               aria-hidden="true">
         </button>
         
         <!-- Mobile Menu -->
-        <div 
-          *ngIf="showMobileMenu === task.id" 
-          class="board__mobile-menu"
-        >
-          <button
-            *ngFor="let option of getAvailableStatusOptions(task.status)"
-            type="button"
-            class="board__mobile-menu-item"
-            (click)="moveTaskViaMobile(task, option.status); $event.stopPropagation()"
-          >
-            <img [src]="option.icon" alt="" role="presentation" class="board__menu-icon">
+        <nav *ngIf="showMobileMenu === task.id" 
+             class="board__mobile-menu"
+             [id]="'mobile-menu-' + task.id"
+             role="menu"
+             aria-label="Task verschieben Optionen">
+          <button *ngFor="let option of getAvailableStatusOptions(task.status)"
+                  type="button"
+                  class="board__mobile-menu-item"
+                  role="menuitem"
+                  (click)="moveTaskViaMobile(task, option.status); $event.stopPropagation()"
+                  [attr.aria-label]="'Task nach ' + option.label + ' verschieben'">
+            <img [src]="option.icon" 
+                 alt="" 
+                 role="presentation" 
+                 aria-hidden="true"
+                 class="board__menu-icon">
             <span>{{ option.label }}</span>
           </button>
-        </div>
+        </nav>
       </div>
-    </div>
+    </header>
     
     <!-- Task Description -->
-    <p *ngIf="task.description" class="board__task-description">
-      {{ task.description }}
-    </p>
+    <div *ngIf="task.description" class="board__task-description">
+      <p>{{ task.description }}</p>
+    </div>
     
     <!-- Subtasks Progress -->
-    <div *ngIf="getTotalSubtasksCount(task) > 0" class="board__task-progress">
-      <div class="board__progress-bar">
-        <div 
-          class="board__progress-fill" 
-          [style.width.%]="(getCompletedSubtasksCount(task) / getTotalSubtasksCount(task)) * 100"
-        ></div>
+    <div *ngIf="getTotalSubtasksCount(task) > 0" 
+         class="board__task-progress"
+         role="progressbar"
+         [attr.aria-valuenow]="getCompletedSubtasksCount(task)"
+         [attr.aria-valuemin]="0"
+         [attr.aria-valuemax]="getTotalSubtasksCount(task)"
+         [attr.aria-label]="getCompletedSubtasksCount(task) + ' von ' + getTotalSubtasksCount(task) + ' Teilaufgaben erledigt'">
+      <div class="board__progress-bar" aria-hidden="true">
+        <div class="board__progress-fill" 
+             [style.width.%]="(getCompletedSubtasksCount(task) / getTotalSubtasksCount(task)) * 100">
+        </div>
       </div>
-      <span class="board__progress-text">
+      <span class="board__progress-text" aria-hidden="true">
         {{ getCompletedSubtasksCount(task) }}/{{ getTotalSubtasksCount(task) }} Subtasks
       </span>
     </div>
     
     <!-- Task Footer -->
-    <div class="board__task-footer">
+    <footer class="board__task-footer">
       <!-- Assigned Contacts -->
-      <div class="board__task-contacts">
-        <div 
-          *ngFor="let contactId of task.assignedTo.slice(0, 3); trackBy: trackByContactId" 
-          class="board__contact-avatar"
-          [style.background-color]="getContactColor(contactId)"
-          [title]="getContactName(contactId)"
-        >
+      <div class="board__task-contacts" 
+           role="group" 
+           [attr.aria-label]="'Zugewiesene Kontakte: ' + task.assignedTo.length + (task.assignedTo.length === 1 ? ' Person' : ' Personen')">
+        <div *ngFor="let contactId of task.assignedTo.slice(0, 3); trackBy: trackByContactId" 
+             class="board__contact-avatar"
+             [style.background-color]="getContactColor(contactId)"
+             [attr.title]="getContactName(contactId)"
+             [attr.aria-label]="'Avatar: ' + getContactName(contactId)"
+             role="img">
           {{ getContactInitials(contactId) }}
         </div>
-        <div 
-          *ngIf="task.assignedTo.length > 3" 
-          class="board__contact-avatar board__contact-avatar--more"
-          [title]="'Und ' + (task.assignedTo.length - 3) + ' weitere'"
-        >
+        <div *ngIf="task.assignedTo.length > 3" 
+             class="board__contact-avatar board__contact-avatar--more"
+             [attr.title]="'Und ' + (task.assignedTo.length - 3) + ' weitere'"
+             [attr.aria-label]="'Und ' + (task.assignedTo.length - 3) + ' weitere Kontakte'"
+             role="img">
           +{{ task.assignedTo.length - 3 }}
         </div>
       </div>
       
       <!-- Priority Icon -->
-      <div class="board__task-priority">
-        <img 
-          [src]="getPriorityIcon(task.priority)" 
-          [alt]="task.priority + ' Priorität'"
-          class="board__priority-icon"
-        >
+      <div class="board__task-priority" 
+           [attr.aria-label]="task.priority + ' Priorität'"
+           role="img">
+        <img [src]="getPriorityIcon(task.priority)" 
+             [alt]=""
+             role="presentation"
+             aria-hidden="true"
+             class="board__priority-icon">
       </div>
-    </div>
+    </footer>
 </ng-template>
