@@ -39,6 +39,8 @@ interface Task {
   createdAt: string;
   /** Array of completed subtask descriptions */
   completedSubtasks?: string[];
+  /** Soft delete flag */
+  deleted?: boolean;
 }
 
 /**
@@ -240,10 +242,12 @@ export class SummaryComponent implements OnInit, OnDestroy {
       });
 
       // Process and transform task documents
-      this.tasks = tasksSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      } as Task));
+      this.tasks = tasksSnapshot.docs
+        .map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        } as Task))
+        .filter(task => !task.deleted); // Filter out deleted tasks
 
       // Process and transform contact documents
       this.contacts = contactsSnapshot.docs.map(doc => ({

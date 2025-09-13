@@ -55,6 +55,8 @@ interface Task {
   createdAt: string;
   /** Completed subtasks count */
   completedSubtasks?: string[];
+  /** Soft delete flag */
+  deleted?: boolean;
 }
 
 /**
@@ -219,11 +221,14 @@ export class BoardComponent implements OnInit, OnDestroy {
       const snapshot = await runInInjectionContext(this.injector, async () => {
         return getDocs(this.tasksCol);
       });
-      this.allTasks = snapshot.docs.map((doc) => ({
+      const allTasksFromFirestore = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...(doc.data() as Omit<Task, 'id'>),
         status: (doc.data() as any).status || 'todo', // Default to todo if no status
       })) as Task[];
+      
+      // Filter out deleted tasks
+      this.allTasks = allTasksFromFirestore.filter(task => !task.deleted);
     } catch (error) {
       console.error('Error loading tasks:', error);
     }
