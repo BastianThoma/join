@@ -36,13 +36,13 @@
     padding: 0;
     list-style: none;
 
-    // Desktop: Vertikale Anordnung
+    // Desktop: Vertikale Anordnung ohne äußeres Padding
     @media (min-width: 1024px) {
       flex-direction: column;
       justify-content: flex-start;
       align-items: stretch;
       gap: 8px;
-      padding: 0; // Padding entfernt, wird auf Link-Level angewendet
+      padding: 0; // Kein äußeres Padding
     }
 
     .navbar__item {
@@ -55,9 +55,10 @@
       font-weight: 400;
       transition: color 0.2s;
 
-      // Desktop: Horizontale Link-Anordnung
+      // Desktop: Vereinfachte Struktur
       @media (min-width: 1024px) {
         flex: none;
+        width: 100%; // Explizite Breite
       }
 
       &--active {
@@ -75,15 +76,17 @@
         height: 100%;
         padding: 8px 0 0 0;
 
-        // Desktop: Horizontale Anordnung mit mehr Padding und Effekten
+        // Desktop: Saubere Struktur mit korrektem Padding innerhalb der 240px Sidebar
         @media (min-width: 1024px) {
           flex-direction: row;
           align-items: center;
-          padding: 12px 16px;
-          margin: 0 16px; // Margin für korrekten Abstand zur Sidebar-Kante
-          gap: 16px;
+          padding: 12px 20px; // Angepasstes Padding für 240px Container
+          width: 100%;
+          gap: 12px; // Reduzierter Gap
           border-radius: 8px;
+          margin: 0 8px; // Kleiner Margin für Abstand zu Sidebar-Rändern
           transition: all 0.2s ease;
+          box-sizing: border-box;
 
           &:hover {
             background: #f8f9fa;
