@@ -23,17 +23,15 @@
     height: calc(100vh - 72px);
     box-shadow: 2px 0 16px 0 rgba(0,0,0,0.08), 1px 0 4px 0 rgba(0,0,0,0.06);
     flex-direction: column;
-    align-items: stretch;
+    align-items: start;
     padding: 24px 0;
   }
 
   &__list {
     display: flex;
-    width: 100%;
     justify-content: space-around;
     align-items: center;
-    margin: 0;
-    padding: 0;
+    margin: 0 0 0 16px;
     list-style: none;
 
     // Desktop: Vertikale Anordnung
