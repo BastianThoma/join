@@ -671,6 +671,8 @@ $desktop: 1024px;
     .login-card {
       padding: 32px 48px;
       margin-top: 48px;
+      width: 500px; // ~100px breiter als Mobile Standard
+      max-width: 500px;
 
       &__title {
         font-size: 56px;
@@ -678,6 +680,18 @@ $desktop: 1024px;
 
       &__form {
         max-width: 400px;
+      }
+
+      // Desktop: Buttons nebeneinander anordnen
+      &__buttons {
+        flex-direction: row;
+        gap: 16px;
+        
+        .login-card__login-btn,
+        .login-card__guest-btn {
+          flex: 1; // Gleichmäßige Breite
+          min-width: 0; // Flexbox Overflow Fix
+        }
       }
     }
   }
