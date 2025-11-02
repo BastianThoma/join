@@ -1,13 +1,21 @@
 // ===============================
-// SCSS Variables (Figma Design)
+// Summary Component Styles
+//
+// BEM Methodology für strukturierte und wartbare SCSS
+// Mobile-First Responsive Design mit Barrierefreiheits-Features
+//
+// @description Implementiert WCAG 2.1 AA konforme Styles für das Summary Dashboard
+// @author Join Team
+// @since v1.0.0
 // ===============================
 
-$primary-blue: #4589ff;
-$secondary-blue: #29abe2;
+// Design System Integration - Lokale Variablen für Komponenten-spezifische Werte
+$primary-blue: #4589ff; // Sollte durch globale $primary-color ersetzt werden
+$secondary-blue: #29abe2; // Sollte durch globale $secondary-color ersetzt werden
 $light-blue: #e7f3ff;
 $very-light-blue: #f0f8ff;
-$white: #ffffff;
-$text-dark: #2a3647;
+$white: #ffffff; // Sollte durch globale $background-card ersetzt werden
+$text-dark: #2a3647; // Sollte durch globale $text-primary ersetzt werden
 $text-light: #a8a8a8;
 $background: #f6f7fb;
 $border-radius: 16px;
@@ -17,6 +25,11 @@ $transition: all 0.3s ease;
 // Accessibility Utilities
 // ===============================
 
+/**
+ * Screen Reader Only Text
+ * Versteckt Inhalte visuell, aber lässt sie für Screen Reader verfügbar
+ * @accessibility WCAG 2.1 AA konform
+ */
 .visually-hidden {
   position: absolute !important;
   width: 1px !important;
@@ -53,8 +66,12 @@ $transition: all 0.3s ease;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 // ===============================
@@ -62,7 +79,6 @@ $transition: all 0.3s ease;
 // ===============================
 
 .summary {
-  
   // Greeting Animation
   &-greeting {
     position: fixed;
@@ -120,7 +136,6 @@ $transition: all 0.3s ease;
 // ===============================
 
 .dashboard {
-  
   // Loading State
   &-loading {
     display: flex;
@@ -140,7 +155,7 @@ $transition: all 0.3s ease;
   &-greeting {
     display: none; // Hidden by default on mobile
     margin-bottom: 24px;
-    
+
     &__text {
       font-size: 1.8rem;
       font-weight: 400;
@@ -148,13 +163,13 @@ $transition: all 0.3s ease;
       margin: 0;
       line-height: 1.2;
     }
-    
+
     &__time {
       display: block;
       font-weight: 300;
       font-size: 1.6rem;
     }
-    
+
     &__name {
       display: block;
       font-weight: 700;
@@ -201,6 +216,7 @@ $transition: all 0.3s ease;
   cursor: pointer;
   transition: $transition;
 
+  // Hover & Focus States für Barrierefreiheit
   &:hover,
   &:focus {
     background: $white;
@@ -213,6 +229,7 @@ $transition: all 0.3s ease;
     }
   }
 
+  // Focus State für Tastatur-Navigation (WCAG 2.1 AA)
   &:focus {
     outline: 2px solid $primary-blue;
     outline-offset: 2px;
@@ -237,10 +254,10 @@ $transition: all 0.3s ease;
     img {
       width: 60px;
       height: 60px;
-      filter: drop-shadow(0 2px 0 rgba(255, 255, 255, 1)) 
-              drop-shadow(0 -2px 0 rgba(255, 255, 255, 1)) 
-              drop-shadow(2px 0 0 rgba(255, 255, 255, 1)) 
-              drop-shadow(-2px 0 0 rgba(255, 255, 255, 1));
+      filter: drop-shadow(0 2px 0 rgba(255, 255, 255, 1))
+        drop-shadow(0 -2px 0 rgba(255, 255, 255, 1))
+        drop-shadow(2px 0 0 rgba(255, 255, 255, 1))
+        drop-shadow(-2px 0 0 rgba(255, 255, 255, 1));
       transition: $transition;
     }
   }
@@ -311,10 +328,10 @@ $transition: all 0.3s ease;
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(69, 137, 255, 0.15);
     outline: none;
-    
+
     .task-number,
     .task-label {
-      color: #005DFF;
+      color: #005dff;
     }
   }
 
@@ -377,19 +394,19 @@ $transition: all 0.3s ease;
 
   &:hover,
   &:focus {
-    background: #005DFF;
+    background: #005dff;
     border-top-left-radius: 0;
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     outline: none;
-    
+
     .status-icon img {
-      filter: drop-shadow(0 2px 0 rgba(255, 255, 255, 1)) 
-              drop-shadow(0 -2px 0 rgba(255, 255, 255, 1)) 
-              drop-shadow(2px 0 0 rgba(255, 255, 255, 1)) 
-              drop-shadow(-2px 0 0 rgba(255, 255, 255, 1));
+      filter: drop-shadow(0 2px 0 rgba(255, 255, 255, 1))
+        drop-shadow(0 -2px 0 rgba(255, 255, 255, 1))
+        drop-shadow(2px 0 0 rgba(255, 255, 255, 1))
+        drop-shadow(-2px 0 0 rgba(255, 255, 255, 1));
     }
-    
+
     .status-number,
     .status-label {
       color: $white;
@@ -537,23 +554,23 @@ $transition: all 0.3s ease;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto auto auto;
     gap: 24px;
-    
+
     .dashboard-greeting {
       display: block; // Show greeting from tablet up
       grid-column: 1 / -1;
       grid-row: 1;
     }
-    
+
     .urgent-card {
       grid-column: 1 / -1; // Spans full width
       grid-row: 2;
     }
-    
+
     .task-card {
       grid-column: 1 / -1; // Spans full width
       grid-row: 3;
     }
-    
+
     .status-grid {
       grid-column: 1 / -1;
       grid-row: 4;
@@ -566,11 +583,11 @@ $transition: all 0.3s ease;
     &__text {
       font-size: 2rem;
     }
-    
+
     &__time {
       font-size: 1.6rem;
     }
-    
+
     &__name {
       font-size: 2.2rem;
     }
@@ -660,25 +677,25 @@ $transition: all 0.3s ease;
     grid-template-rows: auto auto 1fr;
     gap: 24px;
     min-height: calc(100vh - 200px);
-    
+
     .dashboard-greeting {
       display: block; // Show greeting on desktop
       grid-column: 1 / -1;
       grid-row: 1;
     }
-    
+
     .urgent-card {
       grid-column: 1 / -1;
       grid-row: 2;
     }
-    
+
     .task-card {
       grid-column: 1;
       grid-row: 3;
       align-self: start;
       height: fit-content;
     }
-    
+
     .status-grid {
       grid-column: 2;
       grid-row: 3;
@@ -693,11 +710,11 @@ $transition: all 0.3s ease;
     &__text {
       font-size: 2.2rem;
     }
-    
+
     &__time {
       font-size: 1.8rem;
     }
-    
+
     &__name {
       font-size: 2.4rem;
     }
@@ -795,25 +812,25 @@ $transition: all 0.3s ease;
     grid-template-rows: auto auto 1fr;
     gap: 28px;
     min-height: calc(100vh - 220px);
-    
+
     .dashboard-greeting {
       display: block; // Show greeting on large desktop
       grid-column: 1 / -1;
       grid-row: 1;
     }
-    
+
     .urgent-card {
       grid-column: 1 / -1;
       grid-row: 2;
     }
-    
+
     .task-card {
       grid-column: 1;
       grid-row: 3;
       align-self: start;
       height: fit-content;
     }
-    
+
     .status-grid {
       grid-column: 2;
       grid-row: 3;
@@ -828,11 +845,11 @@ $transition: all 0.3s ease;
     &__text {
       font-size: 2.6rem;
     }
-    
+
     &__time {
       font-size: 2.2rem;
     }
-    
+
     &__name {
       font-size: 2.8rem;
     }
@@ -841,7 +858,7 @@ $transition: all 0.3s ease;
   .urgent-card {
     padding: 26px;
     gap: 26px;
-    
+
     &:hover,
     &:focus {
       transform: translateY(-4px);
@@ -854,7 +871,7 @@ $transition: all 0.3s ease;
     flex-direction: column;
     text-align: center;
     gap: 20px;
-    
+
     &:hover,
     &:focus {
       transform: translateY(-4px);
@@ -865,7 +882,7 @@ $transition: all 0.3s ease;
   .status-card {
     padding: 24px;
     gap: 14px;
-    
+
     &:hover,
     &:focus {
       transform: translateY(-4px);
@@ -956,15 +973,15 @@ $transition: all 0.3s ease;
 
   .dashboard-greeting {
     display: block; // Show greeting on ultra-wide desktop
-    
+
     &__text {
       font-size: 3rem;
     }
-    
+
     &__time {
       font-size: 2.6rem;
     }
-    
+
     &__name {
       font-size: 3.2rem;
     }

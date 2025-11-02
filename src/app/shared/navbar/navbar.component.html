@@ -1,25 +1,66 @@
-
 <!-- Hauptnavigation für die Anwendung, barrierefrei und semantisch -->
- 
+
 <nav class="navbar" role="navigation" aria-label="Hauptnavigation">
+  <!-- Hauptnavigationsbereich -->
   <ul class="navbar__list" role="menubar">
-    <li *ngFor="let item of navItems"
-        class="navbar__item"
-        [ngClass]="{ 'navbar__item--active': getActive(item.route) }"
-        role="none">
-      <a [routerLink]="item.route"
-         class="navbar__link"
-         role="menuitem"
-         [attr.aria-current]="getActive(item.route) ? 'page' : null"
-         tabindex="0"
-         [attr.aria-label]="item.label">
+    <li
+      *ngFor="let item of navItems"
+      class="navbar__item"
+      [ngClass]="{ 'navbar__item--active': getActive(item.route) }"
+      role="none"
+    >
+      <a
+        [routerLink]="item.route"
+        class="navbar__link"
+        role="menuitem"
+        [attr.aria-current]="getActive(item.route) ? 'page' : null"
+        tabindex="0"
+        [attr.aria-label]="item.label"
+      >
         <span class="navbar__icon" aria-hidden="true">
-          <img 
-            [src]="'assets/img/' + item.icon + (getActive(item.route) ? '_active.png' : '.png')"
-            [alt]="''" />
+          <img
+            [src]="
+              'assets/img/' +
+              item.icon +
+              (getActive(item.route) ? '_active.png' : '.png')
+            "
+            [alt]="''"
+          />
         </span>
         <span class="navbar__label">{{ item.label }}</span>
       </a>
     </li>
   </ul>
+
+  <!-- Rechtliche Links - nur Desktop -->
+  <footer
+    class="navbar__legal"
+    role="contentinfo"
+    aria-label="Rechtliche Informationen"
+  >
+    <nav role="navigation" aria-label="Rechtliche Links">
+      <a
+        href="#"
+        class="navbar__legal-link"
+        aria-describedby="navbar-privacy-description"
+      >
+        Privacy Policy
+      </a>
+      <a
+        href="#"
+        class="navbar__legal-link"
+        aria-describedby="navbar-legal-description"
+      >
+        Legal Notice
+      </a>
+
+      <!-- Screen Reader Beschreibungen -->
+      <div id="navbar-privacy-description" class="sr-only">
+        Öffnet die Datenschutzerklärung
+      </div>
+      <div id="navbar-legal-description" class="sr-only">
+        Öffnet das Impressum
+      </div>
+    </nav>
+  </footer>
 </nav>
