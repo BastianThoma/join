@@ -12,6 +12,19 @@
 
   <!-- Kontaktliste nach Buchstaben sortiert (Original Struktur) -->
   <section class="contacts__list" role="region" [attr.aria-label]="'Kontaktliste'">
+    
+    <!-- Add New Contact Button (Desktop) -->
+    <div class="contacts__header-actions">
+      <button 
+        class="contacts__add-button"
+        type="button"
+        (click)="onFabAddClick()"
+        aria-label="Neuen Kontakt hinzufügen">
+        <img src="/assets/img/person_add_icon.png" alt="Add Contact" />
+        <span>Add new contact</span>
+      </button>
+    </div>
+    
     <ng-container *ngFor="let group of groupedContacts; trackBy: trackByGroup">
       <!-- Buchstaben-Überschrift -->
       <h2 class="contacts__letter" [id]="'letter-' + group.letter">
@@ -22,9 +35,11 @@
       <div
         *ngFor="let contact of group.contacts; trackBy: trackByContact"
         class="contacts__row"
+        [class.contacts__row--active]="selectedContact?.id === contact.id"
         (click)="showContactDetail(contact)"
         [attr.aria-labelledby]="'contact-name-' + contact.id"
         [attr.aria-describedby]="'contact-email-' + contact.id"
+        [attr.aria-current]="selectedContact?.id === contact.id ? 'page' : null"
         role="button"
         tabindex="0"
         (keydown.enter)="showContactDetail(contact)"

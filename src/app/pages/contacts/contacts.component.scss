@@ -44,6 +44,81 @@ $desktop: 1024px;
   padding: 0 0 24px 0;
   min-height: 100vh;
   background: #fff;
+  
+  // Desktop: Layout mit fester Kontaktliste und gleitender Detailansicht
+  @media (min-width: 1024px) {
+    display: flex;
+    overflow: hidden;
+  }
+
+  &__list {
+    // Mobile: Volle Breite
+    width: 100%;
+    
+    // Desktop: Feste Breite für Kontaktliste
+    @media (min-width: 1024px) {
+      width: 350px;
+      flex-shrink: 0;
+      overflow-y: auto;
+      height: calc(100vh - 72px);
+      border-right: 1px solid $border-color;
+    }
+    
+    // Größere Bildschirme: Etwas mehr Platz
+    @media (min-width: 1400px) {
+      width: 400px;
+    }
+  }
+
+  &__header-actions {
+    display: none;
+    
+    // Nur auf Desktop anzeigen
+    @media (min-width: 1024px) {
+      display: block;
+      padding: 16px 24px;
+      border-bottom: 1px solid $border-color;
+    }
+  }
+
+  &__add-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 16px;
+    background: $primary-hover; // Gleiche Farbe wie kleiner FAB
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: $primary-color; // Gleiche Hover-Farbe wie kleiner FAB
+      transform: translateY(-1px);
+      box-shadow: $shadow-medium;
+    }
+    
+    &:active {
+      transform: translateY(0);
+      box-shadow: $shadow-light;
+    }
+    
+    img {
+      width: 20px;
+      height: 20px;
+      filter: brightness(0) invert(1); // Macht das Icon weiß
+    }
+    
+    span {
+      // Zentriert den Text
+      text-align: center;
+    }
+  }
 
   &__letter {
     font-size: 20px;
@@ -60,10 +135,50 @@ $desktop: 1024px;
     background: #fff;
     position: relative;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background: $background-light;
+    }
     
     &:active {
       background: $background-light;
+    }
+    
+    // Aktiver Zustand - ähnlich wie Navbar-Links
+    &--active {
+      background: linear-gradient(90deg, rgba(69, 137, 255, 0.1) 0%, rgba(69, 137, 255, 0.05) 100%);
+      border-left: 4px solid $primary-color;
+      padding-left: 20px; // Kompensiert den Border
+      
+      // Desktop: Prominenterer aktiver Zustand
+      @media (min-width: 1024px) {
+        background: linear-gradient(90deg, rgba(69, 137, 255, 0.08) 0%, rgba(69, 137, 255, 0.02) 100%);
+        border-radius: 0 8px 8px 0;
+        margin-right: 8px;
+        box-shadow: inset 3px 0 0 $primary-color, 0 2px 8px rgba(69, 137, 255, 0.1);
+        border-left: none;
+        padding-left: 24px;
+        
+        &:hover {
+          background: linear-gradient(90deg, rgba(69, 137, 255, 0.12) 0%, rgba(69, 137, 255, 0.04) 100%);
+          transform: translateX(2px);
+        }
+      }
+      
+      .contacts__name {
+        color: $primary-color;
+        font-weight: 600;
+      }
+      
+      .contacts__email {
+        color: darken($primary-color, 10%);
+      }
+      
+      .contacts__avatar {
+        border: 2px solid $primary-color;
+        box-shadow: 0 0 0 2px rgba(69, 137, 255, 0.2);
+      }
     }
   }
 
@@ -116,6 +231,11 @@ $desktop: 1024px;
     cursor: pointer;
     z-index: 400;
     transition: background 0.2s;
+    
+    // Desktop: FAB ausblenden, da großer Button in der Liste vorhanden ist
+    @media (min-width: 1024px) {
+      display: none;
+    }
     
     img {
       width: 28px;
@@ -194,11 +314,26 @@ $desktop: 1024px;
   opacity: 0;
   padding-top: 72px;
   
-  // Desktop: Sidebar-Layout berücksichtigen
+  // Desktop: Neben der Kontaktliste positionieren
   @media (min-width: 1024px) {
-    left: 240px; // Sidebar-Breite berücksichtigen
-    width: calc(100vw - 240px); // Verfügbare Breite anpassen
-    padding-top: 72px; // Header-Höhe beibehalten
+    left: calc(240px + 350px); // Sidebar + Kontaktliste Breite
+    width: calc(100vw - 240px - 350px); // Verfügbare Breite rechts der Kontaktliste
+    padding-top: 72px;
+    top: 72px; // Unter dem Header positionieren
+    height: calc(100vh - 72px);
+    
+    // Animation: Von rechts nach links bis zur Kontaktliste
+    transform: translateX(100%);
+    
+    &--open {
+      transform: translateX(0);
+    }
+  }
+  
+  // Größere Bildschirme: Breitere Kontaktliste berücksichtigen
+  @media (min-width: 1400px) {
+    left: calc(240px + 400px);
+    width: calc(100vw - 240px - 400px);
   }
   
   &--open {
@@ -323,10 +458,11 @@ $desktop: 1024px;
   align-items: center;
   justify-content: center;
   
-  // Desktop: Sidebar-Layout berücksichtigen (Optional für bessere Zentrierung)
+  // Desktop: Über der gesamten verfügbaren Fläche zentrieren
   @media (min-width: 1024px) {
     left: 240px;
     width: calc(100vw - 240px);
+    background: rgba(0, 0, 0, 0.12); // Etwas dunkler für Desktop
   }
 }
 
@@ -342,6 +478,18 @@ $desktop: 1024px;
     flex-direction: column;
     align-items: center;
     position: relative;
+    
+    // Desktop: Modernes, größeres Modal
+    @media (min-width: 1024px) {
+      width: 520px;
+      max-width: 520px;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 24px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      
+      // Animierte Einblendung mit Scale-Effekt
+      animation: modalSlideInDesktop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
   }
   
   &__header {
@@ -355,17 +503,52 @@ $desktop: 1024px;
     padding: 16px 24px 64px 24px;
     font-size: 28px;
     font-weight: 700;
+    
+    // Desktop: Moderneres Header-Design
+    @media (min-width: 1024px) {
+      padding: 24px 32px 72px 32px;
+      background: linear-gradient(135deg, $primary-color 0%, $primary-hover 100%);
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+        pointer-events: none;
+      }
+    }
   }
   
   &__title {
     font-size: 28px;
     font-weight: 700;
+    position: relative;
+    z-index: 1;
+    
+    // Desktop: Größerer Titel
+    @media (min-width: 1024px) {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
   }
   
   &__subtitle {
     color: #fff;
     font-size: 16px;
     font-weight: 400;
+    position: relative;
+    z-index: 1;
+    opacity: 0.9;
+    
+    // Desktop: Bessere Typografie
+    @media (min-width: 1024px) {
+      font-size: 18px;
+      font-weight: 300;
+      letter-spacing: 0.5px;
+    }
   }
   
   &__close {
@@ -376,12 +559,39 @@ $desktop: 1024px;
     border: none;
     color: #fff;
     cursor: pointer;
+    z-index: 2;
+    
+    // Desktop: Größerer, prominenterer Close-Button
+    @media (min-width: 1024px) {
+      top: 20px;
+      right: 48px;
+      padding: 8px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: scale(1.1);
+      }
+      
+      &:active {
+        transform: scale(0.95);
+      }
+    }
     
     img {
       width: 18px;
       height: 18px;
       padding: 4px;
       border-radius: 50%;
+      transition: all 0.2s ease;
+      
+      // Desktop: Größeres Icon
+      @media (min-width: 1024px) {
+        width: 20px;
+        height: 20px;
+        padding: 0;
+      }
       
       &:hover {
         background-color: #ffffff3e;
@@ -405,11 +615,33 @@ $desktop: 1024px;
     font-size: 24px;
     font-weight: 700;
     color: #fff;
+    transition: all 0.3s ease;
+    
+    // Desktop: Größerer, beeindruckenderer Avatar
+    @media (min-width: 1024px) {
+      width: 96px;
+      height: 96px;
+      margin: -60px auto 24px auto;
+      border: 6px solid #fff;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      background: linear-gradient(135deg, #f1f1f1 0%, #e1e1e1 100%);
+      
+      &:hover {
+        transform: scale(1.05);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+      }
+    }
     
     img {
       width: 50px;
       height: 50px;
       object-fit: contain;
+      
+      // Desktop: Größeres Icon
+      @media (min-width: 1024px) {
+        width: 64px;
+        height: 64px;
+      }
     }
   }
   
@@ -420,6 +652,13 @@ $desktop: 1024px;
     flex-direction: column;
     align-items: center;
     gap: 16px;
+    
+    // Desktop: Mehr Platz und bessere Spacing
+    @media (min-width: 1024px) {
+      width: 85%;
+      padding: 0 32px 32px 32px;
+      gap: 20px;
+    }
   }
   
   &__input-group {
@@ -433,6 +672,27 @@ $desktop: 1024px;
     border-radius: 0;
     padding: 0;
     margin-bottom: 0;
+    transition: all 0.3s ease;
+    
+    // Desktop: Modernere Input-Felder
+    @media (min-width: 1024px) {
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 8px;
+      
+      &:hover {
+        border-color: $primary-hover;
+        background: #f1f3f4;
+      }
+      
+      &:focus-within {
+        border-color: $primary-color;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(69, 137, 255, 0.1);
+      }
+    }
     
     input {
       width: 100%;
@@ -442,16 +702,38 @@ $desktop: 1024px;
       font-size: 1rem;
       font-weight: 400;
       background: transparent;
-      transition: border-color 0.2s;
+      transition: all 0.3s ease;
       outline: none;
+      
+      // Desktop: Verbesserte Input-Styles
+      @media (min-width: 1024px) {
+        padding: 16px 48px 16px 20px;
+        font-size: 16px;
+        border-radius: 8px;
+        
+        &:focus {
+          transform: translateY(-1px);
+        }
+      }
       
       &::placeholder {
         color: #b5bac5;
         opacity: 1;
+        
+        // Desktop: Dezentere Placeholder
+        @media (min-width: 1024px) {
+          color: #9ca3af;
+          font-weight: 300;
+        }
       }
       
       &:focus {
         border-bottom: 2px solid $primary-hover;
+        
+        // Desktop: Kein Border-Bottom Fokus
+        @media (min-width: 1024px) {
+          border-bottom: none;
+        }
       }
     }
     
@@ -464,6 +746,19 @@ $desktop: 1024px;
       align-items: center;
       height: 24px;
       width: 24px;
+      transition: all 0.2s ease;
+      
+      // Desktop: Bessere Icon-Positionierung
+      @media (min-width: 1024px) {
+        right: 8px;
+        height: 32px;
+        width: 32px;
+        border-radius: 8px;
+        
+        &:hover {
+          background: rgba(69, 137, 255, 0.1);
+        }
+      }
       
       img {
         width: 18px;
@@ -471,6 +766,14 @@ $desktop: 1024px;
         opacity: 0.7;
         object-fit: contain;
         pointer-events: none;
+        transition: all 0.2s ease;
+        
+        // Desktop: Größere Icons
+        @media (min-width: 1024px) {
+          width: 20px;
+          height: 20px;
+          opacity: 0.6;
+        }
       }
     }
   }
@@ -490,10 +793,24 @@ $desktop: 1024px;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    transition: background 0.2s;
+    transition: all 0.2s;
     
     &:hover {
       background: $primary-color;
+      transform: translateY(-1px);
+      box-shadow: $shadow-medium;
+    }
+    
+    &:active {
+      transform: translateY(0);
+      box-shadow: $shadow-light;
+    }
+    
+    // Desktop: Größerer Button
+    @media (min-width: 1024px) {
+      padding: 12px 16px;
+      font-size: 16px;
+      font-weight: 600;
     }
   }
 }
@@ -509,6 +826,11 @@ $desktop: 1024px;
   right: 24px;
   bottom: 24px;
   z-index: 100;
+  
+  // Desktop: Komplett ausblenden, da großer Add-Button in der Liste vorhanden ist
+  @media (min-width: 1024px) {
+    display: none;
+  }
   
   .contacts__fab {
     z-index: 101;
@@ -527,5 +849,32 @@ $desktop: 1024px;
     gap: 18px;
     min-width: 140px;
     z-index: 102;
+  }
+}
+
+// === Modal Animations ===
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes modalSlideInDesktop {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.9);
+  }
+  60% {
+    opacity: 0.8;
+    transform: translateY(5px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
