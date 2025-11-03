@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, Injector, runInInjectionContext, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import {
@@ -68,7 +69,7 @@ interface Task {
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [CommonModule, DragDropModule],
+  imports: [CommonModule, FormsModule, DragDropModule],
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -121,6 +122,17 @@ export class BoardComponent implements OnInit, OnDestroy {
   /** Show task detail modal */
   showTaskDetail = false;
 
+  /** Edit mode for selected task */
+  isEditMode = false;
+
+  /** Edit form data - copy of selected task for editing */
+  editTask: Task | null = null;
+
+  /** Contact search and dropdown for edit mode */
+  editContactSearch = '';
+  showEditContactsDropdown = false;
+  filteredEditContacts: Contact[] = [];
+
   // ===============================
   // Firestore Collections
   // ===============================
@@ -156,13 +168,29 @@ export class BoardComponent implements OnInit, OnDestroy {
    */
   async ngOnInit() {
     await this.loadData();
+    this.setupClickOutsideListener();
+  }
+
+  /**
+   * Sets up click outside listener for dropdowns
+   */
+  private setupClickOutsideListener(): void {
+    document.addEventListener('click', (event: Event) => {
+      const target = event.target as HTMLElement;
+      // Only close if we're in edit mode and clicked outside the contact selector
+      if (this.isEditMode && this.showEditContactsDropdown && 
+          !target.closest('.board__contacts-selector-wrapper')) {
+        this.closeEditContacts();
+      }
+    });
   }
 
   /**
    * Component cleanup
    */
   ngOnDestroy() {
-    // Cleanup if needed
+    // Close any open dropdowns
+    this.closeEditContacts();
   }
 
   // ===============================
@@ -583,6 +611,16 @@ export class BoardComponent implements OnInit, OnDestroy {
     return contactId;
   }
 
+  /**
+   * TrackBy function for contact objects
+   * @param index - Array index
+   * @param contact - Contact object
+   * @returns Unique identifier for tracking
+   */
+  trackByContact(index: number, contact: Contact): string {
+    return contact.id || index.toString();
+  }
+
   // ===============================
   // Task Detail Methods
   // ===============================
@@ -603,6 +641,9 @@ export class BoardComponent implements OnInit, OnDestroy {
   closeTaskDetail(): void {
     this.selectedTask = null;
     this.showTaskDetail = false;
+    this.isEditMode = false;
+    this.editTask = null;
+    this.closeEditContacts();
     this.cdr.detectChanges();
   }
 
@@ -697,9 +738,227 @@ export class BoardComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Navigates to edit task page
+   * Starts editing mode for the current task
    */
-  editTask(task: Task): void {
+  startEditMode(task: Task): void {
+    if (task) {
+      this.isEditMode = true;
+      // Create a deep copy for editing
+      this.editTask = JSON.parse(JSON.stringify(task));
+      // Initialize contact management
+      this.filteredEditContacts = [...this.allContacts];
+      this.editContactSearch = '';
+      this.showEditContactsDropdown = false;
+      this.cdr.detectChanges();
+    }
+  }
+
+  /**
+   * Cancels edit mode and reverts to view mode
+   */
+  cancelEditMode(): void {
+    this.isEditMode = false;
+    this.editTask = null;
+    this.closeEditContacts();
+    this.cdr.detectChanges();
+  }
+
+  /**
+   * Saves the edited task and exits edit mode
+   */
+  async saveEditedTask(): Promise<void> {
+    if (!this.editTask || !this.editTask.id) return;
+
+    try {
+      // Update in Firestore
+      await runInInjectionContext(this.injector, async () => {
+        const taskDoc = doc(this.firestore, 'tasks', this.editTask!.id!);
+        const updateData = {
+          title: this.editTask!.title,
+          description: this.editTask!.description,
+          dueDate: this.editTask!.dueDate,
+          priority: this.editTask!.priority,
+          assignedTo: this.editTask!.assignedTo,
+          category: this.editTask!.category,
+          subtasks: this.editTask!.subtasks
+        };
+        return updateDoc(taskDoc, updateData);
+      });
+
+      // Update local arrays
+      const taskIndex = this.allTasks.findIndex(t => t.id === this.editTask!.id);
+      if (taskIndex !== -1) {
+        this.allTasks[taskIndex] = { ...this.editTask! };
+        this.sortTasksIntoColumns();
+      }
+
+      // Update selected task
+      this.selectedTask = { ...this.editTask! };
+
+      // Exit edit mode
+      this.isEditMode = false;
+      this.editTask = null;
+      
+      this.cdr.detectChanges();
+      console.log('Task updated successfully');
+      
+    } catch (error) {
+      console.error('Error updating task:', error);
+      this.error = 'Fehler beim Speichern der Aufgabe';
+      this.cdr.detectChanges();
+    }
+  }
+
+  /**
+   * Adds a new subtask to the edit form
+   */
+  addSubtaskToEdit(): void {
+    if (this.editTask) {
+      if (!this.editTask.subtasks) {
+        this.editTask.subtasks = [];
+      }
+      this.editTask.subtasks.push('Neue Subtask');
+      this.cdr.detectChanges();
+    }
+  }
+
+  /**
+   * Removes a subtask from the edit form
+   */
+  removeSubtaskFromEdit(index: number): void {
+    if (this.editTask && this.editTask.subtasks) {
+      this.editTask.subtasks.splice(index, 1);
+      this.cdr.detectChanges();
+    }
+  }
+
+  /**
+   * Removes assigned contact from edit form
+   */
+  removeAssignedContactFromEdit(contactId: string): void {
+    if (this.editTask && this.editTask.assignedTo) {
+      const index = this.editTask.assignedTo.indexOf(contactId);
+      if (index > -1) {
+        this.editTask.assignedTo.splice(index, 1);
+        this.cdr.detectChanges();
+      }
+    }
+  }
+
+  // ===============================
+  // Edit Mode Contact Management
+  // ===============================
+
+  /**
+   * Opens the contact dropdown for edit mode
+   */
+  openEditContacts(): void {
+    this.showEditContactsDropdown = true;
+    this.filterEditContacts();
+  }
+
+  /**
+   * Toggles the contact dropdown for edit mode
+   */
+  toggleEditContacts(event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    if (this.showEditContactsDropdown) {
+      this.showEditContactsDropdown = false;
+    } else {
+      this.openEditContacts();
+    }
+  }
+
+  /**
+   * Filters contacts based on search term for edit mode
+   */
+  filterEditContacts(): void {
+    const searchTerm = this.editContactSearch.trim().toLowerCase();
+    
+    if (!searchTerm) {
+      this.filteredEditContacts = [...this.allContacts];
+      return;
+    }
+
+    this.filteredEditContacts = this.allContacts.filter((contact) =>
+      contact.name.toLowerCase().includes(searchTerm) ||
+      (contact.email && contact.email.toLowerCase().includes(searchTerm))
+    );
+  }
+
+  /**
+   * Toggles contact assignment in edit mode
+   */
+  toggleEditContactSelection(contact: Contact): void {
+    if (!contact?.id || !this.editTask) return;
+
+    if (!this.editTask.assignedTo) {
+      this.editTask.assignedTo = [];
+    }
+
+    const index = this.editTask.assignedTo.indexOf(contact.id);
+    if (index === -1) {
+      this.editTask.assignedTo.push(contact.id);
+    } else {
+      this.editTask.assignedTo.splice(index, 1);
+    }
+    this.cdr.detectChanges();
+  }
+
+  /**
+   * Checks if a contact is assigned in edit mode
+   */
+  isEditContactAssigned(contactId?: string): boolean {
+    return !!contactId && !!this.editTask?.assignedTo?.includes(contactId);
+  }
+
+  /**
+   * Gets contact by ID
+   */
+  getEditContactById(contactId: string): Contact | undefined {
+    return this.allContacts.find((contact) => contact.id === contactId);
+  }
+
+  /**
+   * Closes edit contacts dropdown
+   */
+  closeEditContacts(): void {
+    this.showEditContactsDropdown = false;
+    this.editContactSearch = '';
+    this.filteredEditContacts = [...this.allContacts];
+    this.cdr.detectChanges();
+  }
+
+  /**
+   * Handles clicks within the modal to close contacts dropdown when appropriate
+   */
+  handleModalClick(event: Event): void {
+    const target = event.target as HTMLElement;
+    // Close contacts dropdown if click is outside the contacts selector wrapper
+    if (!target.closest('.board__contacts-selector-wrapper')) {
+      this.closeEditContacts();
+    }
+    // Stop propagation to prevent modal from closing
+    event.stopPropagation();
+  }
+
+  /**
+   * Handles escape key - closes dropdown first, then modal if no dropdown open
+   */
+  handleEscapeKey(): void {
+    if (this.showEditContactsDropdown) {
+      this.closeEditContacts();
+    } else {
+      this.closeTaskDetail();
+    }
+  }
+
+  /**
+   * Navigates to add task page (legacy method for external navigation)
+   */
+  navigateToEditTask(task: Task): void {
     if (task && task.id) {
       this.router.navigate(['/add-task'], { 
         queryParams: { edit: task.id } 

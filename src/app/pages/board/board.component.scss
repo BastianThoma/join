@@ -472,7 +472,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 200px;
+    height: 16px;
     color: #42526e;
     font-size: 14px;
     font-style: italic;
@@ -1019,6 +1019,387 @@
 }
 
 // ===============================
+// Edit Mode Styles
+// ===============================
+
+.board__edit-field {
+  margin-bottom: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.board__edit-label {
+  display: block;
+  font-weight: 600;
+  color: #2a3647;
+  font-size: 14px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.board__edit-input,
+.board__edit-textarea,
+.board__edit-select {
+  width: 100%;
+  max-width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 15px;
+  color: #2a3647;
+  background: #fff;
+  transition: all 0.2s ease;
+  outline: none;
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: #4589ff;
+    box-shadow: 0 0 0 3px rgba(69, 137, 255, 0.1);
+  }
+
+  &::placeholder {
+    color: #a0aec0;
+  }
+}
+
+.board__edit-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.board__edit-textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+}
+
+.board__edit-contacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.board__edit-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  max-width: 100%;
+  box-sizing: border-box;
+  
+  .board__contact-name {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.board__remove-contact-btn,
+.board__remove-subtask-btn {
+  background: #e53e3e;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #c53030;
+    transform: scale(1.1);
+  }
+
+  &:focus {
+    outline: 2px solid #4589ff;
+    outline-offset: 2px;
+  }
+}
+
+.board__edit-subtasks-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.board__add-subtask-btn {
+  background: #4589ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #005dff;
+    transform: translateY(-1px);
+  }
+
+  &:focus {
+    outline: 2px solid #4589ff;
+    outline-offset: 2px;
+  }
+}
+
+.board__edit-subtasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.board__edit-subtask-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.board__edit-subtask-input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+  
+  &:focus {
+    border-color: #4589ff;
+    outline: 1px solid #4589ff;
+  }
+}
+
+.board__no-subtasks {
+  padding: 20px;
+  text-align: center;
+  color: #a0aec0;
+  font-style: italic;
+}
+
+// Contact Selection Styles (from Add-Task)
+.board__contacts-selector-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.board__select-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.board__edit-contact-input {
+  flex: 1;
+  padding: 12px 40px 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 15px;
+  color: #2a3647;
+  background: #fff;
+  transition: all 0.2s ease;
+  outline: none;
+
+  &:focus {
+    border-color: #4589ff;
+    box-shadow: 0 0 0 3px rgba(69, 137, 255, 0.1);
+  }
+
+  &::placeholder {
+    color: #a0aec0;
+  }
+}
+
+.board__contact-select-button {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background: #f3f4f6;
+  }
+
+  &:focus {
+    outline: 2px solid #4589ff;
+    outline-offset: 2px;
+  }
+}
+
+.board__select-icon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.6;
+}
+
+.board__assign-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  margin-top: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.board__assign-dropdown-list {
+  padding: 8px 0;
+}
+
+.board__assign-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background: #f9fafb;
+  }
+
+  &.selected {
+    background: #e6f0ff;
+  }
+
+  &:focus {
+    outline: 2px solid #4589ff;
+    outline-offset: -2px;
+    background: #f9fafb;
+  }
+}
+
+.board__assign-dropdown-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.board__assign-dropdown-name {
+  flex: 1;
+  font-size: 14px;
+  color: #2a3647;
+  font-weight: 500;
+}
+
+.board__assign-dropdown-check {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.board__selected-contacts-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.board__selected-contact-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  &--more {
+    background: #6b7280 !important;
+    font-size: 10px;
+  }
+}
+
+// New action button styles for edit mode
+.board__action-btn--cancel {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  color: #6b7280;
+  border: 2px solid #d1d5db;
+  box-shadow: 0 2px 4px rgba(107, 114, 128, 0.1);
+
+  &:hover {
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    color: white;
+    border-color: #6b7280;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(107, 114, 128, 0.3);
+    
+    img {
+      filter: brightness(0) invert(1);
+    }
+  }
+
+  &:active {
+    transform: translateY(-1px);
+  }
+}
+
+.board__action-btn--save {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: 2px solid #10b981;
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.2);
+
+  &:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    border-color: #059669;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+  }
+
+  &:active {
+    transform: translateY(-1px);
+  }
+}
+
+// ===============================
 // Modal Animations
 // ===============================
 
@@ -1042,6 +1423,13 @@
   }
 }
 
+// Global Edit Mode Constraints
+.board__modal-details {
+  * {
+    box-sizing: border-box;
+  }
+}
+
 // Mobile responsive
 @media (max-width: 768px) {
   .board__modal-overlay {
@@ -1054,8 +1442,11 @@
     max-height: calc(100vh - 40px); // Weniger Höhe für Buttons
     border-radius: 12px;
     width: calc(100% - 16px);
+    max-width: calc(100vw - 16px);
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    box-sizing: border-box;
   }
 
   .board__modal-header {
@@ -1064,10 +1455,13 @@
   }
   
   .board__modal-content {
-    padding: 16px;
+    padding: 12px;
     flex: 1; // Nimmt verfügbaren Platz
     min-height: 0; // Wichtig für Flex-Scroll
     max-height: calc(100vh - 200px); // Platz für Header und Actions
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden; // Verhindert horizontalen Overflow
   }
   
   .board__modal-actions {
@@ -1144,5 +1538,102 @@
   .board__modal-details {
     padding: 16px;
     margin-bottom: 20px;
+  }
+  
+  // Edit mode mobile adjustments
+  .board__edit-title {
+    font-size: 18px;
+  }
+  
+  .board__edit-field {
+    margin-bottom: 16px;
+  }
+  
+  .board__edit-input,
+  .board__edit-textarea,
+  .board__edit-select {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+  
+  .board__edit-subtasks-header {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+  
+  .board__add-subtask-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+  
+  .board__edit-contact-item {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 100%;
+    
+    .board__contact-name {
+      max-width: 80px;
+      font-size: 13px;
+    }
+  }
+  
+  .board__edit-contacts {
+    gap: 6px;
+  }
+  
+  .board__edit-subtask-item {
+    padding: 6px;
+    gap: 6px;
+  }
+  
+  .board__edit-subtask-input {
+    padding: 6px 8px;
+    font-size: 13px;
+  }
+  
+  .board__remove-contact-btn,
+  .board__remove-subtask-btn {
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
+  }
+  
+  // Contact selection mobile adjustments
+  .board__edit-contact-input {
+    padding: 10px 35px 10px 12px;
+    font-size: 14px;
+  }
+  
+  .board__assign-dropdown-item {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+  
+  .board__assign-dropdown-avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+  }
+  
+  .board__assign-dropdown-name {
+    font-size: 13px;
+  }
+  
+  .board__assign-dropdown-check {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .board__selected-contact-avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+    
+    &--more {
+      font-size: 9px;
+    }
   }
 }

@@ -304,10 +304,10 @@
      aria-labelledby="modal-title"
      aria-describedby="modal-description"
      (click)="closeTaskDetail()"
-     (keydown.escape)="closeTaskDetail()">
+     (keydown.escape)="handleEscapeKey()">
   
   <div class="board__task-detail-modal" 
-       (click)="$event.stopPropagation()"
+       (click)="handleModalClick($event)"
        role="document">
     
     <!-- Modal Header -->
@@ -333,22 +333,46 @@
     <!-- Modal Content -->
     <div class="board__modal-content" role="main">
       
-      <!-- Task Title -->
-      <h1 class="board__modal-title" id="modal-title">{{ selectedTask.title }}</h1>
+      <!-- VIEW MODE: Task Title -->
+      <h1 *ngIf="!isEditMode" 
+          class="board__modal-title" 
+          id="modal-title">{{ selectedTask.title }}</h1>
       
-      <!-- Task Description -->
-      <div *ngIf="selectedTask.description" 
+      <!-- EDIT MODE: Task Title Input -->
+      <div *ngIf="isEditMode" class="board__edit-field">
+        <label for="edit-title" class="board__edit-label">Titel</label>
+        <input 
+          id="edit-title"
+          type="text" 
+          [(ngModel)]="editTask!.title"
+          class="board__edit-input board__edit-title"
+          placeholder="Aufgaben-Titel eingeben">
+      </div>
+      
+      <!-- VIEW MODE: Task Description -->
+      <div *ngIf="!isEditMode && selectedTask.description" 
            class="board__modal-description" 
            id="modal-description">
         <h2 class="sr-only">Beschreibung</h2>
         <p>{{ selectedTask.description }}</p>
       </div>
       
+      <!-- EDIT MODE: Task Description -->
+      <div *ngIf="isEditMode" class="board__edit-field">
+        <label for="edit-description" class="board__edit-label">Beschreibung</label>
+        <textarea 
+          id="edit-description"
+          [(ngModel)]="editTask!.description"
+          class="board__edit-textarea"
+          placeholder="Beschreibung eingeben..."
+          rows="3"></textarea>
+      </div>
+      
       <!-- Task Details Grid -->
       <div class="board__modal-details" role="group" aria-label="Aufgaben-Details">
         
-        <!-- Due Date -->
-        <div class="board__detail-item">
+        <!-- VIEW MODE: Due Date -->
+        <div *ngIf="!isEditMode" class="board__detail-item">
           <span class="board__detail-label" id="due-date-label">Fälligkeitsdatum:</span>
           <span class="board__detail-value" 
                 aria-labelledby="due-date-label"
@@ -357,8 +381,18 @@
           </span>
         </div>
         
-        <!-- Priority -->
-        <div class="board__detail-item">
+        <!-- EDIT MODE: Due Date -->
+        <div *ngIf="isEditMode" class="board__detail-item">
+          <label for="edit-due-date" class="board__edit-label">Fälligkeitsdatum:</label>
+          <input 
+            id="edit-due-date"
+            type="date" 
+            [(ngModel)]="editTask!.dueDate"
+            class="board__edit-input">
+        </div>
+        
+        <!-- VIEW MODE: Priority -->
+        <div *ngIf="!isEditMode" class="board__detail-item">
           <span class="board__detail-label" id="priority-label">Priorität:</span>
           <div class="board__priority-detail" 
                role="group" 
@@ -373,8 +407,21 @@
           </div>
         </div>
         
-        <!-- Assigned Contacts -->
-        <div class="board__detail-item">
+        <!-- EDIT MODE: Priority -->
+        <div *ngIf="isEditMode" class="board__detail-item">
+          <label for="edit-priority" class="board__edit-label">Priorität:</label>
+          <select 
+            id="edit-priority"
+            [(ngModel)]="editTask!.priority"
+            class="board__edit-select">
+            <option value="low">Niedrig</option>
+            <option value="medium">Mittel</option>
+            <option value="urgent">Hoch</option>
+          </select>
+        </div>
+        
+        <!-- VIEW MODE: Assigned Contacts -->
+        <div *ngIf="!isEditMode" class="board__detail-item">
           <span class="board__detail-label" id="assigned-label">Zugewiesen an:</span>
           <div class="board__assigned-contacts" 
                role="group" 
@@ -394,10 +441,112 @@
           </div>
         </div>
         
+        <!-- EDIT MODE: Assigned Contacts -->
+        <div *ngIf="isEditMode" class="board__detail-item">
+          <label class="board__edit-label">Zugewiesen an:</label>
+          
+          <!-- Contact Selector -->
+          <div class="board__contacts-selector-wrapper">
+            <div class="board__select-row">
+              <input
+                id="edit-contact-search"
+                class="board__edit-contact-input"
+                type="text"
+                placeholder="Select contacts to assign"
+                [(ngModel)]="editContactSearch"
+                name="editContactSearch"
+                (focus)="openEditContacts()"
+                (ngModelChange)="filterEditContacts()"
+                [attr.aria-expanded]="showEditContactsDropdown"
+                aria-haspopup="listbox"
+                role="combobox"
+                autocomplete="off">
+              <button
+                type="button"
+                class="board__contact-select-button"
+                [attr.aria-label]="showEditContactsDropdown ? 'Close contact selection' : 'Open contact selection'"
+                (click)="toggleEditContacts($event)"
+                (keydown.enter)="toggleEditContacts($event)"
+                (keydown.space)="$event.preventDefault(); toggleEditContacts($event)">
+                <img
+                  class="board__select-icon"
+                  [src]="showEditContactsDropdown ? '/assets/img/close_dropdown_icon.png' : '/assets/img/open_dropdown_icon.png'"
+                  alt=""
+                  role="presentation">
+              </button>
+            </div>
+
+            <!-- Contact Dropdown -->
+            <div *ngIf="showEditContactsDropdown"
+                 class="board__assign-dropdown"
+                 role="listbox"
+                 aria-label="Available contacts"
+                 (click)="$event.stopPropagation()"
+                 (keydown.escape)="closeEditContacts()">
+              <div class="board__assign-dropdown-list">
+                <div *ngFor="let contact of filteredEditContacts; trackBy: trackByContact"
+                     class="board__assign-dropdown-item"
+                     [class.selected]="isEditContactAssigned(contact.id)"
+                     (click)="toggleEditContactSelection(contact)"
+                     role="option"
+                     [attr.aria-selected]="isEditContactAssigned(contact.id)"
+                     [attr.aria-label]="contact.name + (isEditContactAssigned(contact.id) ? ' (selected)' : '')"
+                     tabindex="0"
+                     (keydown.enter)="toggleEditContactSelection(contact)"
+                     (keydown.space)="$event.preventDefault(); toggleEditContactSelection(contact)">
+                  <div class="board__assign-dropdown-avatar"
+                       [style.background]="contact.color || '#4589ff'"
+                       aria-hidden="true">
+                    {{ getContactInitials(contact.id!) }}
+                  </div>
+                  <div class="board__assign-dropdown-name">{{ contact.name }}</div>
+                  <img class="board__assign-dropdown-check"
+                       [src]="isEditContactAssigned(contact.id) ? '/assets/img/checked_checkbox_icon.png' : '/assets/img/unchecked_checkbox_icon.png'"
+                       alt=""
+                       role="presentation">
+                </div>
+              </div>
+            </div>
+
+            <!-- Selected Contacts Display -->
+            <div *ngIf="editTask!.assignedTo && editTask!.assignedTo.length > 0"
+                 class="board__selected-contacts-row"
+                 role="group"
+                 aria-label="Selected contacts">
+              <ng-container *ngFor="let contactId of editTask!.assignedTo.slice(0, 3); let i = index">
+                <div *ngIf="getEditContactById(contactId) as contact"
+                     class="board__selected-contact-avatar"
+                     [style.background]="contact.color || '#4589ff'"
+                     [attr.aria-label]="contact.name"
+                     role="img">
+                  {{ getContactInitials(contactId) }}
+                </div>
+              </ng-container>
+              <div *ngIf="editTask!.assignedTo.length > 3"
+                   class="board__selected-contact-avatar board__selected-contact-avatar--more"
+                   [attr.aria-label]="editTask!.assignedTo.length - 3 + ' more contacts selected'"
+                   role="img">
+                +{{ editTask!.assignedTo.length - 3 }}
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- EDIT MODE: Category -->
+        <div *ngIf="isEditMode" class="board__detail-item">
+          <label for="edit-category" class="board__edit-label">Kategorie:</label>
+          <input 
+            id="edit-category"
+            type="text" 
+            [(ngModel)]="editTask!.category"
+            class="board__edit-input"
+            placeholder="Kategorie eingeben">
+        </div>
+        
       </div>
       
-      <!-- Subtasks Section -->
-      <div *ngIf="selectedTask.subtasks && selectedTask.subtasks.length > 0" 
+      <!-- VIEW MODE: Subtasks Section -->
+      <div *ngIf="!isEditMode && selectedTask.subtasks && selectedTask.subtasks.length > 0" 
            class="board__subtasks-section"
            role="group"
            aria-labelledby="subtasks-title">
@@ -429,40 +578,119 @@
         </ul>
       </div>
       
+      <!-- EDIT MODE: Subtasks Section -->
+      <div *ngIf="isEditMode" 
+           class="board__subtasks-section"
+           role="group"
+           aria-labelledby="edit-subtasks-title">
+        <div class="board__edit-subtasks-header">
+          <h2 class="board__subtasks-title" id="edit-subtasks-title">
+            Subtasks
+          </h2>
+          <button 
+            type="button"
+            class="board__add-subtask-btn"
+            (click)="addSubtaskToEdit()"
+            aria-label="Neue Subtask hinzufügen">
+            + Subtask hinzufügen
+          </button>
+        </div>
+        <ul class="board__edit-subtasks-list" 
+            role="list"
+            aria-label="Bearbeitbare Liste der Teilaufgaben">
+          <li *ngFor="let subtask of editTask!.subtasks || []; let i = index" 
+              class="board__edit-subtask-item"
+              role="listitem">
+            <input 
+              type="text"
+              [(ngModel)]="editTask!.subtasks![i]"
+              class="board__edit-subtask-input"
+              placeholder="Subtask eingeben...">
+            <button 
+              type="button"
+              class="board__remove-subtask-btn"
+              (click)="removeSubtaskFromEdit(i)"
+              aria-label="Subtask entfernen">
+              ✕
+            </button>
+          </li>
+          <li *ngIf="!editTask!.subtasks || editTask!.subtasks.length === 0" 
+              class="board__no-subtasks">
+            <em>Keine Subtasks vorhanden. Klicken Sie auf "+ Subtask hinzufügen"</em>
+          </li>
+        </ul>
+      </div>
+      
     </div>
     
     <!-- Modal Actions -->
     <footer class="board__modal-actions" 
             role="group" 
             aria-label="Aufgaben-Aktionen">
-      <button class="board__action-btn board__action-btn--delete" 
-              type="button" 
-              (click)="deleteTask(selectedTask)"
-              aria-label="Aufgabe löschen"
-              aria-describedby="delete-description">
-        <img src="/assets/img/delete_icon_blue.png" 
-             alt="" 
-             role="presentation" 
-             aria-hidden="true">
-        <span>Löschen</span>
-        <span id="delete-description" class="sr-only">
-          Diese Aktion löscht die Aufgabe dauerhaft
-        </span>
-      </button>
-      <button class="board__action-btn board__action-btn--edit" 
-              type="button" 
-              (click)="editTask(selectedTask)"
-              aria-label="Aufgabe bearbeiten"
-              aria-describedby="edit-description">
-        <img src="/assets/img/edit_icon_blue.png" 
-             alt="" 
-             role="presentation" 
-             aria-hidden="true">
-        <span>Bearbeiten</span>
-        <span id="edit-description" class="sr-only">
-          Öffnet das Bearbeitungsformular für diese Aufgabe
-        </span>
-      </button>
+      
+      <!-- VIEW MODE Actions -->
+      <ng-container *ngIf="!isEditMode">
+        <button class="board__action-btn board__action-btn--delete" 
+                type="button" 
+                (click)="deleteTask(selectedTask)"
+                aria-label="Aufgabe löschen"
+                aria-describedby="delete-description">
+          <img src="/assets/img/delete_icon_blue.png" 
+               alt="" 
+               role="presentation" 
+               aria-hidden="true">
+          <span>Löschen</span>
+          <span id="delete-description" class="sr-only">
+            Diese Aktion löscht die Aufgabe dauerhaft
+          </span>
+        </button>
+        <button class="board__action-btn board__action-btn--edit" 
+                type="button" 
+                (click)="startEditMode(selectedTask)"
+                aria-label="Aufgabe bearbeiten"
+                aria-describedby="edit-description">
+          <img src="/assets/img/edit_icon_blue.png" 
+               alt="" 
+               role="presentation" 
+               aria-hidden="true">
+          <span>Bearbeiten</span>
+          <span id="edit-description" class="sr-only">
+            Öffnet das Bearbeitungsformular für diese Aufgabe
+          </span>
+        </button>
+      </ng-container>
+      
+      <!-- EDIT MODE Actions -->
+      <ng-container *ngIf="isEditMode">
+        <button class="board__action-btn board__action-btn--cancel" 
+                type="button" 
+                (click)="cancelEditMode()"
+                aria-label="Bearbeitung abbrechen"
+                aria-describedby="cancel-description">
+          <img src="/assets/img/close_small_white_icon.png" 
+               alt="" 
+               role="presentation" 
+               aria-hidden="true">
+          <span>Abbrechen</span>
+          <span id="cancel-description" class="sr-only">
+            Bricht die Bearbeitung ab und kehrt zur Ansicht zurück
+          </span>
+        </button>
+        <button class="board__action-btn board__action-btn--save" 
+                type="button" 
+                (click)="saveEditedTask()"
+                aria-label="Änderungen speichern"
+                aria-describedby="save-description">
+          <img src="/assets/img/check_blue_icon.png" 
+               alt="" 
+               role="presentation" 
+               aria-hidden="true">
+          <span>Speichern</span>
+          <span id="save-description" class="sr-only">
+            Speichert die Änderungen an der Aufgabe
+          </span>
+        </button>
+      </ng-container>
     </footer>
     
   </div>
