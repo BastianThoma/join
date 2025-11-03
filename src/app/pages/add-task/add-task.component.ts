@@ -1,6 +1,15 @@
-import { Component, ElementRef, HostListener, ViewChild, Injector, runInInjectionContext, inject } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  ViewChild,
+  Injector,
+  runInInjectionContext,
+  inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import {
   Firestore,
   collection,
@@ -34,7 +43,7 @@ interface Contact {
  * - Category selection
  * - Subtask management with inline editing
  * - Form validation and Firestore integration
- * 
+ *
  * Implements WCAG accessibility standards with proper ARIA attributes,
  * semantic HTML structure, and keyboard navigation support.
  */
@@ -49,11 +58,11 @@ export class AddTaskComponent {
   // ===============================
   // ViewChild References
   // ===============================
-  
+
   /** Reference to category picker wrapper for outside-click detection */
-  @ViewChild('categoryPickerWrapper', { static: false }) 
+  @ViewChild('categoryPickerWrapper', { static: false })
   categoryPickerWrapper!: ElementRef;
-  
+
   /** Reference to contacts selector wrapper for outside-click detection */
   @ViewChild('contactsSelectorWrapper', { static: false })
   contactsSelectorWrapper!: ElementRef;
@@ -61,92 +70,95 @@ export class AddTaskComponent {
   // ===============================
   // Form Fields
   // ===============================
-  
+
   /** Task title - required field */
   title = '';
-  
+
   /** Task description - optional field */
   description = '';
-  
+
   /** Due date for the task - required field */
   dueDate = '';
-  
+
   /** Task priority level with default medium priority */
   priority: 'urgent' | 'medium' | 'low' = 'medium';
-  
+
   /** Currently hovered priority for UI feedback */
   hoverPriority: 'urgent' | 'medium' | 'low' | null = null;
-  
+
   /** Array of assigned contact IDs */
   assignedTo: string[] = [];
-  
+
   /** Task category - required field */
   category = '';
-  
+
   /** Array of subtask descriptions */
   subtasks: string[] = [];
 
   // ===============================
   // Contact Management
   // ===============================
-  
+
   /** Complete list of available contacts */
   contacts: Contact[] = [];
-  
+
   /** Filtered contacts based on search input */
   filteredContacts: Contact[] = [];
-  
+
   /** Current search term for contact filtering */
   contactSearch = '';
-  
+
   /** Controls visibility of contacts dropdown */
   showContactsDropdown = false;
 
   // ===============================
   // UI State Management
   // ===============================
-  
+
   /** Controls visibility of category dropdown */
   showCategoryDropdown = false;
-  
+
   /** Input value for new subtask creation */
   newSubtask = '';
-  
+
   /** Tracks focus state of subtask input for UI changes */
   subtaskInputFocused = false;
-  
+
   /** Index of currently edited subtask, null if none */
   editSubtaskIndex: number | null = null;
-  
+
   /** Temporary value for subtask during editing */
   editSubtaskValue = '';
 
   // ===============================
   // Feedback Messages
   // ===============================
-  
+
   /** Error message display */
   error = '';
-  
+
   /** Success message display */
   success = '';
 
   // ===============================
   // Firestore Collections
   // ===============================
-  
+
   /** Firestore instance */
   private firestore = inject(Firestore);
-  
+
   /** Element reference */
   private el = inject(ElementRef);
-  
+
   /** Angular Injector for running Firebase calls in injection context */
   private injector = inject(Injector);
-  
+
+  /** Router service for navigation */
+  private router = inject(Router);
+
   /** Firestore collection reference for tasks */
   private tasksCol: CollectionReference<DocumentData>;
-  
+
   /** Firestore collection reference for contacts */
   private contactsCol: CollectionReference<DocumentData>;
 
@@ -170,14 +182,14 @@ export class AddTaskComponent {
   @HostListener('document:click', ['$event'])
   handleOutsideClick(event: Event) {
     const target = event.target as Node;
-    
+
     // Close contacts dropdown if clicked outside
     if (this.showContactsDropdown && this.contactsSelectorWrapper) {
       if (!this.contactsSelectorWrapper.nativeElement.contains(target)) {
         this.showContactsDropdown = false;
       }
     }
-    
+
     // Close category dropdown if clicked outside
     if (this.showCategoryDropdown && this.categoryPickerWrapper) {
       if (!this.categoryPickerWrapper.nativeElement.contains(target)) {
@@ -270,7 +282,7 @@ export class AddTaskComponent {
     if (event) {
       event.stopPropagation();
     }
-    
+
     if (this.showContactsDropdown) {
       this.showContactsDropdown = false;
     } else {
@@ -284,12 +296,12 @@ export class AddTaskComponent {
    */
   filterContacts(): void {
     const searchTerm = this.contactSearch.trim().toLowerCase();
-    
+
     if (searchTerm.length < 2) {
       this.filteredContacts = [...this.contacts];
       return;
     }
-    
+
     this.filteredContacts = this.contacts.filter((contact) =>
       contact.name.toLowerCase().includes(searchTerm)
     );
@@ -301,7 +313,7 @@ export class AddTaskComponent {
    */
   toggleContactSelection(contact: Contact): void {
     if (!contact?.id) return;
-    
+
     const index = this.assignedTo.indexOf(contact.id);
     if (index === -1) {
       this.assignedTo.push(contact.id);
@@ -346,6 +358,17 @@ export class AddTaskComponent {
   // ===============================
 
   /**
+   * Focuses the subtask input field to enable direct typing
+   * @param inputElement - HTML input element to focus
+   */
+  focusSubtaskInput(inputElement: HTMLInputElement): void {
+    if (inputElement) {
+      inputElement.focus();
+      this.subtaskInputFocused = true;
+    }
+  }
+
+  /**
    * Adds a new subtask from the current input value
    */
   addSubtask(): void {
@@ -355,6 +378,17 @@ export class AddTaskComponent {
       this.newSubtask = '';
       this.subtaskInputFocused = true;
     }
+  }
+
+  /**
+   * Handles Enter key in subtask input - prevents form submission
+   * @param event - Keyboard event
+   */
+  addSubtaskOnEnter(event: Event): void {
+    const keyboardEvent = event as KeyboardEvent;
+    keyboardEvent.preventDefault(); // Verhindert Form-Submit
+    keyboardEvent.stopPropagation(); // Verhindert Event-Bubbling
+    this.addSubtask();
   }
 
   /**
@@ -405,6 +439,17 @@ export class AddTaskComponent {
   }
 
   /**
+   * Handles Enter key in subtask edit input - prevents form submission
+   * @param event - Keyboard event
+   */
+  confirmEditSubtaskOnEnter(event: Event): void {
+    const keyboardEvent = event as KeyboardEvent;
+    keyboardEvent.preventDefault(); // Verhindert Form-Submit
+    keyboardEvent.stopPropagation(); // Verhindert Event-Bubbling
+    this.confirmEditSubtask();
+  }
+
+  /**
    * Cancels subtask editing without saving changes
    */
   cancelEditSubtask(): void {
@@ -418,12 +463,12 @@ export class AddTaskComponent {
    */
   removeSubtask(index: number): void {
     this.subtasks.splice(index, 1);
-    
+
     // Reset edit state if the deleted item was being edited
     if (this.editSubtaskIndex === index) {
       this.editSubtaskIndex = null;
       this.editSubtaskValue = '';
-    } 
+    }
     // Adjust edit index if an item before the edited one was deleted
     else if (this.editSubtaskIndex !== null && this.editSubtaskIndex > index) {
       this.editSubtaskIndex--;
@@ -441,7 +486,7 @@ export class AddTaskComponent {
    */
   openDatepicker(inputElement: HTMLInputElement): void {
     if (!inputElement) return;
-    
+
     // Try modern showPicker method first
     const anyInput = inputElement as any;
     if (typeof anyInput.showPicker === 'function') {
@@ -452,7 +497,7 @@ export class AddTaskComponent {
         console.warn('showPicker not supported, falling back to focus/click');
       }
     }
-    
+
     // Fallback for older browsers
     try {
       inputElement.focus();
@@ -494,23 +539,23 @@ export class AddTaskComponent {
   async onSubmit(): Promise<void> {
     this.error = '';
     this.success = '';
-    
+
     // Validate required fields
     if (!this.title.trim()) {
       this.error = 'Title is required.';
       return;
     }
-    
+
     if (!this.dueDate.trim()) {
       this.error = 'Due date is required.';
       return;
     }
-    
+
     if (!this.category.trim()) {
       this.error = 'Category is required.';
       return;
     }
-    
+
     try {
       // Create task document
       await runInInjectionContext(this.injector, async () => {
@@ -527,9 +572,9 @@ export class AddTaskComponent {
           completedSubtasks: [], // Initialize empty completed subtasks array
         });
       });
-      
+
       this.success = 'Task created successfully!';
-      
+
       // Reset form after successful submission
       this.title = '';
       this.description = '';
@@ -538,7 +583,12 @@ export class AddTaskComponent {
       this.assignedTo = [];
       this.category = '';
       this.subtasks = [];
-      
+
+      // Automatische Weiterleitung zum Board nach 2 Sekunden
+      setTimeout(() => {
+        this.success = ''; // Erfolgsmeldung ausblenden
+        this.router.navigate(['/board']); // Navigation zum Board
+      }, 2000);
     } catch (error) {
       console.error('Error saving task:', error);
       this.error = 'Error saving task. Please try again.';

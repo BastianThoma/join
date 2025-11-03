@@ -1,15 +1,15 @@
 <main class="add-task" role="main" aria-labelledby="page-title">
   <h1 id="page-title" class="sr-only">Create New Task</h1>
-  
-  <form 
-    class="add-task__form" 
-    (ngSubmit)="onSubmit()" 
+
+  <form
+    class="add-task__form"
+    (ngSubmit)="onSubmit()"
     novalidate
     aria-label="Task creation form"
   >
     <!-- Success Message -->
-    <div 
-      *ngIf="success" 
+    <div
+      *ngIf="success"
       class="add-task__success"
       role="alert"
       aria-live="polite"
@@ -33,10 +33,10 @@
         aria-describedby="title-error"
         [attr.aria-invalid]="error && !title.trim() ? 'true' : 'false'"
       />
-      <div 
-        id="title-error" 
-        *ngIf="error && !title.trim()" 
-        class="add-task__error" 
+      <div
+        id="title-error"
+        *ngIf="error && !title.trim()"
+        class="add-task__error"
         role="alert"
         aria-live="polite"
       >
@@ -46,7 +46,11 @@
 
     <!-- Task Description Section -->
     <section class="add-task__section" aria-labelledby="description-label">
-      <label id="description-label" for="task-description" class="add-task__label">
+      <label
+        id="description-label"
+        for="task-description"
+        class="add-task__label"
+      >
         Description <span class="add-task__optional">(optional)</span>
       </label>
       <textarea
@@ -94,10 +98,10 @@
           />
         </button>
       </div>
-      <div 
-        id="date-error" 
-        *ngIf="error && !dueDate.trim()" 
-        class="add-task__error" 
+      <div
+        id="date-error"
+        *ngIf="error && !dueDate.trim()"
+        class="add-task__error"
         role="alert"
         aria-live="polite"
       >
@@ -108,13 +112,20 @@
     <!-- Priority Section -->
     <section class="add-task__section" aria-labelledby="priority-label">
       <label id="priority-label" class="add-task__label">Priority</label>
-      <fieldset class="add-task__priority-fieldset" aria-describedby="priority-hint">
+      <fieldset
+        class="add-task__priority-fieldset"
+        aria-describedby="priority-hint"
+      >
         <legend class="sr-only">Select task priority level</legend>
         <div id="priority-hint" class="sr-only">
           Choose between urgent, medium, or low priority
         </div>
-        
-        <div class="add-task__priority-row" role="radiogroup" aria-labelledby="priority-label">
+
+        <div
+          class="add-task__priority-row"
+          role="radiogroup"
+          aria-labelledby="priority-label"
+        >
           <button
             type="button"
             class="add-task__priority add-task__priority--urgent"
@@ -127,13 +138,17 @@
             aria-label="Urgent priority"
           >
             Urgent
-            <img 
-              [src]="priority === 'urgent' || hoverPriority === 'urgent' ? '/assets/img/urgent_prio_icon_white.png' : '/assets/img/urgent_prio_icon_red.png'" 
-              alt="" 
+            <img
+              [src]="
+                priority === 'urgent' || hoverPriority === 'urgent'
+                  ? '/assets/img/urgent_prio_icon_white.png'
+                  : '/assets/img/urgent_prio_icon_red.png'
+              "
+              alt=""
               role="presentation"
             />
           </button>
-          
+
           <button
             type="button"
             class="add-task__priority add-task__priority--medium"
@@ -146,13 +161,17 @@
             aria-label="Medium priority"
           >
             Medium
-            <img 
-              [src]="priority === 'medium' || hoverPriority === 'medium' ? '/assets/img/medium_prio_icon_white.png' : '/assets/img/medium_prio_icon_orange.png'" 
-              alt="" 
+            <img
+              [src]="
+                priority === 'medium' || hoverPriority === 'medium'
+                  ? '/assets/img/medium_prio_icon_white.png'
+                  : '/assets/img/medium_prio_icon_orange.png'
+              "
+              alt=""
               role="presentation"
             />
           </button>
-          
+
           <button
             type="button"
             class="add-task__priority add-task__priority--low"
@@ -165,9 +184,13 @@
             aria-label="Low priority"
           >
             Low
-            <img 
-              [src]="priority === 'low' || hoverPriority === 'low' ? '/assets/img/low_prio_icon_white.png' : '/assets/img/low_prio_icon_green.png'" 
-              alt="" 
+            <img
+              [src]="
+                priority === 'low' || hoverPriority === 'low'
+                  ? '/assets/img/low_prio_icon_white.png'
+                  : '/assets/img/low_prio_icon_green.png'
+              "
+              alt=""
               role="presentation"
             />
           </button>
@@ -180,7 +203,7 @@
       <label id="contacts-label" class="add-task__label">
         Assigned to <span class="add-task__optional">(optional)</span>
       </label>
-      
+
       <div class="contacts-selector-wrapper" #contactsSelectorWrapper>
         <div class="add-task__select-row">
           <input
@@ -201,54 +224,70 @@
           <button
             type="button"
             class="add-task__select-button"
-            [attr.aria-label]="showContactsDropdown ? 'Close contact selection' : 'Open contact selection'"
+            [attr.aria-label]="
+              showContactsDropdown
+                ? 'Close contact selection'
+                : 'Open contact selection'
+            "
             (click)="toggleContacts($event)"
           >
-            <img 
-              class="add-task__select-icon" 
-              [src]="showContactsDropdown ? '/assets/img/close_dropdown_icon.png' : '/assets/img/open_dropdown_icon.png'" 
-              alt="" 
+            <img
+              class="add-task__select-icon"
+              [src]="
+                showContactsDropdown
+                  ? '/assets/img/close_dropdown_icon.png'
+                  : '/assets/img/open_dropdown_icon.png'
+              "
+              alt=""
               role="presentation"
             />
           </button>
         </div>
-        
+
         <div id="contacts-hint" class="sr-only">
           Type to search contacts or click to see all available contacts
         </div>
 
-        <div 
-          *ngIf="showContactsDropdown" 
-          class="assign-dropdown" 
+        <div
+          *ngIf="showContactsDropdown"
+          class="assign-dropdown"
           role="listbox"
           aria-label="Available contacts"
           (click)="$event.stopPropagation()"
         >
           <div class="assign-dropdown__list">
-            <div 
-              *ngFor="let c of filteredContacts; trackBy: trackByContactId" 
-              class="assign-dropdown__item" 
-              [class.selected]="isAssigned(c.id)" 
+            <div
+              *ngFor="let c of filteredContacts; trackBy: trackByContactId"
+              class="assign-dropdown__item"
+              [class.selected]="isAssigned(c.id)"
               (click)="toggleContactSelection(c)"
               role="option"
               [attr.aria-selected]="isAssigned(c.id)"
-              [attr.aria-label]="c.name + (isAssigned(c.id) ? ' (selected)' : '')"
+              [attr.aria-label]="
+                c.name + (isAssigned(c.id) ? ' (selected)' : '')
+              "
               tabindex="0"
               (keydown.enter)="toggleContactSelection(c)"
-              (keydown.space)="$event.preventDefault(); toggleContactSelection(c)"
+              (keydown.space)="
+                $event.preventDefault(); toggleContactSelection(c)
+              "
             >
-              <div 
-                class="assign-dropdown__avatar" 
+              <div
+                class="assign-dropdown__avatar"
                 [style.background]="c.color || '#ccc'"
                 aria-hidden="true"
               >
                 {{ getInitials(c.name) }}
               </div>
               <div class="assign-dropdown__name">{{ c.name }}</div>
-              <img 
-                class="assign-dropdown__check" 
-                [src]="isAssigned(c.id) ? '/assets/img/checked_checkbox_icon.png' : '/assets/img/unchecked_checkbox_icon.png'" 
-                alt="" 
+              <img
+                class="assign-dropdown__check"
+                [src]="
+                  isAssigned(c.id)
+                    ? '/assets/img/checked_checkbox_icon.png'
+                    : '/assets/img/unchecked_checkbox_icon.png'
+                "
+                alt=""
                 role="presentation"
               />
             </div>
@@ -256,16 +295,18 @@
         </div>
 
         <!-- Selected Contacts Display -->
-        <div 
-          *ngIf="assignedTo.length > 0" 
+        <div
+          *ngIf="assignedTo.length > 0"
           class="selected-contacts-row"
           role="group"
           aria-label="Selected contacts"
         >
-          <ng-container *ngFor="let id of assignedTo.slice(0,3); let i = index">
-            <div 
-              *ngIf="getContactById(id) as contact" 
-              class="selected-contact-avatar" 
+          <ng-container
+            *ngFor="let id of assignedTo.slice(0, 3); let i = index"
+          >
+            <div
+              *ngIf="getContactById(id) as contact"
+              class="selected-contact-avatar"
               [style.background]="contact.color || '#ccc'"
               [attr.aria-label]="contact.name"
               role="img"
@@ -273,10 +314,12 @@
               {{ getInitials(contact.name) }}
             </div>
           </ng-container>
-          <div 
-            *ngIf="assignedTo.length > 3" 
+          <div
+            *ngIf="assignedTo.length > 3"
             class="selected-contact-avatar selected-contact-avatar--more"
-            [attr.aria-label]="(assignedTo.length - 3) + ' more contacts selected'"
+            [attr.aria-label]="
+              assignedTo.length - 3 + ' more contacts selected'
+            "
             role="img"
           >
             +{{ assignedTo.length - 3 }}
@@ -290,7 +333,7 @@
       <label id="category-label" class="add-task__label">
         Category <span class="add-task__required" aria-label="required">*</span>
       </label>
-      
+
       <div class="category-picker-row" #categoryPickerWrapper>
         <button
           type="button"
@@ -302,15 +345,15 @@
           [attr.aria-invalid]="error && !category.trim() ? 'true' : 'false'"
           role="combobox"
         >
-          <span 
-            *ngIf="!category" 
+          <span
+            *ngIf="!category"
             id="category-placeholder"
             class="category-picker-placeholder"
           >
             Select task category
           </span>
-          <span 
-            *ngIf="category" 
+          <span
+            *ngIf="category"
             class="category-picker-value"
             [attr.aria-label]="'Selected category: ' + category"
           >
@@ -325,8 +368,8 @@
           />
         </button>
 
-        <div 
-          *ngIf="showCategoryDropdown" 
+        <div
+          *ngIf="showCategoryDropdown"
           class="category-picker-dropdown"
           role="listbox"
           aria-label="Category options"
@@ -339,7 +382,9 @@
             [attr.aria-selected]="category === 'Technical Task'"
             tabindex="0"
             (keydown.enter)="selectCategory('Technical Task')"
-            (keydown.space)="$event.preventDefault(); selectCategory('Technical Task')"
+            (keydown.space)="
+              $event.preventDefault(); selectCategory('Technical Task')
+            "
           >
             Technical Task
           </div>
@@ -351,16 +396,18 @@
             [attr.aria-selected]="category === 'User Story'"
             tabindex="0"
             (keydown.enter)="selectCategory('User Story')"
-            (keydown.space)="$event.preventDefault(); selectCategory('User Story')"
+            (keydown.space)="
+              $event.preventDefault(); selectCategory('User Story')
+            "
           >
             User Story
           </div>
         </div>
       </div>
-      
-      <div 
-        *ngIf="error && !category.trim()" 
-        class="add-task__error" 
+
+      <div
+        *ngIf="error && !category.trim()"
+        class="add-task__error"
         role="alert"
         aria-live="polite"
       >
@@ -373,10 +420,14 @@
       <label id="subtasks-label" class="add-task__label">
         Subtasks <span class="add-task__optional">(optional)</span>
       </label>
-      
+
       <div class="add-task__subtasks-row">
         <!-- Subtask Input -->
-        <div class="add-task__select-row" role="group" aria-labelledby="subtasks-label">
+        <div
+          class="add-task__select-row"
+          role="group"
+          aria-labelledby="subtasks-label"
+        >
           <input
             id="subtask-input"
             #subtaskInput
@@ -385,7 +436,7 @@
             placeholder="Add new subtask"
             [(ngModel)]="newSubtask"
             name="newSubtask"
-            (keydown.enter)="addSubtask()"
+            (keydown.enter)="addSubtaskOnEnter($event)"
             [disabled]="editSubtaskIndex !== null"
             (focus)="subtaskInputFocused = true"
             (blur)="subtaskInputFocused = false"
@@ -394,49 +445,57 @@
           <div id="subtask-hint" class="sr-only">
             Press Enter or click the add button to create a new subtask
           </div>
-          
-          <div class="add-task__select-icons" role="group" aria-label="Subtask actions">
+
+          <div
+            class="add-task__select-icons"
+            role="group"
+            aria-label="Subtask actions"
+          >
             <button
               *ngIf="!newSubtask && !subtaskInputFocused"
               type="button"
               class="add-task__select-button"
               aria-label="Add new subtask"
-              (mousedown)="$event.preventDefault(); addSubtask()"
+              (click)="focusSubtaskInput(subtaskInput)"
             >
-              <img 
-                class="add-task__select-icon" 
-                src="/assets/img/add_subtask_blue_icon.png" 
-                alt="" 
+              <img
+                class="add-task__select-icon"
+                src="/assets/img/add_subtask_blue_icon.png"
+                alt=""
                 role="presentation"
               />
             </button>
-            
+
             <ng-container *ngIf="subtaskInputFocused || newSubtask">
               <button
                 type="button"
                 class="add-task__select-button"
                 aria-label="Clear subtask input"
-                (mousedown)="clearSubtaskInput(subtaskInput); $event.preventDefault()"
-                style="right: 32px;"
+                (mousedown)="
+                  clearSubtaskInput(subtaskInput); $event.preventDefault()
+                "
+                style="right: 32px"
               >
-                <img 
-                  class="add-task__select-icon" 
-                  src="/assets/img/x_delete_blue_icon.png" 
-                  alt="" 
+                <img
+                  class="add-task__select-icon"
+                  src="/assets/img/x_delete_blue_icon.png"
+                  alt=""
                   role="presentation"
                 />
               </button>
-              
+
               <button
                 type="button"
                 class="add-task__select-button"
                 aria-label="Add subtask"
-                (mousedown)="addSubtaskFromInput(subtaskInput); $event.preventDefault()"
+                (mousedown)="
+                  addSubtaskFromInput(subtaskInput); $event.preventDefault()
+                "
               >
-                <img 
-                  class="add-task__select-icon" 
-                  src="/assets/img/check_blue_icon.png" 
-                  alt="" 
+                <img
+                  class="add-task__select-icon"
+                  src="/assets/img/check_blue_icon.png"
+                  alt=""
                   role="presentation"
                 />
               </button>
@@ -444,35 +503,45 @@
           </div>
         </div>
       </div>
-      
+
       <!-- Subtasks List -->
-      <div 
+      <div
         *ngIf="subtasks.length > 0"
-        class="subtasks-list" 
+        class="subtasks-list"
         role="list"
         aria-label="Current subtasks"
       >
-        <div 
-          *ngFor="let sub of subtasks; let i = index; trackBy: trackBySubtaskIndex" 
+        <div
+          *ngFor="
+            let sub of subtasks;
+            let i = index;
+            trackBy: trackBySubtaskIndex
+          "
           class="subtask-list-item"
           role="listitem"
         >
           <span class="subtask-dot" aria-hidden="true">•</span>
-          
+
           <!-- Display Mode -->
           <ng-container *ngIf="editSubtaskIndex !== i">
-            <span class="subtask-text" [attr.aria-label]="'Subtask: ' + sub">{{ sub }}</span>
-            <div class="subtask-actions" role="group" [attr.aria-label]="'Actions for subtask: ' + sub">
+            <span class="subtask-text" [attr.aria-label]="'Subtask: ' + sub">{{
+              sub
+            }}</span>
+            <div
+              class="subtask-actions"
+              role="group"
+              [attr.aria-label]="'Actions for subtask: ' + sub"
+            >
               <button
                 type="button"
                 class="subtask-action-button"
                 [attr.aria-label]="'Edit subtask: ' + sub"
                 (click)="startEditSubtask(i)"
               >
-                <img 
-                  class="subtask-icon subtask-edit" 
-                  src="/assets/img/edit_icon_blue.png" 
-                  alt="" 
+                <img
+                  class="subtask-icon subtask-edit"
+                  src="/assets/img/edit_icon_blue.png"
+                  alt=""
                   role="presentation"
                 />
               </button>
@@ -482,24 +551,24 @@
                 [attr.aria-label]="'Delete subtask: ' + sub"
                 (click)="removeSubtask(i)"
               >
-                <img 
-                  class="subtask-icon subtask-delete" 
-                  src="/assets/img/delete_icon_blue.png" 
-                  alt="" 
+                <img
+                  class="subtask-icon subtask-delete"
+                  src="/assets/img/delete_icon_blue.png"
+                  alt=""
                   role="presentation"
                 />
               </button>
             </div>
           </ng-container>
-          
+
           <!-- Edit Mode -->
           <ng-container *ngIf="editSubtaskIndex === i">
-            <input 
-              class="add-task__select subtask-edit-input" 
-              type="text" 
-              [(ngModel)]="editSubtaskValue" 
-              [ngModelOptions]="{standalone: true}"
-              (keydown.enter)="confirmEditSubtask()"
+            <input
+              class="add-task__select subtask-edit-input"
+              type="text"
+              [(ngModel)]="editSubtaskValue"
+              [ngModelOptions]="{ standalone: true }"
+              (keydown.enter)="confirmEditSubtaskOnEnter($event)"
               [attr.aria-label]="'Edit subtask: ' + sub"
               #editInput
             />
@@ -510,10 +579,10 @@
                 aria-label="Delete this subtask"
                 (click)="removeSubtask(i)"
               >
-                <img 
-                  class="subtask-icon subtask-clear" 
-                  src="/assets/img/delete_icon_blue.png" 
-                  alt="" 
+                <img
+                  class="subtask-icon subtask-clear"
+                  src="/assets/img/delete_icon_blue.png"
+                  alt=""
                   role="presentation"
                 />
               </button>
@@ -524,10 +593,10 @@
                 aria-label="Save changes to subtask"
                 (click)="confirmEditSubtask()"
               >
-                <img 
-                  class="subtask-icon subtask-check" 
-                  src="/assets/img/check_blue_icon.png" 
-                  alt="" 
+                <img
+                  class="subtask-icon subtask-check"
+                  src="/assets/img/check_blue_icon.png"
+                  alt=""
                   role="presentation"
                 />
               </button>
@@ -539,33 +608,45 @@
 
     <!-- Form Actions -->
     <div class="add-task__form-actions" role="group" aria-label="Form actions">
-      <button 
-        type="button" 
+      <button
+        type="button"
         class="add-task__clear-btn"
         (click)="clearForm()"
         aria-describedby="clear-help"
       >
         Clear
-        <img src="/assets/img/clear_button_icon.png" alt="" role="presentation" />
+        <img
+          src="/assets/img/clear_button_icon.png"
+          alt=""
+          role="presentation"
+        />
       </button>
-      <div id="clear-help" class="sr-only">Clear all form fields and start over</div>
-      
-      <button 
-        type="submit" 
+      <div id="clear-help" class="sr-only">
+        Clear all form fields and start over
+      </div>
+
+      <button
+        type="submit"
         class="add-task__create-btn"
         [disabled]="!title.trim() || !dueDate.trim() || !category.trim()"
         aria-describedby="submit-help"
       >
         Create Task
-        <img src="/assets/img/check_small_icon.png" alt="" role="presentation" />
+        <img
+          src="/assets/img/check_small_icon.png"
+          alt=""
+          role="presentation"
+        />
       </button>
-      <div id="submit-help" class="sr-only">Create the new task with the provided information</div>
+      <div id="submit-help" class="sr-only">
+        Create the new task with the provided information
+      </div>
     </div>
 
     <!-- Form Messages -->
     <div class="add-task__messages" aria-live="polite" role="status">
-      <div 
-        *ngIf="error && !(!title.trim() || !dueDate.trim() || !category.trim())" 
+      <div
+        *ngIf="error && !(!title.trim() || !dueDate.trim() || !category.trim())"
         class="add-task__error"
         role="alert"
       >
