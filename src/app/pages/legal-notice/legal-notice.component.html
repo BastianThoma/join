@@ -1,0 +1,251 @@
+<!--
+  Legal Notice Component (Impressum)
+  Rechtliche Pflichtangaben nach deutschem Recht mit WCAG 2.1 AA Barrierefreiheit
+-->
+<main class="legal-notice" 
+      role="main" 
+      aria-label="Impressum und rechtliche Hinweise">
+  
+  <!-- Header Section -->
+  <header class="legal-notice__header">
+    <h1 class="legal-notice__title">Impressum</h1>
+    <p class="legal-notice__subtitle">
+      Angaben gemäß § 5 TMG (Telemediengesetz)
+    </p>
+    <p class="legal-notice__last-updated">
+      Letzte Aktualisierung: {{ lastUpdated }}
+    </p>
+  </header>
+
+  <!-- Content Sections -->
+  <div class="legal-notice__content">
+    
+    <!-- 1. Verantwortlich für den Inhalt -->
+    <section class="legal-notice__section"
+             role="region"
+             aria-labelledby="responsible-title">
+      <h2 id="responsible-title" class="legal-notice__section-title">
+        Verantwortlich für den Inhalt
+      </h2>
+      <div class="legal-notice__section-content">
+        <div class="legal-notice__contact-card">
+          <address class="legal-notice__address">
+            <strong class="legal-notice__org-name">{{ responsibleOrganization }}</strong><br>
+            <span class="legal-notice__address-line">Musterstraße 123</span><br>
+            <span class="legal-notice__address-line">12345 Musterstadt</span><br>
+            <span class="legal-notice__country">Deutschland</span>
+          </address>
+          
+          <div class="legal-notice__contact-details">
+            <h3 class="legal-notice__contact-title">Kontakt</h3>
+            <p>
+              <strong>E-Mail:</strong> 
+              <a href="mailto:{{ contactEmail }}" 
+                 class="legal-notice__email-link"
+                 aria-label="E-Mail senden an {{ contactEmail }}">
+                {{ contactEmail }}
+              </a>
+            </p>
+            <p>
+              <strong>Website:</strong> 
+              <a href="{{ websiteUrl }}" 
+                 class="legal-notice__website-link"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 aria-label="Website öffnen in neuem Tab">
+                {{ websiteUrl }}
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Haftungsausschluss -->
+    <section class="legal-notice__section"
+             role="region"
+             aria-labelledby="liability-title">
+      <h2 id="liability-title" class="legal-notice__section-title">
+        Haftungsausschluss (Disclaimer)
+      </h2>
+      <div class="legal-notice__section-content">
+        
+        <h3 class="legal-notice__subsection-title">Haftung für Inhalte</h3>
+        <p>
+          Als Diensteanbieter sind wir gemäß § 7 Abs.1 TMG für eigene Inhalte auf diesen Seiten 
+          nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir als 
+          Diensteanbieter jedoch nicht unter der Verpflichtung, übermittelte oder gespeicherte 
+          fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine 
+          rechtswidrige Tätigkeit hinweisen.
+        </p>
+        <p>
+          Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den 
+          allgemeinen Gesetzen bleiben hiervon unberührt. Eine diesbezügliche Haftung ist jedoch 
+          erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung möglich. Bei 
+          Bekanntwerden von entsprechenden Rechtsverletzungen werden wir diese Inhalte umgehend entfernen.
+        </p>
+
+        <h3 class="legal-notice__subsection-title">Haftung für Links</h3>
+        <p>
+          Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte wir keinen 
+          Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. 
+          Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der 
+          Seiten verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf 
+          mögliche Rechtsverstöße überprüft. Rechtswidrige Inhalte waren zum Zeitpunkt der 
+          Verlinkung nicht erkennbar.
+        </p>
+        <p>
+          Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete 
+          Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von 
+          Rechtsverletzungen werden wir derartige Links umgehend entfernen.
+        </p>
+      </div>
+    </section>
+
+    <!-- 3. Urheberrecht -->
+    <section class="legal-notice__section"
+             role="region"
+             aria-labelledby="copyright-title">
+      <h2 id="copyright-title" class="legal-notice__section-title">
+        Urheberrecht
+      </h2>
+      <div class="legal-notice__section-content">
+        <p>
+          Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen 
+          dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art 
+          der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen 
+          Zustimmung des jeweiligen Autors bzw. Erstellers.
+        </p>
+        <p>
+          Downloads und Kopien dieser Seite sind nur für den privaten, nicht kommerziellen Gebrauch 
+          gestattet. Soweit die Inhalte auf dieser Seite nicht vom Betreiber erstellt wurden, werden 
+          die Urheberrechte Dritter beachtet. Insbesondere werden Inhalte Dritter als solche 
+          gekennzeichnet. Sollten Sie trotzdem auf eine Urheberrechtsverletzung aufmerksam werden, 
+          bitten wir um einen entsprechenden Hinweis. Bei Bekanntwerden von Rechtsverletzungen 
+          werden wir derartige Inhalte umgehend entfernen.
+        </p>
+
+        <div class="legal-notice__copyright-notice">
+          <h4>Copyright Notice</h4>
+          <p>
+            © 2025 Firma. 
+            Alle Rechte vorbehalten.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Datenschutz -->
+    <section class="legal-notice__section"
+             role="region"
+             aria-labelledby="privacy-title">
+      <h2 id="privacy-title" class="legal-notice__section-title">
+        Datenschutz
+      </h2>
+      <div class="legal-notice__section-content">
+        <p>
+          Die Nutzung unserer Website ist in der Regel ohne Angabe personenbezogener Daten möglich. 
+          Soweit auf unseren Seiten personenbezogene Daten (beispielsweise Name, Anschrift oder 
+          E-Mail-Adressen) erhoben werden, erfolgt dies, soweit möglich, stets auf freiwilliger Basis.
+        </p>
+        <p>
+          Diese Daten werden ohne Ihre ausdrückliche Zustimmung nicht an Dritte weitergegeben. 
+          Wir weisen darauf hin, dass die Datenübertragung im Internet (z.B. bei der Kommunikation 
+          per E-Mail) Sicherheitslücken aufweisen kann. Ein lückenloser Schutz der Daten vor dem 
+          Zugriff durch Dritte ist nicht möglich.
+        </p>
+        
+        <div class="legal-notice__privacy-link">
+          <p>
+            <strong>Detaillierte Informationen finden Sie in unserer 
+            <a routerLink="/privacy-policy" 
+               class="legal-notice__internal-link"
+               aria-label="Zur ausführlichen Datenschutzerklärung">
+              Datenschutzerklärung
+            </a>.</strong>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Rechtliche Hinweise -->
+    <section class="legal-notice__section"
+             role="region"
+             aria-labelledby="legal-hints-title">
+      <h2 id="legal-hints-title" class="legal-notice__section-title">
+        Weitere rechtliche Hinweise
+      </h2>
+      <div class="legal-notice__section-content">
+        
+        <h3 class="legal-notice__subsection-title">Anwendbares Recht</h3>
+        <p>
+          Für diese Website und alle Streitigkeiten im Zusammenhang mit ihrer Nutzung gilt 
+          ausschließlich deutsches Recht unter Ausschluss des UN-Kaufrechts.
+        </p>
+
+        <h3 class="legal-notice__subsection-title">Gerichtsstand</h3>
+        <p>
+          Ausschließlicher Gerichtsstand für alle Streitigkeiten ist der Sitz des 
+          Website-Betreibers, sofern der Nutzer Kaufmann, juristische Person des 
+          öffentlichen Rechts oder öffentlich-rechtliches Sondervermögen ist.
+        </p>
+
+        <h3 class="legal-notice__subsection-title">Salvatorische Klausel</h3>
+        <p>
+          Sollten einzelne Bestimmungen dieses Impressums unwirksam sein oder werden, 
+          berührt dies nicht die Wirksamkeit der übrigen Bestimmungen.
+        </p>
+      </div>
+    </section>
+
+    <!-- 6. Kontakt für rechtliche Anfragen -->
+    <section class="legal-notice__section"
+             role="region"
+             aria-labelledby="legal-contact-title">
+      <h2 id="legal-contact-title" class="legal-notice__section-title">
+        Kontakt für rechtliche Anfragen
+      </h2>
+      <div class="legal-notice__section-content">
+        <div class="legal-notice__legal-contact-box">
+          <p>
+            Bei rechtlichen Fragen, Beschwerden oder Anmerkungen zu diesem Impressum 
+            kontaktieren Sie uns unter:
+          </p>
+          <address class="legal-notice__legal-contact">
+            <strong>Rechtliche Anfragen:</strong><br>
+            E-Mail: <a href="mailto:{{ legalEmail }}" 
+                      class="legal-notice__email-link"
+                      aria-label="E-Mail für rechtliche Anfragen senden">
+              {{ legalEmail }}
+            </a><br>
+            <em>Betreff: Rechtliche Anfrage - Impressum</em>
+          </address>
+        </div>
+      </div>
+    </section>
+    
+  </div>
+
+  <!-- Footer Actions -->
+  <footer class="legal-notice__footer">
+    <div class="legal-notice__actions">
+      <button type="button" 
+              class="legal-notice__back-to-top"
+              (click)="scrollToTop()"
+              aria-label="Zurück zum Seitenanfang">
+        Nach oben
+      </button>
+      <a routerLink="/privacy-policy" 
+         class="legal-notice__privacy-link-btn"
+         aria-label="Zur Datenschutzerklärung">
+        Datenschutzerklärung
+      </a>
+      <a routerLink="/" 
+         class="legal-notice__back-home"
+         aria-label="Zurück zur Startseite">
+        Zurück zur App
+      </a>
+    </div>
+  </footer>
+
+</main>

@@ -1,0 +1,386 @@
+/**
+ * Privacy Policy Component Styles
+ * 
+ * Implementiert BEM-Methodologie mit vollständiger Accessibility-Unterstützung
+ * nach WCAG 2.1 AA Standards für Rechtsdokumente.
+ */
+
+// === SCSS Variables ===
+$primary-color: #005dff;
+$primary-hover: #4589ff;
+$secondary-color: #2a3647;
+$text-color: #222;
+$text-muted: #42526e;
+$border-color: #f1f1f1;
+$background-light: #f5f8fd;
+$background-highlight: #fff4e6;
+$shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+$shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.12);
+
+// Responsive Breakpoints
+$mobile: 320px;
+$tablet: 768px;
+$desktop: 1024px;
+
+// === Base Component Styles ===
+.privacy-policy {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  line-height: 1.6;
+  color: $text-color;
+  background: #fff;
+  
+  @media (min-width: $tablet) {
+    padding: 40px 32px;
+  }
+  
+  @media (min-width: $desktop) {
+    padding: 48px 40px;
+  }
+
+  // === Header Section ===
+  &__header {
+    text-align: center;
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 2px solid $border-color;
+  }
+
+  &__title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: $secondary-color;
+    margin: 0 0 16px 0;
+    
+    @media (min-width: $tablet) {
+      font-size: 3rem;
+    }
+  }
+
+  &__last-updated {
+    font-size: 0.95rem;
+    color: $text-muted;
+    font-style: italic;
+    margin: 0;
+  }
+
+  // === Navigation ===
+  &__nav {
+    background: $background-light;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 40px;
+    border-left: 4px solid $primary-color;
+  }
+
+  &__nav-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: $secondary-color;
+    margin: 0 0 16px 0;
+  }
+
+  &__nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  &__nav-link {
+    display: block;
+    padding: 8px 12px;
+    color: $primary-color;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    
+    &:hover,
+    &:focus {
+      background: rgba($primary-color, 0.1);
+      color: $primary-hover;
+      outline: 2px solid $primary-color;
+      outline-offset: 2px;
+    }
+  }
+
+  // === Content Sections ===
+  &__content {
+    margin-bottom: 48px;
+  }
+
+  &__section {
+    margin-bottom: 48px;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__section-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: $secondary-color;
+    margin: 0 0 24px 0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid $border-color;
+  }
+
+  &__subsection-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: $secondary-color;
+    margin: 32px 0 16px 0;
+    
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  &__section-content {
+    font-size: 1rem;
+    
+    p {
+      margin: 0 0 16px 0;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  // === Lists ===
+  &__data-list,
+  &__legal-list {
+    padding-left: 20px;
+    margin: 16px 0;
+    
+    li {
+      margin-bottom: 8px;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  // === Contact Information ===
+  &__contact-info {
+    background: $background-light;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 16px 0;
+    font-style: normal;
+    border-left: 3px solid $primary-color;
+  }
+
+  &__email-link {
+    color: $primary-color;
+    text-decoration: none;
+    font-weight: 500;
+    
+    &:hover,
+    &:focus {
+      color: $primary-hover;
+      text-decoration: underline;
+    }
+  }
+
+  // === Highlight Boxes ===
+  &__highlight-box {
+    background: $background-highlight;
+    border: 1px solid #ffd700;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 24px 0;
+    
+    h4 {
+      margin: 0 0 12px 0;
+      color: $secondary-color;
+      font-weight: 600;
+    }
+    
+    ul {
+      margin: 0;
+      padding-left: 20px;
+      
+      li {
+        margin-bottom: 6px;
+        
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+
+  // === Rights Grid ===
+  &__rights-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin: 24px 0;
+    
+    @media (min-width: $tablet) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  &__right-item {
+    background: #fff;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    padding: 20px;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      border-color: $primary-color;
+      box-shadow: $shadow-light;
+    }
+    
+    h4 {
+      margin: 0 0 12px 0;
+      color: $primary-color;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    
+    p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: $text-muted;
+    }
+  }
+
+  // === Complaint Info ===
+  &__complaint-info {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 24px 0;
+    
+    h4 {
+      margin: 0 0 12px 0;
+      color: #856404;
+    }
+    
+    p {
+      margin: 0;
+      color: #856404;
+    }
+  }
+
+  // === Contact Box ===
+  &__contact-box {
+    background: linear-gradient(135deg, $primary-color 0%, $primary-hover 100%);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+    color: #fff;
+  }
+
+  &__contact-details {
+    font-style: normal;
+    
+    strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+    }
+    
+    .privacy-policy__email-link {
+      color: #fff;
+      
+      &:hover,
+      &:focus {
+        color: #e6f3ff;
+      }
+    }
+    
+    em {
+      display: block;
+      margin-top: 12px;
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+  }
+
+  // === Footer ===
+  &__footer {
+    border-top: 2px solid $border-color;
+    padding-top: 32px;
+    text-align: center;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  &__back-to-top {
+    background: $primary-color;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover,
+    &:focus {
+      background: $primary-hover;
+      transform: translateY(-2px);
+      box-shadow: $shadow-medium;
+    }
+  }
+
+  &__back-home {
+    display: inline-block;
+    padding: 12px 24px;
+    color: $primary-color;
+    text-decoration: none;
+    border: 2px solid $primary-color;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    
+    &:hover,
+    &:focus {
+      background: $primary-color;
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: $shadow-medium;
+    }
+  }
+}
+
+// === Print Styles ===
+@media print {
+  .privacy-policy {
+    padding: 0;
+    
+    &__nav {
+      display: none;
+    }
+    
+    &__footer {
+      display: none;
+    }
+    
+    &__section {
+      page-break-inside: avoid;
+    }
+    
+    &__section-title {
+      page-break-after: avoid;
+    }
+  }
+}

@@ -1,0 +1,392 @@
+/**
+ * Legal Notice Component Styles
+ * 
+ * Implementiert BEM-Methodologie mit vollständiger Accessibility-Unterstützung
+ * nach WCAG 2.1 AA Standards für Rechtsdokumente (Impressum).
+ */
+
+// === SCSS Variables ===
+$primary-color: #005dff;
+$primary-hover: #4589ff;
+$secondary-color: #2a3647;
+$text-color: #222;
+$text-muted: #42526e;
+$border-color: #f1f1f1;
+$background-light: #f5f8fd;
+$background-accent: #e8f4fd;
+$shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+$shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.12);
+
+// Responsive Breakpoints
+$mobile: 320px;
+$tablet: 768px;
+$desktop: 1024px;
+
+// === Base Component Styles ===
+.legal-notice {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  line-height: 1.6;
+  color: $text-color;
+  background: #fff;
+  
+  @media (min-width: $tablet) {
+    padding: 40px 32px;
+  }
+  
+  @media (min-width: $desktop) {
+    padding: 48px 40px;
+  }
+
+  // === Header Section ===
+  &__header {
+    text-align: center;
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 2px solid $border-color;
+  }
+
+  &__title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: $secondary-color;
+    margin: 0 0 12px 0;
+    
+    @media (min-width: $tablet) {
+      font-size: 3rem;
+    }
+  }
+
+  &__subtitle {
+    font-size: 1.1rem;
+    color: $text-muted;
+    margin: 0 0 16px 0;
+    font-weight: 500;
+  }
+
+  &__last-updated {
+    font-size: 0.95rem;
+    color: $text-muted;
+    font-style: italic;
+    margin: 0;
+  }
+
+  // === Content Sections ===
+  &__content {
+    margin-bottom: 48px;
+  }
+
+  &__section {
+    margin-bottom: 48px;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__section-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: $secondary-color;
+    margin: 0 0 24px 0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid $border-color;
+  }
+
+  &__subsection-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: $secondary-color;
+    margin: 32px 0 16px 0;
+    
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  &__section-content {
+    font-size: 1rem;
+    
+    p {
+      margin: 0 0 16px 0;
+      text-align: justify;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  // === Contact Card ===
+  &__contact-card {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    background: $background-light;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+    border-left: 4px solid $primary-color;
+    
+    @media (min-width: $tablet) {
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+  }
+
+  &__address {
+    font-style: normal;
+    
+    .legal-notice__org-name {
+      font-size: 1.2rem;
+      color: $secondary-color;
+      display: block;
+      margin-bottom: 8px;
+    }
+    
+    .legal-notice__address-line {
+      display: block;
+      margin-bottom: 4px;
+      color: $text-muted;
+    }
+    
+    .legal-notice__country {
+      display: block;
+      margin-top: 8px;
+      font-weight: 500;
+      color: $secondary-color;
+    }
+  }
+
+  &__contact-details {
+    p {
+      margin: 0 0 12px 0;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  &__contact-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: $secondary-color;
+    margin: 0 0 16px 0;
+  }
+
+  // === Links ===
+  &__email-link,
+  &__website-link {
+    color: $primary-color;
+    text-decoration: none;
+    font-weight: 500;
+    
+    &:hover,
+    &:focus {
+      color: $primary-hover;
+      text-decoration: underline;
+    }
+  }
+
+  &__internal-link {
+    color: $primary-color;
+    text-decoration: none;
+    font-weight: 600;
+    
+    &:hover,
+    &:focus {
+      color: $primary-hover;
+      text-decoration: underline;
+    }
+  }
+
+  // === Special Boxes ===
+  &__copyright-notice {
+    background: $background-accent;
+    border: 1px solid lighten($primary-color, 30%);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 24px 0;
+    text-align: center;
+    
+    h4 {
+      margin: 0 0 12px 0;
+      color: $primary-color;
+      font-weight: 600;
+    }
+    
+    p {
+      margin: 0;
+      font-weight: 500;
+      color: $secondary-color;
+    }
+  }
+
+  &__privacy-link {
+    background: linear-gradient(135deg, #fff4e6 0%, #ffe8cc 100%);
+    border: 1px solid #ffd700;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 24px 0;
+    text-align: center;
+    
+    p {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+  }
+
+  &__legal-contact-box {
+    background: linear-gradient(135deg, $primary-color 0%, $primary-hover 100%);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+    color: #fff;
+    
+    p {
+      margin: 0 0 16px 0;
+      font-size: 1.05rem;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  &__legal-contact {
+    font-style: normal;
+    
+    strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+    }
+    
+    .legal-notice__email-link {
+      color: #fff;
+      
+      &:hover,
+      &:focus {
+        color: #e6f3ff;
+      }
+    }
+    
+    em {
+      display: block;
+      margin-top: 12px;
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+  }
+
+  // === Footer ===
+  &__footer {
+    border-top: 2px solid $border-color;
+    padding-top: 32px;
+    text-align: center;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    
+    @media (max-width: $tablet) {
+      flex-direction: column;
+      gap: 12px;
+    }
+  }
+
+  &__back-to-top {
+    background: $primary-color;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover,
+    &:focus {
+      background: $primary-hover;
+      transform: translateY(-2px);
+      box-shadow: $shadow-medium;
+    }
+  }
+
+  &__privacy-link-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    background: #28a745;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    
+    &:hover,
+    &:focus {
+      background: #218838;
+      transform: translateY(-2px);
+      box-shadow: $shadow-medium;
+    }
+  }
+
+  &__back-home {
+    display: inline-block;
+    padding: 12px 24px;
+    color: $primary-color;
+    text-decoration: none;
+    border: 2px solid $primary-color;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    
+    &:hover,
+    &:focus {
+      background: $primary-color;
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: $shadow-medium;
+    }
+  }
+}
+
+// === Print Styles ===
+@media print {
+  .legal-notice {
+    padding: 0;
+    
+    &__footer {
+      display: none;
+    }
+    
+    &__section {
+      page-break-inside: avoid;
+    }
+    
+    &__section-title {
+      page-break-after: avoid;
+    }
+    
+    &__contact-card {
+      background: #fff;
+      border: 1px solid #000;
+    }
+    
+    &__copyright-notice,
+    &__privacy-link,
+    &__legal-contact-box {
+      background: #fff;
+      border: 1px solid #000;
+      color: #000;
+    }
+  }
+}

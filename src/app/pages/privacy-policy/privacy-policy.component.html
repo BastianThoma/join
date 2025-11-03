@@ -1,0 +1,234 @@
+<!--
+  Privacy Policy Component
+  Datenschutzerklärung nach EU-DSGVO Standards mit WCAG 2.1 AA Barrierefreiheit
+-->
+<main class="privacy-policy" 
+      role="main" 
+      aria-label="Datenschutzerklärung">
+  
+  <!-- Header Section -->
+  <header class="privacy-policy__header">
+    <h1 class="privacy-policy__title">Datenschutzerklärung</h1>
+    <p class="privacy-policy__last-updated">
+      Letzte Aktualisierung: {{ lastUpdated }}
+    </p>
+  </header>
+
+  <!-- Navigation/Inhaltsverzeichnis -->
+  <nav class="privacy-policy__nav" 
+       role="navigation" 
+       aria-label="Inhaltsverzeichnis Datenschutzerklärung">
+    <h2 class="privacy-policy__nav-title">Inhaltsverzeichnis</h2>
+    <ol class="privacy-policy__nav-list">
+      <li><a href="#verantwortlicher" class="privacy-policy__nav-link">1. Verantwortlicher</a></li>
+      <li><a href="#datenverarbeitung" class="privacy-policy__nav-link">2. Art der Datenverarbeitung</a></li>
+      <li><a href="#rechtsgrundlage" class="privacy-policy__nav-link">3. Rechtsgrundlage</a></li>
+      <li><a href="#speicherdauer" class="privacy-policy__nav-link">4. Speicherdauer</a></li>
+      <li><a href="#betroffenenrechte" class="privacy-policy__nav-link">5. Ihre Rechte</a></li>
+      <li><a href="#kontakt" class="privacy-policy__nav-link">6. Kontakt</a></li>
+    </ol>
+  </nav>
+
+  <!-- Content Sections -->
+  <div class="privacy-policy__content">
+    
+    <!-- 1. Verantwortlicher -->
+    <section id="verantwortlicher" 
+             class="privacy-policy__section"
+             role="region"
+             aria-labelledby="verantwortlicher-title">
+      <h2 id="verantwortlicher-title" class="privacy-policy__section-title">
+        1. Verantwortlicher
+      </h2>
+      <div class="privacy-policy__section-content">
+        <p>
+          Verantwortlich für die Datenverarbeitung auf dieser Website ist:
+        </p>
+        <address class="privacy-policy__contact-info">
+          <strong>{{ responsiblePerson }}</strong><br>
+          E-Mail: <a href="mailto:{{ privacyEmail }}" 
+                    class="privacy-policy__email-link"
+                    aria-label="E-Mail senden an {{ privacyEmail }}">
+            {{ privacyEmail }}
+          </a>
+        </address>
+      </div>
+    </section>
+
+    <!-- 2. Art der Datenverarbeitung -->
+    <section id="datenverarbeitung" 
+             class="privacy-policy__section"
+             role="region"
+             aria-labelledby="datenverarbeitung-title">
+      <h2 id="datenverarbeitung-title" class="privacy-policy__section-title">
+        2. Art der Datenverarbeitung
+      </h2>
+      <div class="privacy-policy__section-content">
+        <h3 class="privacy-policy__subsection-title">Kontaktformular</h3>
+        <p>
+          Wenn Sie unser Kontaktformular nutzen, erheben wir folgende personenbezogene Daten:
+        </p>
+        <ul class="privacy-policy__data-list">
+          <li><strong>Name:</strong> Zur persönlichen Ansprache</li>
+          <li><strong>E-Mail-Adresse:</strong> Zur Kontaktaufnahme und Beantwortung Ihrer Anfrage</li>
+          <li><strong>Telefonnummer (optional):</strong> Für telefonische Rückfragen</li>
+          <li><strong>Nachricht:</strong> Inhalt Ihrer Anfrage</li>
+        </ul>
+        
+        <h3 class="privacy-policy__subsection-title">Keine Cookies oder Tracking</h3>
+        <p>
+          <strong>Diese Website verwendet keine Cookies, kein Tracking und keine Analyse-Tools.</strong>
+          Es werden keine Daten über Ihr Nutzungsverhalten gesammelt oder an Dritte weitergegeben.
+        </p>
+      </div>
+    </section>
+
+    <!-- 3. Rechtsgrundlage -->
+    <section id="rechtsgrundlage" 
+             class="privacy-policy__section"
+             role="region"
+             aria-labelledby="rechtsgrundlage-title">
+      <h2 id="rechtsgrundlage-title" class="privacy-policy__section-title">
+        3. Rechtsgrundlage der Verarbeitung
+      </h2>
+      <div class="privacy-policy__section-content">
+        <p>
+          Die Verarbeitung Ihrer personenbezogenen Daten erfolgt auf Grundlage von:
+        </p>
+        <ul class="privacy-policy__legal-list">
+          <li>
+            <strong>Art. 6 Abs. 1 lit. a DSGVO (Einwilligung):</strong> 
+            Sie haben durch das Absenden des Formulars Ihre Einwilligung zur Verarbeitung gegeben.
+          </li>
+          <li>
+            <strong>Art. 6 Abs. 1 lit. f DSGVO (Berechtigtes Interesse):</strong> 
+            Wir haben ein berechtigtes Interesse daran, Ihre Anfrage zu bearbeiten und zu beantworten.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 4. Speicherdauer -->
+    <section id="speicherdauer" 
+             class="privacy-policy__section"
+             role="region"
+             aria-labelledby="speicherdauer-title">
+      <h2 id="speicherdauer-title" class="privacy-policy__section-title">
+        4. Speicherdauer
+      </h2>
+      <div class="privacy-policy__section-content">
+        <p>
+          Ihre Daten werden ausschließlich zur Bearbeitung Ihrer Anfrage verwendet und 
+          <strong>nach Abschluss der Kommunikation vollständig gelöscht</strong>.
+        </p>
+        <div class="privacy-policy__highlight-box">
+          <h4>Automatische Löschung</h4>
+          <ul>
+            <li>Nach erfolgreicher Bearbeitung Ihrer Anfrage</li>
+            <li>Spätestens nach 30 Tagen ohne weitere Kommunikation</li>
+            <li>Sofort auf Ihren Wunsch (siehe Ihre Rechte)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Betroffenenrechte -->
+    <section id="betroffenenrechte" 
+             class="privacy-policy__section"
+             role="region"
+             aria-labelledby="betroffenenrechte-title">
+      <h2 id="betroffenenrechte-title" class="privacy-policy__section-title">
+        5. Ihre Rechte als betroffene Person
+      </h2>
+      <div class="privacy-policy__section-content">
+        <p>Nach der DSGVO haben Sie folgende Rechte:</p>
+        
+        <div class="privacy-policy__rights-grid">
+          <div class="privacy-policy__right-item">
+            <h4>Recht auf Auskunft (Art. 15 DSGVO)</h4>
+            <p>Sie können Auskunft über Ihre bei uns gespeicherten Daten verlangen.</p>
+          </div>
+          
+          <div class="privacy-policy__right-item">
+            <h4>Recht auf Berichtigung (Art. 16 DSGVO)</h4>
+            <p>Sie können die Berichtigung unrichtiger Daten verlangen.</p>
+          </div>
+          
+          <div class="privacy-policy__right-item">
+            <h4>Recht auf Löschung (Art. 17 DSGVO)</h4>
+            <p>Sie können die sofortige Löschung Ihrer Daten verlangen.</p>
+          </div>
+          
+          <div class="privacy-policy__right-item">
+            <h4>Recht auf Einschränkung (Art. 18 DSGVO)</h4>
+            <p>Sie können die Einschränkung der Verarbeitung verlangen.</p>
+          </div>
+          
+          <div class="privacy-policy__right-item">
+            <h4>Recht auf Datenübertragbarkeit (Art. 20 DSGVO)</h4>
+            <p>Sie können Ihre Daten in einem strukturierten Format erhalten.</p>
+          </div>
+          
+          <div class="privacy-policy__right-item">
+            <h4>Widerspruchsrecht (Art. 21 DSGVO)</h4>
+            <p>Sie können der Verarbeitung Ihrer Daten widersprechen.</p>
+          </div>
+        </div>
+
+        <div class="privacy-policy__complaint-info">
+          <h4>Beschwerderecht</h4>
+          <p>
+            Sie haben das Recht, sich bei einer Datenschutz-Aufsichtsbehörde über die 
+            Verarbeitung Ihrer personenbezogenen Daten zu beschweren.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Kontakt -->
+    <section id="kontakt" 
+             class="privacy-policy__section"
+             role="region"
+             aria-labelledby="kontakt-title">
+      <h2 id="kontakt-title" class="privacy-policy__section-title">
+        6. Kontakt für Datenschutz-Anfragen
+      </h2>
+      <div class="privacy-policy__section-content">
+        <p>
+          Für Fragen zum Datenschutz, zur Ausübung Ihrer Rechte oder bei Beschwerden 
+          kontaktieren Sie uns unter:
+        </p>
+        <div class="privacy-policy__contact-box">
+          <address class="privacy-policy__contact-details">
+            <strong>Datenschutz-Kontakt:</strong><br>
+            E-Mail: <a href="mailto:{{ privacyEmail }}" 
+                      class="privacy-policy__email-link"
+                      aria-label="E-Mail für Datenschutz-Anfragen senden">
+              {{ privacyEmail }}
+            </a><br>
+            <em>Wir antworten innerhalb von 72 Stunden</em>
+          </address>
+        </div>
+      </div>
+    </section>
+    
+  </div>
+
+  <!-- Footer Actions -->
+  <footer class="privacy-policy__footer">
+    <div class="privacy-policy__actions">
+      <button type="button" 
+              class="privacy-policy__back-to-top"
+              (click)="scrollToTop()"
+              aria-label="Zurück zum Seitenanfang">
+        Nach oben
+      </button>
+      <a routerLink="/" 
+         class="privacy-policy__back-home"
+         aria-label="Zurück zur Startseite">
+        Zurück zur App
+      </a>
+    </div>
+  </footer>
+
+</main>
