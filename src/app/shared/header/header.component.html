@@ -3,7 +3,16 @@
   <div class="app-header__logo">
     <img src="assets/img/join_logo_white.png" alt="Join Logo White" />
   </div>
-  <div class="app-header__user" tabindex="0" aria-label="Benutzerprofil" role="button">
-    <span class="app-header__user-initials" aria-label="Benutzerkürzel">{{ initials || '?' }}</span>
+  <div class="app-header__user-menu">
+    <div class="app-header__user" tabindex="0" aria-label="Benutzerprofil" role="button">
+      <span class="app-header__user-initials" aria-label="Benutzerkürzel">{{ initials || '?' }}</span>
+    </div>
+    <button 
+      class="app-header__logout-btn"
+      (click)="logout()"
+      aria-label="Abmelden"
+      type="button">
+      <span class="app-header__logout-text">Logout</span>
+    </button>
   </div>
 </header>

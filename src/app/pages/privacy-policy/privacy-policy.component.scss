@@ -321,6 +321,11 @@ $desktop: 1024px;
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
+    
+    @media (max-width: $tablet) {
+      flex-direction: column;
+      gap: 12px;
+    }
   }
 
   &__back-to-top {
@@ -337,6 +342,25 @@ $desktop: 1024px;
     &:hover,
     &:focus {
       background: $primary-hover;
+      transform: translateY(-2px);
+      box-shadow: $shadow-medium;
+    }
+  }
+
+  &__legal-link-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    color: $secondary-color;
+    text-decoration: none;
+    border: 2px solid $secondary-color;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    
+    &:hover,
+    &:focus {
+      background: $secondary-color;
+      color: #fff;
       transform: translateY(-2px);
       box-shadow: $shadow-medium;
     }

@@ -48,7 +48,7 @@
           <strong>{{ responsiblePerson }}</strong><br>
           E-Mail: <a href="mailto:{{ privacyEmail }}" 
                     class="privacy-policy__email-link"
-                    aria-label="E-Mail senden an {{ privacyEmail }}">
+                    [attr.aria-label]="'E-Mail senden an ' + privacyEmail">
             {{ privacyEmail }}
           </a>
         </address>
@@ -198,6 +198,14 @@
           Für Fragen zum Datenschutz, zur Ausübung Ihrer Rechte oder bei Beschwerden 
           kontaktieren Sie uns unter:
         </p>
+        <p>
+          <strong>Weitere rechtliche Informationen finden Sie in unserem 
+          <a routerLink="/legal-notice" 
+             class="privacy-policy__internal-link"
+             aria-label="Zum Impressum mit rechtlichen Informationen">
+            Impressum
+          </a>.</strong>
+        </p>
         <div class="privacy-policy__contact-box">
           <address class="privacy-policy__contact-details">
             <strong>Datenschutz-Kontakt:</strong><br>
@@ -223,11 +231,27 @@
               aria-label="Zurück zum Seitenanfang">
         Nach oben
       </button>
-      <a routerLink="/" 
-         class="privacy-policy__back-home"
-         aria-label="Zurück zur Startseite">
-        Zurück zur App
+      <a routerLink="/legal-notice" 
+         class="privacy-policy__legal-link-btn"
+         aria-label="Zum Impressum">
+        Impressum
       </a>
+      
+      <!-- Navigation basierend auf Authentifizierungsstatus -->
+      <a *ngIf="isAuthenticated$ | async; else loginLink"
+         routerLink="/summary" 
+         class="privacy-policy__back-home"
+         aria-label="Zurück zur Übersicht">
+        Zurück zur Übersicht
+      </a>
+      
+      <ng-template #loginLink>
+        <a routerLink="/login" 
+           class="privacy-policy__back-home"
+           aria-label="Zurück zur Anmeldung">
+          Zurück zur Anmeldung
+        </a>
+      </ng-template>
     </div>
   </footer>
 

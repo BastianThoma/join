@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy, Injector, runInInjectionContext, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
+import { AuthService } from '../../shared/services/auth.service';
 
 /**
  * LoginComponent - Hauptkomponente für Benutzeranmeldung
@@ -67,6 +68,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   
   /** Angular Injector for running Firebase calls in injection context */
   private injector = inject(Injector);
+  
+  /** AuthService für erweiterte Authentifizierungssicherheit */
+  private authService = inject(AuthService);
 
   /**
    * Konstruktor
@@ -116,6 +120,9 @@ export class LoginComponent implements OnInit, OnDestroy {
       await runInInjectionContext(this.injector, async () => {
         return signInWithEmailAndPassword(this.auth, this.email, this.password);
       });
+      
+      // Set manual login flag for security
+      this.authService.setManualLogin();
       
       // Clear form data
       this.clearLoginForm();

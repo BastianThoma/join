@@ -42,7 +42,7 @@
               <strong>E-Mail:</strong> 
               <a href="mailto:{{ contactEmail }}" 
                  class="legal-notice__email-link"
-                 aria-label="E-Mail senden an {{ contactEmail }}">
+                 [attr.aria-label]="'E-Mail senden an ' + contactEmail">
                 {{ contactEmail }}
               </a>
             </p>
@@ -240,11 +240,22 @@
          aria-label="Zur Datenschutzerklärung">
         Datenschutzerklärung
       </a>
-      <a routerLink="/" 
+      
+      <!-- Navigation basierend auf Authentifizierungsstatus -->
+      <a *ngIf="isAuthenticated$ | async; else loginLink"
+         routerLink="/summary" 
          class="legal-notice__back-home"
-         aria-label="Zurück zur Startseite">
-        Zurück zur App
+         aria-label="Zurück zur Übersicht">
+        Zurück zur Übersicht
       </a>
+      
+      <ng-template #loginLink>
+        <a routerLink="/login" 
+           class="legal-notice__back-home"
+           aria-label="Zurück zur Anmeldung">
+          Zurück zur Anmeldung
+        </a>
+      </ng-template>
     </div>
   </footer>
 

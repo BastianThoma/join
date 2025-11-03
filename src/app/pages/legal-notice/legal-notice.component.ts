@@ -1,6 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { Auth } from '@angular/fire/auth';
+import { Observable } from 'rxjs';
+import { authState } from '@angular/fire/auth';
+import { map } from 'rxjs/operators';
 
 /**
  * LegalNoticeComponent
@@ -20,6 +24,15 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./legal-notice.component.scss']
 })
 export class LegalNoticeComponent {
+  
+  /** Firebase Auth Service */
+  private auth = inject(Auth);
+  
+  /** Observable für den aktuellen Authentifizierungsstatus */
+  public user$ = authState(this.auth);
+  
+  /** Observable ob Benutzer angemeldet ist */
+  public isAuthenticated$ = this.user$.pipe(map(user => !!user));
   
   /** Aktuelles Datum für "Letzte Aktualisierung" */
   readonly lastUpdated = '3. November 2025';

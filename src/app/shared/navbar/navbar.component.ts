@@ -7,10 +7,14 @@
  * - Verwendet semantisches HTML und ARIA-Rollen für Screenreader.
  * - Die Navigationspunkte werden aus dem navItems-Array generiert.
  * - Die Methode getActive(route) prüft, ob ein Navigationspunkt aktiv ist.
+ * - Authentifizierungsschutz: Hauptnavigation nur für angemeldete Benutzer
  */
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { Auth, User } from '@angular/fire/auth';
+import { Observable } from 'rxjs';
+import { authState } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-navbar',
@@ -20,6 +24,13 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent {
+  
+  /** Firebase Auth Service */
+  private auth = inject(Auth);
+  
+  /** Observable für den aktuellen Authentifizierungsstatus */
+  public user$: Observable<User | null> = authState(this.auth);
+  
   /**
    * Navigationspunkte für die Hauptnavigation.
    * label: Anzeigename
@@ -41,5 +52,14 @@ export class NavbarComponent {
    */
   getActive(route: string): boolean {
     return location.pathname === route;
+  }
+  
+  /**
+   * Prüft, ob der aktuelle Benutzer angemeldet ist
+   * 
+   * @returns true, wenn Benutzer angemeldet ist
+   */
+  isAuthenticated(): boolean {
+    return !!this.auth.currentUser;
   }
 }

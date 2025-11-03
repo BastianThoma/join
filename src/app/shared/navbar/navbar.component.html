@@ -1,8 +1,8 @@
 <!-- Hauptnavigation für die Anwendung, barrierefrei und semantisch -->
 
 <nav class="navbar" role="navigation" aria-label="Hauptnavigation">
-  <!-- Hauptnavigationsbereich -->
-  <ul class="navbar__list" role="menubar">
+  <!-- Hauptnavigationsbereich - nur für angemeldete Benutzer -->
+  <ul class="navbar__list" role="menubar" *ngIf="user$ | async as user">
     <li
       *ngFor="let item of navItems"
       class="navbar__item"
@@ -31,6 +31,15 @@
       </a>
     </li>
   </ul>
+  
+  <!-- Platzhalter für nicht angemeldete Benutzer -->
+  <div class="navbar__guest-placeholder" *ngIf="!(user$ | async)">
+    <div class="navbar__guest-message">
+      <span class="navbar__guest-text sr-only">
+        Melden Sie sich an, um auf die Hauptnavigation zuzugreifen
+      </span>
+    </div>
+  </div>
 
   <!-- Rechtliche Links - nur Desktop -->
   <footer
@@ -40,14 +49,14 @@
   >
     <nav role="navigation" aria-label="Rechtliche Links">
       <a
-        href="#"
+        routerLink="/privacy-policy"
         class="navbar__legal-link"
         aria-describedby="navbar-privacy-description"
       >
         Privacy Policy
       </a>
       <a
-        href="#"
+        routerLink="/legal-notice"
         class="navbar__legal-link"
         aria-describedby="navbar-legal-description"
       >

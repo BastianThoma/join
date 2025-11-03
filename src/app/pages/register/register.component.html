@@ -286,7 +286,7 @@
         <label for="privacy-checkbox" class="register-card__checkbox-label">
           I accept the 
           <a 
-            routerLink="/privacy" 
+            routerLink="/privacy-policy" 
             class="register-card__privacy-link"
             [attr.aria-describedby]="'privacy-link-description'">
             Privacy Policy
@@ -350,7 +350,7 @@
     
     <nav role="navigation" [attr.aria-label]="'Rechtliche Links'">
       <a 
-        href="#" 
+        routerLink="/privacy-policy" 
         class="legal-container__link"
         [attr.aria-describedby]="'footer-privacy-description'">
         Privacy Policy
@@ -362,7 +362,7 @@
         [attr.aria-hidden]="'true'">•</span>
       
       <a 
-        href="#" 
+        routerLink="/legal-notice" 
         class="legal-container__link"
         [attr.aria-describedby]="'footer-legal-description'">
         Legal Notice
