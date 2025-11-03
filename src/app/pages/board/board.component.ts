@@ -1,8 +1,22 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, Injector, runInInjectionContext, inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Injector,
+  runInInjectionContext,
+  inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import {
+  DragDropModule,
+  CdkDragDrop,
+  moveItemInArray,
+  transferArrayItem,
+} from '@angular/cdk/drag-drop';
 import {
   Firestore,
   collection,
@@ -72,44 +86,44 @@ interface Task {
   imports: [CommonModule, FormsModule, DragDropModule],
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BoardComponent implements OnInit, OnDestroy {
   // ===============================
   // Data Arrays
   // ===============================
-  
+
   /** All tasks from Firestore */
   allTasks: Task[] = [];
-  
+
   /** All contacts from Firestore */
   allContacts: Contact[] = [];
-  
+
   /** Tasks in To Do column */
   todoTasks: Task[] = [];
-  
+
   /** Tasks in In Progress column */
   inProgressTasks: Task[] = [];
-  
+
   /** Tasks in Await Feedback column */
   awaitFeedbackTasks: Task[] = [];
-  
+
   /** Tasks in Done column */
   doneTasks: Task[] = [];
 
   // ===============================
   // UI State
   // ===============================
-  
+
   /** Loading state */
   isLoading = true;
-  
+
   /** Error message */
   error = '';
-  
+
   /** Currently dragged task */
   draggedTask: Task | null = null;
-  
+
   /** Show mobile move menu for task ID */
   showMobileMenu: string | null = null;
 
@@ -136,22 +150,22 @@ export class BoardComponent implements OnInit, OnDestroy {
   // ===============================
   // Firestore Collections
   // ===============================
-  
+
   /** Firestore instance */
   private firestore = inject(Firestore);
-  
+
   /** Router for navigation */
   private router = inject(Router);
-  
+
   /** Change detection reference */
   private cdr = inject(ChangeDetectorRef);
-  
+
   /** Angular Injector for running Firebase calls in injection context */
   private injector = inject(Injector);
-  
+
   /** Firestore collection reference for tasks */
   private tasksCol: CollectionReference<DocumentData>;
-  
+
   /** Firestore collection reference for contacts */
   private contactsCol: CollectionReference<DocumentData>;
 
@@ -178,8 +192,11 @@ export class BoardComponent implements OnInit, OnDestroy {
     document.addEventListener('click', (event: Event) => {
       const target = event.target as HTMLElement;
       // Only close if we're in edit mode and clicked outside the contact selector
-      if (this.isEditMode && this.showEditContactsDropdown && 
-          !target.closest('.board__contacts-selector-wrapper')) {
+      if (
+        this.isEditMode &&
+        this.showEditContactsDropdown &&
+        !target.closest('.board__contacts-selector-wrapper')
+      ) {
         this.closeEditContacts();
       }
     });
@@ -205,16 +222,12 @@ export class BoardComponent implements OnInit, OnDestroy {
       this.isLoading = true;
       this.error = '';
       this.cdr.detectChanges();
-      
+
       // Load contacts and tasks in parallel
-      await Promise.all([
-        this.loadContacts(),
-        this.loadTasks()
-      ]);
-      
+      await Promise.all([this.loadContacts(), this.loadTasks()]);
+
       // Sort tasks into columns
       this.sortTasksIntoColumns();
-      
     } catch (error) {
       console.error('Error loading data:', error);
       this.error = 'Fehler beim Laden der Daten';
@@ -254,9 +267,9 @@ export class BoardComponent implements OnInit, OnDestroy {
         ...(doc.data() as Omit<Task, 'id'>),
         status: (doc.data() as any).status || 'todo', // Default to todo if no status
       })) as Task[];
-      
+
       // Filter out deleted tasks
-      this.allTasks = allTasksFromFirestore.filter(task => !task.deleted);
+      this.allTasks = allTasksFromFirestore.filter((task) => !task.deleted);
     } catch (error) {
       console.error('Error loading tasks:', error);
     }
@@ -266,10 +279,14 @@ export class BoardComponent implements OnInit, OnDestroy {
    * Sorts tasks into their respective columns based on status
    */
   sortTasksIntoColumns(): void {
-    this.todoTasks = this.allTasks.filter(task => task.status === 'todo');
-    this.inProgressTasks = this.allTasks.filter(task => task.status === 'inprogress');
-    this.awaitFeedbackTasks = this.allTasks.filter(task => task.status === 'awaitfeedback');
-    this.doneTasks = this.allTasks.filter(task => task.status === 'done');
+    this.todoTasks = this.allTasks.filter((task) => task.status === 'todo');
+    this.inProgressTasks = this.allTasks.filter(
+      (task) => task.status === 'inprogress'
+    );
+    this.awaitFeedbackTasks = this.allTasks.filter(
+      (task) => task.status === 'awaitfeedback'
+    );
+    this.doneTasks = this.allTasks.filter((task) => task.status === 'done');
   }
 
   // ===============================
@@ -300,11 +317,15 @@ export class BoardComponent implements OnInit, OnDestroy {
   async onTaskDrop(event: CdkDragDrop<Task[]>): Promise<void> {
     // Disable change detection during drag operation
     this.cdr.detach();
-    
+
     try {
       // If dropped in the same container, just reorder
       if (event.previousContainer === event.container) {
-        moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+        moveItemInArray(
+          event.container.data,
+          event.previousIndex,
+          event.currentIndex
+        );
         this.cdr.reattach();
         this.cdr.detectChanges();
         return;
@@ -313,7 +334,7 @@ export class BoardComponent implements OnInit, OnDestroy {
       // Move task between containers (columns)
       const task = event.previousContainer.data[event.previousIndex];
       const newStatus = this.getStatusFromContainer(event.container);
-      
+
       if (task.id && newStatus) {
         // Transfer item between arrays first (optimistic update)
         transferArrayItem(
@@ -322,21 +343,21 @@ export class BoardComponent implements OnInit, OnDestroy {
           event.previousIndex,
           event.currentIndex
         );
-        
+
         // Update local task object
         task.status = newStatus;
-        
+
         // Re-enable change detection and update view
         this.cdr.reattach();
         this.cdr.detectChanges();
-        
+
         // Update in Firestore (async, non-blocking)
-        this.updateTaskStatus(task.id, newStatus).catch(error => {
+        this.updateTaskStatus(task.id, newStatus).catch((error) => {
           console.error('Error moving task:', error);
           this.error = 'Fehler beim Verschieben der Aufgabe';
           this.cdr.detectChanges();
         });
-        
+
         console.log(`Task "${task.title}" moved to ${newStatus}`);
       } else {
         this.cdr.reattach();
@@ -375,7 +396,10 @@ export class BoardComponent implements OnInit, OnDestroy {
    * @param taskId - ID of the task to update
    * @param newStatus - New status for the task
    */
-  async updateTaskStatus(taskId: string, newStatus: Task['status']): Promise<void> {
+  async updateTaskStatus(
+    taskId: string,
+    newStatus: Task['status']
+  ): Promise<void> {
     try {
       await runInInjectionContext(this.injector, async () => {
         const taskDoc = doc(this.firestore, 'tasks', taskId);
@@ -398,7 +422,7 @@ export class BoardComponent implements OnInit, OnDestroy {
    */
   async moveTaskToStatus(task: Task, newStatus: Task['status']): Promise<void> {
     if (task.status === newStatus || !task.id) return;
-    
+
     try {
       await this.updateTaskStatus(task.id, newStatus);
       task.status = newStatus;
@@ -438,15 +462,33 @@ export class BoardComponent implements OnInit, OnDestroy {
    * @param currentStatus - Current status of the task
    * @returns Array of available status options
    */
-  getAvailableStatusOptions(currentStatus: Task['status']): Array<{status: Task['status'], label: string, icon: string}> {
+  getAvailableStatusOptions(
+    currentStatus: Task['status']
+  ): Array<{ status: Task['status']; label: string; icon: string }> {
     const allOptions = [
-      { status: 'todo' as Task['status'], label: 'To do', icon: '/assets/img/arrow_left.png' },
-      { status: 'inprogress' as Task['status'], label: 'In progress', icon: '/assets/img/arrow_left.png' },
-      { status: 'awaitfeedback' as Task['status'], label: 'Await feedback', icon: '/assets/img/arrow_left.png' },
-      { status: 'done' as Task['status'], label: 'Done', icon: '/assets/img/check_blue_icon.png' }
+      {
+        status: 'todo' as Task['status'],
+        label: 'To do',
+        icon: '/assets/img/arrow_left.png',
+      },
+      {
+        status: 'inprogress' as Task['status'],
+        label: 'In progress',
+        icon: '/assets/img/arrow_left.png',
+      },
+      {
+        status: 'awaitfeedback' as Task['status'],
+        label: 'Await feedback',
+        icon: '/assets/img/arrow_left.png',
+      },
+      {
+        status: 'done' as Task['status'],
+        label: 'Done',
+        icon: '/assets/img/check_blue_icon.png',
+      },
     ];
-    
-    return allOptions.filter(option => option.status !== currentStatus);
+
+    return allOptions.filter((option) => option.status !== currentStatus);
   }
 
   /**
@@ -454,7 +496,10 @@ export class BoardComponent implements OnInit, OnDestroy {
    * @param task - Task to move
    * @param newStatus - Target status
    */
-  async moveTaskViaMobile(task: Task, newStatus: Task['status']): Promise<void> {
+  async moveTaskViaMobile(
+    task: Task,
+    newStatus: Task['status']
+  ): Promise<void> {
     this.closeMobileMenu();
     await this.moveTaskToStatus(task, newStatus);
   }
@@ -469,7 +514,7 @@ export class BoardComponent implements OnInit, OnDestroy {
    * @returns Contact name or empty string
    */
   getContactName(contactId: string): string {
-    const contact = this.allContacts.find(c => c.id === contactId);
+    const contact = this.allContacts.find((c) => c.id === contactId);
     return contact?.name || '';
   }
 
@@ -479,9 +524,9 @@ export class BoardComponent implements OnInit, OnDestroy {
    * @returns Two-character initials
    */
   getContactInitials(contactId: string): string {
-    const contact = this.allContacts.find(c => c.id === contactId);
+    const contact = this.allContacts.find((c) => c.id === contactId);
     if (!contact?.name) return '??';
-    
+
     return contact.name
       .split(' ')
       .map((word) => word[0] || '')
@@ -496,7 +541,7 @@ export class BoardComponent implements OnInit, OnDestroy {
    * @returns Contact color or default color
    */
   getContactColor(contactId: string): string {
-    const contact = this.allContacts.find(c => c.id === contactId);
+    const contact = this.allContacts.find((c) => c.id === contactId);
     return contact?.color || '#4589FF';
   }
 
@@ -529,7 +574,7 @@ export class BoardComponent implements OnInit, OnDestroy {
     for (let i = 0; i < category.length; i++) {
       hash = category.charCodeAt(i) + ((hash << 5) - hash);
     }
-    
+
     // Convert to RGB
     const hue = Math.abs(hash) % 360;
     return `hsl(${hue}, 65%, 55%)`;
@@ -652,11 +697,11 @@ export class BoardComponent implements OnInit, OnDestroy {
    */
   private updateTaskInArrays(updatedTask: Task): void {
     // Update in main array
-    const taskIndex = this.allTasks.findIndex(t => t.id === updatedTask.id);
+    const taskIndex = this.allTasks.findIndex((t) => t.id === updatedTask.id);
     if (taskIndex !== -1) {
       this.allTasks[taskIndex] = updatedTask;
     }
-    
+
     // Re-sort tasks into columns to reflect changes
     this.sortTasksIntoColumns();
   }
@@ -675,7 +720,8 @@ export class BoardComponent implements OnInit, OnDestroy {
       }
 
       const subtaskText = this.selectedTask.subtasks[subtaskIndex];
-      const completedIndex = this.selectedTask.completedSubtasks.indexOf(subtaskText);
+      const completedIndex =
+        this.selectedTask.completedSubtasks.indexOf(subtaskText);
 
       if (completedIndex === -1) {
         // Mark as completed
@@ -688,13 +734,15 @@ export class BoardComponent implements OnInit, OnDestroy {
       // Update in Firestore
       await runInInjectionContext(this.injector, async () => {
         const taskDoc = doc(this.firestore, 'tasks', this.selectedTask!.id!);
-        return updateDoc(taskDoc, { 
-          completedSubtasks: this.selectedTask!.completedSubtasks 
+        return updateDoc(taskDoc, {
+          completedSubtasks: this.selectedTask!.completedSubtasks,
         });
       });
 
       // Update the task in the local arrays
-      const originalTask = this.allTasks.find(t => t.id === this.selectedTask!.id);
+      const originalTask = this.allTasks.find(
+        (t) => t.id === this.selectedTask!.id
+      );
       if (originalTask) {
         originalTask.completedSubtasks = this.selectedTask.completedSubtasks;
       }
@@ -713,7 +761,9 @@ export class BoardComponent implements OnInit, OnDestroy {
   async deleteTask(task: Task): Promise<void> {
     if (!task || !task.id) return;
 
-    const confirmed = confirm(`Möchten Sie die Aufgabe "${task.title}" wirklich löschen?`);
+    const confirmed = confirm(
+      `Möchten Sie die Aufgabe "${task.title}" wirklich löschen?`
+    );
     if (!confirmed) return;
 
     try {
@@ -724,7 +774,7 @@ export class BoardComponent implements OnInit, OnDestroy {
       });
 
       // Remove from local arrays
-      this.allTasks = this.allTasks.filter(t => t.id !== task.id);
+      this.allTasks = this.allTasks.filter((t) => t.id !== task.id);
       this.sortTasksIntoColumns();
 
       // Close detail modal
@@ -780,13 +830,15 @@ export class BoardComponent implements OnInit, OnDestroy {
           priority: this.editTask!.priority,
           assignedTo: this.editTask!.assignedTo,
           category: this.editTask!.category,
-          subtasks: this.editTask!.subtasks
+          subtasks: this.editTask!.subtasks,
         };
         return updateDoc(taskDoc, updateData);
       });
 
       // Update local arrays
-      const taskIndex = this.allTasks.findIndex(t => t.id === this.editTask!.id);
+      const taskIndex = this.allTasks.findIndex(
+        (t) => t.id === this.editTask!.id
+      );
       if (taskIndex !== -1) {
         this.allTasks[taskIndex] = { ...this.editTask! };
         this.sortTasksIntoColumns();
@@ -798,10 +850,9 @@ export class BoardComponent implements OnInit, OnDestroy {
       // Exit edit mode
       this.isEditMode = false;
       this.editTask = null;
-      
+
       this.cdr.detectChanges();
       console.log('Task updated successfully');
-      
     } catch (error) {
       console.error('Error updating task:', error);
       this.error = 'Fehler beim Speichern der Aufgabe';
@@ -876,15 +927,16 @@ export class BoardComponent implements OnInit, OnDestroy {
    */
   filterEditContacts(): void {
     const searchTerm = this.editContactSearch.trim().toLowerCase();
-    
+
     if (!searchTerm) {
       this.filteredEditContacts = [...this.allContacts];
       return;
     }
 
-    this.filteredEditContacts = this.allContacts.filter((contact) =>
-      contact.name.toLowerCase().includes(searchTerm) ||
-      (contact.email && contact.email.toLowerCase().includes(searchTerm))
+    this.filteredEditContacts = this.allContacts.filter(
+      (contact) =>
+        contact.name.toLowerCase().includes(searchTerm) ||
+        (contact.email && contact.email.toLowerCase().includes(searchTerm))
     );
   }
 
@@ -960,8 +1012,8 @@ export class BoardComponent implements OnInit, OnDestroy {
    */
   navigateToEditTask(task: Task): void {
     if (task && task.id) {
-      this.router.navigate(['/add-task'], { 
-        queryParams: { edit: task.id } 
+      this.router.navigate(['/add-task'], {
+        queryParams: { edit: task.id },
       });
     }
   }
