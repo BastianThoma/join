@@ -162,6 +162,27 @@
           {{ selectedContact.phone || "—" }}
         </dd>
       </dl>
+      
+      <!-- Contact Actions für Desktop -->
+      <div class="contact-detail__actions">
+        <button 
+          class="contact-detail__action-btn contact-detail__action-btn--edit"
+          type="button"
+          (click)="editContact()"
+          aria-label="Kontakt bearbeiten">
+          <img src="/assets/img/edit_icon_blue.png" alt="Edit" />
+          <span>Edit</span>
+        </button>
+        
+        <button 
+          class="contact-detail__action-btn contact-detail__action-btn--delete"
+          type="button"
+          (click)="deleteContact()"
+          aria-label="Kontakt löschen">
+          <img src="/assets/img/delete_icon_blue.png" alt="Delete" />
+          <span>Delete</span>
+        </button>
+      </div>
     </main>
   </aside>
 </main>
