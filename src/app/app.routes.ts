@@ -45,6 +45,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/contacts/contacts.component').then(c => c.ContactsComponent),
     canActivate: [authGuard]
   },
+  { 
+    path: 'help', 
+    loadComponent: () => import('./pages/help/help.component').then(c => c.HelpComponent),
+    canActivate: [authGuard]
+  },
   
   // Fallback-Routen
   { path: '', redirectTo: 'login', pathMatch: 'full' },

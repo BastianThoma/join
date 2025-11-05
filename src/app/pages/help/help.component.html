@@ -1,0 +1,167 @@
+<!--
+  Help Component
+  Hilfe und Dokumentation für das Kanban Project Management Tool
+-->
+<main class="help" 
+      role="main" 
+      aria-label="Hilfe und Dokumentation">
+  
+  <!-- Header Section -->
+  <header class="help__header">
+    <h1 class="help__title">Help & Documentation</h1>
+    <p class="help__subtitle">
+      Willkommen beim Join Kanban Project Management Tool
+    </p>
+  </header>
+
+  <!-- Content Sections -->
+  <div class="help__content">
+    
+    <!-- 1. Erste Schritte -->
+    <section class="help__section"
+             role="region"
+             aria-labelledby="getting-started-title">
+      <h2 id="getting-started-title" class="help__section-title">
+        🚀 Erste Schritte
+      </h2>
+      <div class="help__section-content">
+        <p>
+          Join ist ein modernes Kanban-Tool, das Ihnen dabei hilft, Projekte effizient zu organisieren und im Team zusammenzuarbeiten.
+        </p>
+        
+        <h3 class="help__subsection-title">Übersicht der Hauptbereiche:</h3>
+        <ul class="help__feature-list">
+          <li><strong>Summary:</strong> Übersicht über alle Aufgaben und Projekte</li>
+          <li><strong>Add Task:</strong> Neue Aufgaben erstellen und zuweisen</li>
+          <li><strong>Board:</strong> Kanban-Board zur Aufgabenverwaltung</li>
+          <li><strong>Contacts:</strong> Teammitglieder und Kontakte verwalten</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 2. Aufgabenverwaltung -->
+    <section class="help__section"
+             role="region"
+             aria-labelledby="tasks-title">
+      <h2 id="tasks-title" class="help__section-title">
+        📋 Aufgabenverwaltung
+      </h2>
+      <div class="help__section-content">
+        
+        <h3 class="help__subsection-title">Neue Aufgabe erstellen</h3>
+        <ol class="help__step-list">
+          <li>Navigieren Sie zu "Add Task"</li>
+          <li>Füllen Sie alle erforderlichen Felder aus</li>
+          <li>Weisen Sie die Aufgabe Teammitgliedern zu</li>
+          <li>Setzen Sie Priorität und Fälligkeitsdatum</li>
+          <li>Speichern Sie die Aufgabe</li>
+        </ol>
+
+        <h3 class="help__subsection-title">Aufgaben im Board verwalten</h3>
+        <p>
+          Das Kanban-Board zeigt Aufgaben in verschiedenen Status-Spalten. Sie können Aufgaben per Drag & Drop zwischen den Spalten verschieben:
+        </p>
+        <ul class="help__feature-list">
+          <li><strong>To Do:</strong> Neue, noch nicht begonnene Aufgaben</li>
+          <li><strong>In Progress:</strong> Aktive Aufgaben in Bearbeitung</li>
+          <li><strong>Await Feedback:</strong> Aufgaben warten auf Rückmeldung</li>
+          <li><strong>Done:</strong> Abgeschlossene Aufgaben</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 3. Kontaktverwaltung -->
+    <section class="help__section"
+             role="region"
+             aria-labelledby="contacts-title">
+      <h2 id="contacts-title" class="help__section-title">
+        👥 Kontaktverwaltung
+      </h2>
+      <div class="help__section-content">
+        <p>
+          Verwalten Sie Ihr Team und externe Kontakte effizient:
+        </p>
+        
+        <h3 class="help__subsection-title">Neuen Kontakt hinzufügen</h3>
+        <ol class="help__step-list">
+          <li>Klicken Sie auf den "Add new contact" Button</li>
+          <li>Geben Sie Name, E-Mail und Telefonnummer ein</li>
+          <li>Speichern Sie den Kontakt</li>
+        </ol>
+
+        <h3 class="help__subsection-title">Kontakt bearbeiten</h3>
+        <p>
+          Klicken Sie auf einen Kontakt und verwenden Sie die Edit/Delete-Buttons um Änderungen vorzunehmen.
+        </p>
+      </div>
+    </section>
+
+    <!-- 4. Barrierefreiheit -->
+    <section class="help__section"
+             role="region"
+             aria-labelledby="accessibility-title">
+      <h2 id="accessibility-title" class="help__section-title">
+        ♿ Barrierefreiheit
+      </h2>
+      <div class="help__section-content">
+        <p>
+          Join wurde nach WCAG 2.1 AA Standards entwickelt und bietet:
+        </p>
+        <ul class="help__feature-list">
+          <li>Vollständige Keyboard-Navigation (Tab, Enter, Escape, Pfeiltasten)</li>
+          <li>Screen Reader Unterstützung mit ARIA-Attributen</li>
+          <li>Hohe Kontraste für bessere Lesbarkeit</li>
+          <li>Responsive Design für alle Bildschirmgrößen</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 5. Tastenkombinationen -->
+    <section class="help__section"
+             role="region"
+             aria-labelledby="shortcuts-title">
+      <h2 id="shortcuts-title" class="help__section-title">
+        ⌨️ Tastenkombinationen
+      </h2>
+      <div class="help__section-content">
+        <div class="help__shortcut-grid">
+          <div class="help__shortcut-item">
+            <kbd>Tab</kbd>
+            <span>Navigation zwischen Elementen</span>
+          </div>
+          <div class="help__shortcut-item">
+            <kbd>Enter</kbd>
+            <span>Element aktivieren</span>
+          </div>
+          <div class="help__shortcut-item">
+            <kbd>Escape</kbd>
+            <span>Dialoge/Menüs schließen</span>
+          </div>
+          <div class="help__shortcut-item">
+            <kbd>Pfeiltasten</kbd>
+            <span>Navigation in Menüs</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+  </div>
+
+  <!-- Footer Actions -->
+  <footer class="help__footer">
+    <div class="help__actions">
+      <button type="button" 
+              class="help__back-to-top"
+              (click)="scrollToTop()"
+              aria-label="Zurück zum Seitenanfang">
+        Nach oben
+      </button>
+      <a routerLink="/summary" 
+         class="help__back-home"
+         aria-label="Zurück zur Übersicht">
+        Zurück zur Übersicht
+      </a>
+    </div>
+  </footer>
+
+</main>
