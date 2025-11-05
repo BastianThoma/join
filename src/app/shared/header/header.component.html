@@ -3,16 +3,66 @@
   <div class="app-header__logo">
     <img src="assets/img/join_logo_white.png" alt="Join Logo White" />
   </div>
+  
+  <div class="app-header__center">
+    <h1 class="app-header__title">Kanban Project Management Tool</h1>
+    <a 
+      routerLink="/help"
+      class="app-header__help-btn"
+      aria-label="Hilfe anzeigen">
+      <span class="app-header__help-icon">?</span>
+    </a>
+  </div>
+  
   <div class="app-header__user-menu">
-    <div class="app-header__user" tabindex="0" aria-label="Benutzerprofil" role="button">
-      <span class="app-header__user-initials" aria-label="Benutzerkürzel">{{ initials || '?' }}</span>
-    </div>
     <button 
-      class="app-header__logout-btn"
-      (click)="logout()"
-      aria-label="Abmelden"
-      type="button">
-      <span class="app-header__logout-text">Logout</span>
+      class="app-header__user"
+      type="button"
+      (click)="toggleUserMenu()"
+      aria-label="Benutzermenü öffnen"
+      [attr.aria-expanded]="showUserMenu">
+      <span class="app-header__user-initials">{{ initials || '?' }}</span>
     </button>
+    
+    <!-- User Menu Dropdown -->
+    <nav 
+      class="app-header__user-dropdown"
+      *ngIf="showUserMenu"
+      role="menu"
+      aria-label="Benutzer-Menü">
+      
+      <a 
+        routerLink="/privacy-policy"
+        class="app-header__menu-item"
+        role="menuitem"
+        (click)="closeUserMenu()">
+        <span>Privacy Policy</span>
+      </a>
+      
+      <a 
+        routerLink="/legal-notice"
+        class="app-header__menu-item"
+        role="menuitem"
+        (click)="closeUserMenu()">
+        <span>Legal Notice</span>
+      </a>
+      
+      <hr class="app-header__menu-divider">
+      
+      <button 
+        class="app-header__menu-item app-header__menu-item--logout"
+        type="button"
+        role="menuitem"
+        (click)="logout()">
+        <span>Logout</span>
+      </button>
+    </nav>
+  </div>
+  
+  <!-- Overlay für Menü-Schließung -->
+  <div 
+    class="app-header__overlay"
+    *ngIf="showUserMenu"
+    (click)="closeAllMenus()">
   </div>
 </header>

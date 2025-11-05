@@ -8,14 +8,15 @@
  * - Initialen werden als Benutzerkürzel angezeigt.
  * - Logout-Funktionalität für Sicherheit
  */
-import { Component, Input, inject } from '@angular/core';
+import { Component, Input, inject, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
@@ -30,11 +31,55 @@ export class HeaderComponent {
    */
   @Input() initials: string = 'G';
   
+  /** Zustand des User-Dropdown-Menüs */
+  showUserMenu: boolean = false;
+  
+  /**
+   * Schaltet das User-Menü um
+   */
+  toggleUserMenu(): void {
+    this.showUserMenu = !this.showUserMenu;
+  }
+  
+  /**
+   * Schließt das User-Menü
+   */
+  closeUserMenu(): void {
+    this.showUserMenu = false;
+  }
+  
+  /**
+   * Schließt alle offenen Menüs
+   */
+  closeAllMenus(): void {
+    this.showUserMenu = false;
+  }
+  
+  /**
+   * Schließt Menüs beim Klick außerhalb
+   */
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.app-header__user-menu')) {
+      this.closeAllMenus();
+    }
+  }
+  
+  /**
+   * Schließt Menüs bei Escape-Taste
+   */
+  @HostListener('document:keydown.escape')
+  onEscapeKey(): void {
+    this.closeAllMenus();
+  }
+  
   /**
    * Meldet den aktuellen Benutzer ab
    * Verwendet AuthService für vollständigen und sicheren Logout
    */
   async logout(): Promise<void> {
+    this.closeAllMenus();
     await this.authService.logout();
   }
 }
