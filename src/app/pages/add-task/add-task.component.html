@@ -436,7 +436,7 @@
             placeholder="Add new subtask"
             [(ngModel)]="newSubtask"
             name="newSubtask"
-            (keydown.enter)="addSubtaskOnEnter($event)"
+            (keydown.enter)="addSubtaskOnEnter(($event))"
             [disabled]="editSubtaskIndex !== null"
             (focus)="subtaskInputFocused = true"
             (blur)="subtaskInputFocused = false"

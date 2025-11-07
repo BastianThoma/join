@@ -203,7 +203,7 @@ export class AddTaskComponent {
    * @param event - Keyboard event
    */
   @HostListener('document:keydown.escape', ['$event'])
-  handleEscape(event: KeyboardEvent) {
+  handleEscape(event: Event) {
     this.showContactsDropdown = false;
     this.showCategoryDropdown = false;
   }
