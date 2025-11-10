@@ -6,6 +6,8 @@
  * 
  */
 
+@use 'sass:color';
+
 // === SCSS Variables ===
 $primary-color: #005dff;
 $primary-hover: #4589ff;
@@ -185,7 +187,7 @@ $desktop: 1024px;
       }
 
       .contacts__email {
-        color: darken($primary-color, 10%);
+        color: color.scale($primary-color, $lightness: -20%);
       }
 
       .contacts__avatar {
