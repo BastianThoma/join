@@ -27,6 +27,7 @@ import {
   CollectionReference,
   DocumentData,
 } from '@angular/fire/firestore';
+import { AuthService } from '../../shared/services/auth.service';
 
 /**
  * Interface for Contact data structure
@@ -42,6 +43,8 @@ interface Contact {
   phone?: string;
   /** Avatar color for the contact */
   color?: string;
+  /** User ID for data isolation */
+  userId?: string;
 }
 
 /**
@@ -72,6 +75,8 @@ interface Task {
   completedSubtasks?: string[];
   /** Soft delete flag */
   deleted?: boolean;
+  /** User ID for data isolation */
+  userId?: string;
 }
 
 /**
@@ -163,6 +168,9 @@ export class BoardComponent implements OnInit, OnDestroy {
   /** Angular Injector for running Firebase calls in injection context */
   private injector = inject(Injector);
 
+  /** Auth Service for user management */
+  private authService = inject(AuthService);
+
   /** Firestore collection reference for tasks */
   private tasksCol: CollectionReference<DocumentData>;
 
@@ -238,38 +246,58 @@ export class BoardComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Loads all contacts from Firestore
+   * Loads all contacts from Firestore (filtered by current user)
    */
   async loadContacts(): Promise<void> {
     try {
+      const currentUserId = this.authService.getCurrentUserId();
+      if (!currentUserId) {
+        console.error('No current user ID available');
+        return;
+      }
+
       const snapshot = await runInInjectionContext(this.injector, async () => {
         return getDocs(this.contactsCol);
       });
-      this.allContacts = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...(doc.data() as Omit<Contact, 'id'>),
-      })) as Contact[];
+      
+      // Filter contacts by userId to ensure data isolation
+      this.allContacts = snapshot.docs
+        .map((doc) => ({
+          id: doc.id,
+          ...(doc.data() as Omit<Contact, 'id'>),
+        }))
+        .filter((contact: any) => contact.userId === currentUserId) as Contact[];
+        
     } catch (error) {
       console.error('Error loading contacts:', error);
     }
   }
 
   /**
-   * Loads all tasks from Firestore
+   * Loads all tasks from Firestore (filtered by current user)
    */
   async loadTasks(): Promise<void> {
     try {
+      const currentUserId = this.authService.getCurrentUserId();
+      if (!currentUserId) {
+        console.error('No current user ID available');
+        return;
+      }
+
       const snapshot = await runInInjectionContext(this.injector, async () => {
         return getDocs(this.tasksCol);
       });
+      
       const allTasksFromFirestore = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...(doc.data() as Omit<Task, 'id'>),
         status: (doc.data() as any).status || 'todo', // Default to todo if no status
       })) as Task[];
 
-      // Filter out deleted tasks
-      this.allTasks = allTasksFromFirestore.filter((task) => !task.deleted);
+      // Filter tasks by userId to ensure data isolation and exclude deleted tasks
+      this.allTasks = allTasksFromFirestore.filter((task: any) => 
+        !task.deleted && task.userId === currentUserId
+      );
     } catch (error) {
       console.error('Error loading tasks:', error);
     }

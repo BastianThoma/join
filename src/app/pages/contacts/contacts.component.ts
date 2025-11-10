@@ -11,6 +11,7 @@ import {
   Firestore 
 } from '@angular/fire/firestore';
 import { inject } from '@angular/core';
+import { AuthService } from '../../shared/services/auth.service';
 import { Subject, takeUntil } from 'rxjs';
 
 /**
@@ -28,6 +29,8 @@ export interface Contact {
   phone?: string;
   /** Farbcode für Avatar-Darstellung */
   color: string;
+  /** Benutzer-ID für Datenisolation */
+  userId: string;
 }
 
 /**
@@ -73,6 +76,9 @@ export class ContactsComponent implements OnInit, OnDestroy {
   
   /** Angular Injector for running Firebase calls in injection context */
   private injector = inject(Injector);
+  
+  /** Auth Service für Benutzer-Management */
+  private authService = inject(AuthService);
   
   /** Subject für Component Lifecycle Management */
   private destroy$ = new Subject<void>();
@@ -165,21 +171,31 @@ export class ContactsComponent implements OnInit, OnDestroy {
   // === Data Loading & Management ===
 
   /**
-   * Lädt alle Kontakte aus Firestore
+   * Lädt alle Kontakte aus Firestore (gefiltert nach aktuellem Benutzer)
    * 
    * @returns Promise<void>
    */
   private async loadContacts(): Promise<void> {
     try {
+      const currentUserId = this.authService.getCurrentUserId();
+      if (!currentUserId) {
+        console.error('Keine Benutzer-ID verfügbar');
+        this.updateStatusMessage('Authentifizierungsfehler');
+        return;
+      }
+
       const snapshot = await runInInjectionContext(this.injector, async () => {
         const contactsCollection = collection(this.firestore, 'contacts');
         return getDocs(contactsCollection);
       });
       
-      this.contacts = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      } as Contact));
+      // Filter Kontakte nach userId für Datenisolation
+      this.contacts = snapshot.docs
+        .map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        } as Contact))
+        .filter((contact: any) => contact.userId === currentUserId);
       
       this.updateStatusMessage(`${this.contacts.length} Kontakte geladen`);
     } catch (error) {
@@ -437,11 +453,18 @@ export class ContactsComponent implements OnInit, OnDestroy {
     }
 
     try {
+      const currentUserId = this.authService.getCurrentUserId();
+      if (!currentUserId) {
+        this.addError = 'Authentifizierungsfehler';
+        return;
+      }
+
       const newContact: Omit<Contact, 'id'> = {
         name: this.addName.trim(),
         email: this.addEmail.trim(),
         phone: this.addPhone.trim() || '',
-        color: this.generateRandomColor()
+        color: this.generateRandomColor(),
+        userId: currentUserId
       };
 
       const docRef = await runInInjectionContext(this.injector, async () => {

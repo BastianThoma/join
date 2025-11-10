@@ -10,6 +10,7 @@ import {
   DocumentData 
 } from '@angular/fire/firestore';
 import { inject } from '@angular/core';
+import { AuthService } from '../../shared/services/auth.service';
 
 /**
  * Interface for Task data structure from Firestore
@@ -41,6 +42,8 @@ interface Task {
   completedSubtasks?: string[];
   /** Soft delete flag */
   deleted?: boolean;
+  /** User ID for data isolation */
+  userId?: string;
 }
 
 /**
@@ -59,6 +62,8 @@ interface Contact {
   phone?: string;
   /** Assigned color for visual identification */
   color?: string;
+  /** User ID for data isolation */
+  userId?: string;
 }
 
 /**
@@ -131,6 +136,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
   /** Angular Injector for running Firebase calls in injection context */
   private injector = inject(Injector);
+  
+  /** Auth Service für Benutzer-Management und Datenisolation */
+  private authService = inject(AuthService);
   
   /** Firestore collection reference for tasks */
   private tasksCol: CollectionReference<DocumentData>;
@@ -245,7 +253,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Loads all dashboard data from Firestore
+   * Loads all dashboard data from Firestore (filtered by current user)
    * Fetches tasks and contacts in parallel for optimal performance
    * 
    * @async
@@ -256,6 +264,12 @@ export class SummaryComponent implements OnInit, OnDestroy {
     try {
       this.isLoading = true;
       
+      const currentUserId = this.authService.getCurrentUserId();
+      if (!currentUserId) {
+        console.error('No current user ID available');
+        return;
+      }
+      
       // Load tasks and contacts in parallel for better performance
       // Use runInInjectionContext to ensure Firebase APIs are called within the proper injection context
       const [tasksSnapshot, contactsSnapshot] = await runInInjectionContext(this.injector, async () => {
@@ -265,19 +279,26 @@ export class SummaryComponent implements OnInit, OnDestroy {
         ]);
       });
 
-      // Process and transform task documents
-      this.tasks = tasksSnapshot.docs
+      // Process and transform task documents with user filtering
+      const allTasks = tasksSnapshot.docs
         .map(doc => ({
           id: doc.id,
           ...doc.data()
-        } as Task))
-        .filter(task => !task.deleted); // Filter out deleted tasks
+        } as Task));
+      
+      this.tasks = allTasks.filter((task: any) => 
+        !task.deleted && task.userId === currentUserId
+      );
 
-      // Process and transform contact documents
-      this.contacts = contactsSnapshot.docs.map(doc => ({
+      // Process and transform contact documents with user filtering
+      const allContacts = contactsSnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       } as Contact));
+      
+      this.contacts = allContacts.filter((contact: any) => 
+        contact.userId === currentUserId
+      );
 
       // Calculate aggregated statistics
       this.calculateStats();

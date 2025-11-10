@@ -18,6 +18,7 @@ import {
   CollectionReference,
   DocumentData,
 } from '@angular/fire/firestore';
+import { AuthService } from '../../shared/services/auth.service';
 
 /**
  * Interface for Contact data structure
@@ -33,6 +34,8 @@ interface Contact {
   phone?: string;
   /** Avatar color for the contact */
   color?: string;
+  /** User ID for data isolation */
+  userId?: string;
 }
 
 /**
@@ -156,6 +159,9 @@ export class AddTaskComponent {
   /** Router service for navigation */
   private router = inject(Router);
 
+  /** Auth Service für Benutzer-Management */
+  private authService = inject(AuthService);
+
   /** Firestore collection reference for tasks */
   private tasksCol: CollectionReference<DocumentData>;
 
@@ -233,18 +239,30 @@ export class AddTaskComponent {
   // ===============================
 
   /**
-   * Loads all available contacts from Firestore
+   * Loads all available contacts from Firestore (filtered by current user)
    * Populates both contacts and filteredContacts arrays
    */
   async loadContacts(): Promise<void> {
     try {
+      const currentUserId = this.authService.getCurrentUserId();
+      if (!currentUserId) {
+        console.error('No current user ID available');
+        return;
+      }
+
       const snapshot = await runInInjectionContext(this.injector, async () => {
         return getDocs(this.contactsCol);
       });
-      this.contacts = snapshot.docs.map((doc) => ({
+      
+      // Filter contacts by userId to ensure data isolation
+      const allContactsFromFirestore = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...(doc.data() as Omit<Contact, 'id'>),
       })) as Contact[];
+      
+      this.contacts = allContactsFromFirestore.filter((contact: any) => 
+        contact.userId === currentUserId
+      );
       this.filteredContacts = [...this.contacts];
     } catch (error) {
       console.error('Error loading contacts:', error);
@@ -557,6 +575,12 @@ export class AddTaskComponent {
     }
 
     try {
+      const currentUserId = this.authService.getCurrentUserId();
+      if (!currentUserId) {
+        this.error = 'Authentifizierungsfehler';
+        return;
+      }
+
       // Create task document
       await runInInjectionContext(this.injector, async () => {
         return addDoc(this.tasksCol, {
@@ -569,6 +593,7 @@ export class AddTaskComponent {
           subtasks: this.subtasks,
           status: 'todo', // Default status for new tasks
           createdAt: new Date().toISOString(),
+          userId: currentUserId,
           completedSubtasks: [], // Initialize empty completed subtasks array
         });
       });

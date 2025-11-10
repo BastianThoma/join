@@ -109,4 +109,83 @@ export class AuthService {
     console.warn('Unauthorized access detected - forcing logout');
     await this.logout();
   }
+
+  /**
+   * Prüft, ob der aktuelle Benutzer ein Gast ist
+   * @returns true wenn Gast-Account
+   */
+  isGuestUser(): boolean {
+    const currentUser = this.auth.currentUser;
+    return currentUser?.email === 'guest@join-demo.com';
+  }
+
+  /**
+   * Gibt die aktuelle User-ID zurück
+   * @returns User-ID oder null
+   */
+  getCurrentUserId(): string | null {
+    return this.auth.currentUser?.uid || null;
+  }
+
+  /**
+   * Prüft, ob der Benutzer Schreibrechte hat
+   * @returns true wenn normale User-Rechte oder Admin
+   */
+  canModifyData(): boolean {
+    // Gäste können keine Daten ändern (außer als Admin für Demo-Setup)
+    return !this.isGuestUser() || this.isAdmin();
+  }
+
+  /**
+   * Prüft Admin-Status (für Demo-Daten-Setup)
+   * @returns true wenn Admin (für jetzt: nur für Setup)
+   */
+  private isAdmin(): boolean {
+    // Prüfen ob localStorage verfügbar ist
+    if (typeof localStorage === 'undefined') {
+      return false;
+    }
+    
+    try {
+      return localStorage.getItem('join_admin_mode') === 'true';
+    } catch (error) {
+      console.warn('localStorage not accessible:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Aktiviert Admin-Modus für Demo-Setup
+   */
+  enableAdminMode(): void {
+    if (typeof localStorage !== 'undefined') {
+      try {
+        localStorage.setItem('join_admin_mode', 'true');
+        console.log('Admin-Modus aktiviert');
+      } catch (error) {
+        console.error('Fehler beim Aktivieren des Admin-Modus:', error);
+      }
+    }
+  }
+
+  /**
+   * Deaktiviert Admin-Modus
+   */
+  disableAdminMode(): void {
+    if (typeof localStorage !== 'undefined') {
+      try {
+        localStorage.removeItem('join_admin_mode');
+        console.log('Admin-Modus deaktiviert');
+      } catch (error) {
+        console.error('Fehler beim Deaktivieren des Admin-Modus:', error);
+      }
+    }
+  }
+
+  /**
+   * Prüft aktuellen Admin-Status (für UI)
+   */
+  getAdminStatus(): boolean {
+    return this.isAdmin();
+  }
 }

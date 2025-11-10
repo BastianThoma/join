@@ -178,6 +178,44 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Behandelt den Gast-Login
+   * Meldet den Benutzer mit vorkonfigurierten Demo-Credentials an
+   * 
+   * @returns Promise<void>
+   */
+  async loginAsGuest(): Promise<void> {
+    // Reset error state
+    this.errorMessage = '';
+    
+    // Demo-Credentials (diese müssen in Firebase existieren)
+    const guestEmail = 'guest@join-demo.com';
+    const guestPassword = 'Guest123!';
+
+    try {
+      // Authenticate with Firebase using guest credentials
+      await runInInjectionContext(this.injector, async () => {
+        return signInWithEmailAndPassword(this.auth, guestEmail, guestPassword);
+      });
+      
+      // Set manual login flag for security
+      this.authService.setManualLogin();
+      
+      // Clear form data
+      this.clearLoginForm();
+      
+      // Set greeting flag for summary page
+      localStorage.setItem('join_greeting_show', '1');
+      
+      // Navigate to summary
+      await this.router.navigate(['/summary']);
+      
+    } catch (error: any) {
+      console.error('Guest login error:', error);
+      this.errorMessage = 'Demo-Login fehlgeschlagen. Bitte versuchen Sie es später erneut.';
+    }
+  }
+
+  /**
    * Löscht die Login-Formulardaten
    */
   private clearLoginForm(): void {
