@@ -101,13 +101,28 @@
     position: relative;
     transition: transform 0.2s ease;
     
+    // Äußerer Ring - perfekt zentriert mit 2px Abstand rundherum
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 48px;
+      height: 48px;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      background: transparent;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    
     &:hover {
       transform: scale(1.05);
     }
     
     &:focus {
       outline: 2px solid rgba(255, 255, 255, 0.8);
-      outline-offset: 2px;
+      outline-offset: 4px;
       border-radius: 50%;
     }
 
@@ -124,6 +139,8 @@
       border-radius: 50%;
       border: 2px solid #fff;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      position: relative;
+      z-index: 1;
     }
   }
 

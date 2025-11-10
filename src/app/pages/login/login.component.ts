@@ -154,6 +154,10 @@ export class LoginComponent implements OnInit, OnDestroy {
       case 'auth/wrong-password':
         this.errorMessage = 'Falsches Passwort. Bitte versuchen Sie es erneut.';
         break;
+      case 'auth/invalid-credential':
+      case 'auth/invalid-login-credentials':
+        this.errorMessage = 'E-Mail oder Passwort ist falsch. Bitte überprüfen Sie Ihre Angaben und versuchen Sie es erneut.';
+        break;
       case 'auth/invalid-email':
         this.errorMessage = 'Ungültige E-Mail-Adresse.';
         break;
@@ -164,7 +168,12 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.errorMessage = 'Zu viele Anmeldeversuche. Bitte versuchen Sie es später erneut.';
         break;
       default:
-        this.errorMessage = error.message || 'Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.';
+        // Fallback für alle anderen Fehler, einschließlich "Invalid credentials"
+        if (error.message && error.message.toLowerCase().includes('invalid credential')) {
+          this.errorMessage = 'E-Mail oder Passwort ist falsch. Bitte überprüfen Sie Ihre Angaben und versuchen Sie es erneut.';
+        } else {
+          this.errorMessage = 'Anmeldung fehlgeschlagen. Bitte überprüfen Sie Ihre E-Mail und Ihr Passwort und versuchen Sie es erneut.';
+        }
     }
   }
 
