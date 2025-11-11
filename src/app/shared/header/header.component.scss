@@ -15,6 +15,24 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
   &__logo {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    transition: transform 0.2s ease;
+    
+    &:hover {
+      transform: scale(1.05);
+    }
+    
+    &:focus {
+      outline: 2px solid rgba(255, 255, 255, 0.8);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+    
     img {
       height: 40px;
       width: auto;
@@ -71,6 +89,11 @@
       outline: 2px solid rgba(255, 255, 255, 0.8);
       outline-offset: 2px;
     }
+    
+    // Help-Button nur auf Desktop anzeigen
+    @media (max-width: 768px) {
+      display: none;
+    }
   }
 
   &__help-icon {
@@ -114,6 +137,7 @@
       background: transparent;
       transform: translate(-50%, -50%);
       pointer-events: none;
+      transition: border-color 0.2s ease;
     }
     
     &:hover {
@@ -121,9 +145,12 @@
     }
     
     &:focus {
-      outline: 2px solid rgba(255, 255, 255, 0.8);
-      outline-offset: 4px;
-      border-radius: 50%;
+      outline: none; // Standard-Outline deaktivieren
+      
+      // Ring wird schwarz bei Focus für Barrierefreiheit
+      &::before {
+        border-color: #000;
+      }
     }
 
     &-initials {
@@ -146,10 +173,10 @@
 
   &__user-dropdown {
     position: absolute;
-    top: 100%;
+    top: 60px; // Angepasst an die visuelle Header-Höhe
     right: 0;
     background: #fff;
-    border-radius: 0 0 8px 8px;
+    border-radius: 8px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     min-width: 180px;
     overflow: hidden;
@@ -180,6 +207,15 @@
       outline: none;
     }
     
+    &--help {
+      // Help-Menüpunkt nur auf kleineren Geräten anzeigen
+      display: none;
+      
+      @media (max-width: 768px) {
+        display: block;
+      }
+    }
+    
     &--logout {
       color: #e74c3c;
       border-top: 1px solid #f0f0f0;
@@ -200,6 +236,15 @@
     margin: 0;
     border: none;
     border-top: 1px solid #f0f0f0;
+    
+    // Erste Trennlinie nur auf kleineren Geräten anzeigen (nach Help)
+    &:first-of-type {
+      display: none;
+      
+      @media (max-width: 768px) {
+        display: block;
+      }
+    }
   }
 
   // === Overlay ===
@@ -215,8 +260,7 @@
 
   // === Responsive Adjustments ===
   @media (max-width: 1024px) {
-    padding: 0 16px;
-    
+        
     &__title {
       display: none;
     }

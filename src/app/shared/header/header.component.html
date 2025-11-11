@@ -1,8 +1,12 @@
 
 <header class="app-header" role="banner" aria-label="Seitenkopf">
-  <div class="app-header__logo">
+  <button 
+    class="app-header__logo"
+    type="button"
+    (click)="navigateToHome()"
+    aria-label="Zur Startseite">
     <img src="assets/img/join_logo_white.png" alt="Join Logo White" />
-  </div>
+  </button>
   
   <div class="app-header__center">
     <h1 class="app-header__title">Kanban Project Management Tool</h1>
@@ -30,6 +34,16 @@
       *ngIf="showUserMenu"
       role="menu"
       aria-label="Benutzer-Menü">
+      
+      <a 
+        routerLink="/help"
+        class="app-header__menu-item app-header__menu-item--help"
+        role="menuitem"
+        (click)="closeUserMenu()">
+        <span>Help</span>
+      </a>
+      
+      <hr class="app-header__menu-divider">
       
       <a 
         routerLink="/privacy-policy"

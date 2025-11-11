@@ -10,7 +10,7 @@
  */
 import { Component, Input, inject, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -24,6 +24,9 @@ export class HeaderComponent {
   
   /** AuthService für sicheren Logout */
   private authService = inject(AuthService);
+  
+  /** Router für Navigation */
+  private router = inject(Router);
   
   /**
    * Initialen des angemeldeten Benutzers (wird im Header angezeigt).
@@ -72,6 +75,20 @@ export class HeaderComponent {
   @HostListener('document:keydown.escape')
   onEscapeKey(): void {
     this.closeAllMenus();
+  }
+  
+  /**
+   * Navigiert zur Startseite beim Logo-Klick
+   * Eingeloggt: Summary, Nicht eingeloggt: Login
+   */
+  navigateToHome(): void {
+    if (this.authService.canAccessProtectedRoute()) {
+      // User ist eingeloggt → Summary
+      this.router.navigate(['/summary']);
+    } else {
+      // User ist nicht eingeloggt → Login
+      this.router.navigate(['/login']);
+    }
   }
   
   /**
