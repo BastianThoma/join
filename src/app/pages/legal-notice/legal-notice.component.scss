@@ -75,6 +75,129 @@ $desktop: 1024px;
     margin: 0;
   }
 
+  // === Educational Notice ===
+  &__educational-notice {
+    background: linear-gradient(135deg, #fff9e6 0%, #fff4d6 100%);
+    border: 2px solid #ffa500;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 32px;
+    box-shadow: $shadow-light;
+    
+    @media (min-width: $tablet) {
+      padding: 32px;
+    }
+  }
+
+  &__notice-content {
+    text-align: center;
+  }
+
+  &__notice-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e67e00;
+    margin: 0 0 20px 0;
+    
+    @media (min-width: $tablet) {
+      font-size: 1.75rem;
+    }
+  }
+
+  &__notice-text {
+    text-align: left;
+    
+    p {
+      margin-bottom: 16px;
+      color: #8b4513;
+      line-height: 1.7;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+    
+    strong {
+      color: #cc6600;
+      font-weight: 600;
+    }
+  }
+
+  &__copyright-warning {
+    background: rgba(255, 235, 59, 0.2);
+    border-left: 4px solid #ffc107;
+    padding: 16px 20px;
+    margin-top: 20px;
+    border-radius: 0 8px 8px 0;
+    
+    h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #f57c00;
+      margin: 0 0 12px 0;
+    }
+    
+    p {
+      margin: 0;
+      color: #e65100;
+      font-weight: 500;
+    }
+  }
+
+  &__portfolio-reference {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid #3b82f6;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 24px;
+    
+    h4 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #1e40af;
+      margin: 0 0 16px 0;
+    }
+    
+    p {
+      margin-bottom: 12px;
+      color: #1e3a8a;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  &__portfolio-links {
+    margin-top: 16px;
+    
+    p {
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  &__portfolio-link {
+    color: #2563eb !important;
+    text-decoration: none;
+    font-weight: 600;
+    border-bottom: 1px solid transparent;
+    transition: all 0.2s ease;
+    
+    &:hover,
+    &:focus {
+      color: #1d4ed8 !important;
+      border-bottom-color: #1d4ed8;
+      text-decoration: none;
+    }
+  }
+
   // === Content Sections ===
   &__content {
     margin-bottom: 48px;
