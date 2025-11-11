@@ -193,7 +193,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
     effect(() => {
       const user = this.userService.user();
       if (user) {
-        this.name = user.displayName || user.email?.split('@')[0] || '';
+        const rawName = user.displayName || user.email?.split('@')[0] || '';
+        // Ersten Buchstaben groß schreiben für bessere Darstellung
+        this.name = rawName.charAt(0).toUpperCase() + rawName.slice(1);
         this.greeting = this.getGreeting();
       }
     });
@@ -246,7 +248,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
   private loadUserData(): void {
     const user = this.userService.user();
     if (user) {
-      this.name = user.displayName || user.email?.split('@')[0] || '';
+      const rawName = user.displayName || user.email?.split('@')[0] || '';
+      // Ersten Buchstaben groß schreiben für bessere Darstellung
+      this.name = rawName.charAt(0).toUpperCase() + rawName.slice(1);
     }
     // Don't set fallback name here - let the effect handle it
     this.greeting = this.getGreeting();
@@ -372,7 +376,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
     
     const user = this.userService.user();
     if (user) {
-      return user.displayName || user.email?.split('@')[0] || 'User';
+      const rawName = user.displayName || user.email?.split('@')[0] || 'User';
+      // Ersten Buchstaben groß schreiben für bessere Darstellung
+      return rawName.charAt(0).toUpperCase() + rawName.slice(1);
     }
     
     return 'User';

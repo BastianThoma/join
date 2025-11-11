@@ -116,7 +116,7 @@ export class AuthService {
    */
   isGuestUser(): boolean {
     const currentUser = this.auth.currentUser;
-    return currentUser?.email === 'guest@join-demo.com';
+    return currentUser?.email === 'gast@join-demo.com';
   }
 
   /**

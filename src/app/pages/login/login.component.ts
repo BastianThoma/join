@@ -188,7 +188,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.errorMessage = '';
     
     // Demo-Credentials (diese müssen in Firebase existieren)
-    const guestEmail = 'guest@join-demo.com';
+    const guestEmail = 'gast@join-demo.com';
     const guestPassword = 'Guest123!';
 
     try {
