@@ -392,7 +392,7 @@ $desktop: 1024px;
   color: $text-color;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 16px;
   
   // Desktop: Oben rechts positionieren (Figma Design)
   @media (min-width: 1024px) {
@@ -415,17 +415,16 @@ $desktop: 1024px;
     align-items: center;
     color: $background-card;
     background: $primary-color;
+    border: 1px solid $primary-color;
     border-radius: 8px;
-    padding: 10px 16px;
+    padding: 0 16px;
     text-decoration: none;
     transition: background 0.2s, color 0.2s, transform 0.1s;
-    width: 66px;
-    height: 23px;
     font-family: "Open Sans", sans-serif;
-    font-weight: 400;
-    font-size: 16px;
+    font-weight: 600;
+    font-size: 1rem;
     cursor: pointer;
-    min-height: 44px; // Touch target size
+    min-height: 48px; // Touch target size - gleich wie Login & Guest Login Button
 
     // Hover State
     &:hover {
