@@ -66,6 +66,7 @@
           [(ngModel)]="email"
           name="email"
           autocomplete="username"
+          [readonly]="fieldsReadonly"
           required
           email
           #emailInput="ngModel"
@@ -96,6 +97,7 @@
           [(ngModel)]="password"
           name="password"
           autocomplete="current-password"
+          [readonly]="fieldsReadonly"
           required
           #passwordInput="ngModel"
           [attr.aria-describedby]="'password-description'"

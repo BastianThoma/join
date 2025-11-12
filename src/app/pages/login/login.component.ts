@@ -55,6 +55,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   /** Kontrolliert die Passwort-Sichtbarkeit */
   showPassword: boolean = false;
 
+  /** Verhindert Autofill beim initialen Laden */
+  fieldsReadonly: boolean = true;
+
   // === Private Properties ===
   
   /** Timer ID für die Logo-Animation */
@@ -86,6 +89,11 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.initializeLogoAnimation();
     this.setupEventListeners();
     this.handleScrollOrResize();
+    
+    // Entferne readonly nach kurzem Timeout, um Autofill beim Laden zu verhindern
+    setTimeout(() => {
+      this.fieldsReadonly = false;
+    }, 500);
   }
 
   /**
