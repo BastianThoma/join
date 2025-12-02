@@ -8,6 +8,15 @@
       aria-label="Aufgaben-Board" 
       (click)="closeMobileMenu()">
   
+  <!-- Success Message -->
+  <div
+    *ngIf="success"
+    class="board__success"
+    role="alert"
+    aria-live="polite">
+    {{ success }}
+  </div>
+
   <!-- Board Header mit Navigation und Aktionen -->
   <header class="board__header" role="banner">
     <h1 class="board__title" id="board-title">Board</h1>
@@ -664,7 +673,7 @@
       <ng-container *ngIf="isEditMode">
         <button class="board__action-btn board__action-btn--cancel" 
                 type="button" 
-                (click)="cancelEditMode()"
+                (click)="cancelEditMode(); $event.stopPropagation()"
                 aria-label="Bearbeitung abbrechen"
                 aria-describedby="cancel-description">
           <img src="/assets/img/close_small_white_icon.png" 
@@ -678,7 +687,7 @@
         </button>
         <button class="board__action-btn board__action-btn--save" 
                 type="button" 
-                (click)="saveEditedTask()"
+                (click)="saveEditedTask(); $event.stopPropagation()"
                 aria-label="Änderungen speichern"
                 aria-describedby="save-description">
           <img src="/assets/img/check_blue_icon.png" 

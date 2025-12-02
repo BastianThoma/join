@@ -126,6 +126,9 @@ export class BoardComponent implements OnInit, OnDestroy {
   /** Error message */
   error = '';
 
+  /** Success message */
+  success = '';
+
   /** Currently dragged task */
   draggedTask: Task | null = null;
 
@@ -875,9 +878,17 @@ export class BoardComponent implements OnInit, OnDestroy {
       // Update selected task
       this.selectedTask = { ...this.editTask! };
 
-      // Exit edit mode
+      // Exit edit mode and close modal
       this.isEditMode = false;
       this.editTask = null;
+      this.closeTaskDetail();
+
+      // Show success message after closing modal
+      this.success = 'Task updated successfully!';
+      setTimeout(() => {
+        this.success = '';
+        this.cdr.detectChanges();
+      }, 3000);
 
       this.cdr.detectChanges();
       console.log('Task updated successfully');
