@@ -150,6 +150,9 @@ export class BoardComponent implements OnInit, OnDestroy {
   /** Edit form data - copy of selected task for editing */
   editTask: Task | null = null;
 
+  /** Check if mobile view (for disabling drag & drop on touch devices) */
+  isMobileView = false;
+
   /** Contact search and dropdown for edit mode */
   editContactSearch = '';
   showEditContactsDropdown = false;
@@ -194,6 +197,17 @@ export class BoardComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     await this.loadData();
     this.setupClickOutsideListener();
+    this.checkMobileView();
+    window.addEventListener('resize', () => this.checkMobileView());
+  }
+
+  /**
+   * Checks if current viewport is mobile (≤768px)
+   * Mobile devices use button-based task movement instead of drag & drop
+   */
+  private checkMobileView(): void {
+    this.isMobileView = window.innerWidth <= 768;
+    this.cdr.detectChanges();
   }
 
   /**
@@ -219,6 +233,8 @@ export class BoardComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     // Close any open dropdowns
     this.closeEditContacts();
+    // Remove resize listener
+    window.removeEventListener('resize', () => this.checkMobileView());
   }
 
   // ===============================

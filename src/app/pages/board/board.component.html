@@ -101,6 +101,7 @@
         <!-- Task Cards using Template -->
         <div *ngFor="let task of todoTasks; trackBy: trackByTaskId"
              class="board__task-card"
+             [cdkDragDisabled]="isMobileView"
              cdkDrag
              (cdkDragStarted)="onDragStarted()"
              (cdkDragEnded)="onDragEnded()"
@@ -160,6 +161,7 @@
         <!-- Task Cards using Template -->
         <div *ngFor="let task of inProgressTasks; trackBy: trackByTaskId"
              class="board__task-card"
+             [cdkDragDisabled]="isMobileView"
              cdkDrag
              (cdkDragStarted)="onDragStarted()"
              (cdkDragEnded)="onDragEnded()"
@@ -219,6 +221,7 @@
         <!-- Task Cards using Template -->
         <div *ngFor="let task of awaitFeedbackTasks; trackBy: trackByTaskId"
              class="board__task-card"
+             [cdkDragDisabled]="isMobileView"
              cdkDrag
              (cdkDragStarted)="onDragStarted()"
              (cdkDragEnded)="onDragEnded()"
@@ -278,6 +281,7 @@
         <!-- Task Cards using Template -->
         <div *ngFor="let task of doneTasks; trackBy: trackByTaskId"
              class="board__task-card"
+             [cdkDragDisabled]="isMobileView"
              cdkDrag
              (cdkDragStarted)="onDragStarted()"
              (cdkDragEnded)="onDragEnded()"
