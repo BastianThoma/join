@@ -512,8 +512,7 @@
   gap: 12px;
   margin-top: 24px;
   font-size: 0.95rem;
-  color: #fff;
-  opacity: 0.95;
+  color: #fff; // Opacity entfernt für besseren Kontrast (WCAG AA)
 
   // Navigation innerhalb des Legal Containers
   nav {

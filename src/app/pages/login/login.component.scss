@@ -357,8 +357,8 @@ $desktop: 1024px;
   // === Guest Button ===
   &__guest-btn {
     background: $background-card;
-    color: $primary-color;
-    border: 1px solid $primary-color;
+    color: #005dff; // Dunklerer Blau-Ton für besseren Kontrast (WCAG AA)
+    border: 1px solid #005dff;
     border-radius: 8px;
     padding: 12px 0;
     font-size: 1rem;
@@ -370,6 +370,8 @@ $desktop: 1024px;
     // Hover State
     &:hover {
       background: #e6f0ff;
+      border-color: #0046cc;
+      color: #0046cc;
       transform: translateY(-1px);
     }
 
@@ -413,9 +415,9 @@ $desktop: 1024px;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: $background-card;
-    background: $primary-color;
-    border: 1px solid $primary-color;
+    color: #ffffff; // Explizit weiß für besseren Kontrast (WCAG AA)
+    background: #005dff; // Dunklerer Blau-Ton für besseren Kontrast
+    border: 1px solid #005dff;
     border-radius: 8px;
     padding: 0 16px;
     text-decoration: none;
@@ -428,7 +430,8 @@ $desktop: 1024px;
 
     // Hover State
     &:hover {
-      background: $primary-hover;
+      background: #0046cc; // Noch dunkler beim Hover
+      border-color: #0046cc;
       transform: translateY(-1px);
     }
 
@@ -453,8 +456,7 @@ $desktop: 1024px;
   gap: 12px;
   margin-top: 24px;
   font-size: 0.95rem;
-  color: $text-color;
-  opacity: 0.9;
+  color: #2a3647; // Dunklere Farbe für besseren Kontrast (WCAG AA)
 
   // Navigation innerhalb des Legal Containers
   nav {
@@ -465,7 +467,7 @@ $desktop: 1024px;
   }
 
   &__link {
-    color: $text-color;
+    color: #2a3647; // Dunklere Farbe für besseren Kontrast (WCAG AA)
     text-decoration: none;
     padding: 4px 8px;
     border-radius: 6px;
@@ -478,15 +480,15 @@ $desktop: 1024px;
     // Hover State
     &:hover {
       background: #f0f4fa;
-      color: $primary-color;
+      color: #005dff; // Dunklerer Blau-Ton
     }
 
     // Focus State
     &:focus {
-      outline: 2px solid $primary-color;
+      outline: 2px solid #2a3647;
       outline-offset: 2px;
       background: #f0f4fa;
-      color: $primary-color;
+      color: #005dff; // Dunklerer Blau-Ton
     }
   }
 
